@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '../contexts/ThemeContext';
 import { ALGORITHM_CATEGORIES, ALGORITHM_NAME_MAP } from '../constants/algorithms';
@@ -11,15 +11,87 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentAlgorithm }: SidebarProps) {
-  const [expandedCategories, setExpandedCategories] = useState(new Set(["Algorithms"])); // Track multiple expanded categories
-  const [manuallyExpandedCategories, setManuallyExpandedCategories] = useState(new Set(["Algorithms"])); // Track user's manual expansions
+  // Initialize expanded categories from localStorage or default
+  const [expandedCategories, setExpandedCategories] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vizit-sidebar-expanded');
+      return saved ? new Set(JSON.parse(saved)) : new Set(["Algorithms"]);
+    }
+    return new Set(["Algorithms"]);
+  });
+  
+  const [manuallyExpandedCategories, setManuallyExpandedCategories] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vizit-sidebar-manual-expanded');
+      return saved ? new Set(JSON.parse(saved)) : new Set(["Algorithms"]);
+    }
+    return new Set(["Algorithms"]);
+  });
+  
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const isDarkMode = resolvedTheme === 'dark';
 
+  // Save expanded categories to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vizit-sidebar-expanded', JSON.stringify([...expandedCategories]));
+    }
+  }, [expandedCategories]);
+
+  // Save manually expanded categories to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('vizit-sidebar-manual-expanded', JSON.stringify([...manuallyExpandedCategories]));
+    }
+  }, [manuallyExpandedCategories]);
+
+  // Save and restore scroll position
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      // Restore scroll position on mount
+      const savedScrollTop = localStorage.getItem('vizit-sidebar-scroll');
+      if (savedScrollTop) {
+        scrollContainer.scrollTop = parseInt(savedScrollTop, 10);
+      }
+
+      // Save scroll position on scroll
+      const handleScroll = () => {
+        localStorage.setItem('vizit-sidebar-scroll', scrollContainer.scrollTop.toString());
+      };
+
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  // Restore scroll position when expanded categories change (after search or navigation)
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer && !searchQuery.trim()) {
+      // Only restore scroll when not searching to avoid jumping during search
+      const savedScrollTop = localStorage.getItem('vizit-sidebar-scroll');
+      if (savedScrollTop) {
+        setTimeout(() => {
+          scrollContainer.scrollTop = parseInt(savedScrollTop, 10);
+        }, 100); // Small delay to ensure DOM updates are complete
+      }
+    }
+  }, [expandedCategories, searchQuery]);
+
   const handleAlgorithmSelect = (algorithmId: string) => {
+    // Save current scroll position before navigation
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      localStorage.setItem('vizit-sidebar-scroll', scrollContainer.scrollTop.toString());
+    }
+    
+    // Clear search when navigating to maintain clean state
+    setSearchQuery("");
     router.push(`/algorithm/${algorithmId}`);
   };
 
@@ -58,12 +130,11 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
         )
         .map(cat => cat.name);
       
-      setExpandedCategories(prev => {
-        const newExpanded = new Set([...manuallyExpandedCategories, ...categoriesWithResults]);
-        return newExpanded;
-      });
+      // Combine manually expanded categories with search result categories
+      const combinedExpanded = new Set([...manuallyExpandedCategories, ...categoriesWithResults]);
+      setExpandedCategories(combinedExpanded);
     } else {
-      // When not searching, only show manually expanded categories
+      // When not searching, restore manually expanded categories
       setExpandedCategories(new Set(manuallyExpandedCategories));
     }
   }, [searchQuery, manuallyExpandedCategories]); // Removed filteredCategories from dependencies
@@ -184,7 +255,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       </div>
 
       {/* Categories */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-4 pb-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto min-h-0 px-4 pb-4">
         {searchQuery && totalFilteredAlgorithms === 0 ? (
           /* No search results */
           <div className="flex flex-col items-center justify-center py-12 px-6">
