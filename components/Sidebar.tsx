@@ -195,18 +195,18 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       }`}>
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-3 mb-2 w-full text-left group hover:scale-105 transition-all duration-300"
+          className="flex items-center gap-3 mb-2 w-full text-left group hover:scale-102 hover:-translate-y-0.5 transition-all duration-200 ease-out"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:shadow-blue-500/25 transition-all duration-300">
-            <svg className="w-6 h-6 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:shadow-blue-500/25 transition-all duration-200 ease-out group-hover:scale-105">
+            <svg className="w-6 h-6 text-white group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-200 ease-out">
               Vizit
             </h1>
-            <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-gray-500 group-hover:text-gray-400'} tracking-wide uppercase transition-colors duration-300`}>
+            <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-gray-500 group-hover:text-gray-400'} tracking-wide uppercase transition-colors duration-200 ease-out`}>
               Visualize It
             </p>
           </div>
@@ -217,14 +217,14 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
           href="https://github.com/username/vizit"
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-300 ${
+          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ease-out ${
             isDarkMode 
               ? 'bg-gradient-to-r from-slate-800/60 to-slate-700/60 text-slate-300 hover:from-slate-700/70 hover:to-slate-600/70 border border-slate-600/30 hover:border-slate-500/50' 
               : 'bg-gradient-to-r from-gray-100/80 to-white/80 text-gray-700 hover:from-gray-200/80 hover:to-gray-100/80 border border-gray-300/30 hover:border-gray-400/40'
-          } backdrop-blur-sm hover:shadow-lg hover:scale-105 group`}
+          } backdrop-blur-sm hover:shadow-lg hover:scale-102 hover:-translate-y-0.5 group`}
         >
           <svg 
-            className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" 
+            className="w-4 h-4 transition-transform duration-200 ease-out group-hover:rotate-6" 
             fill="currentColor" 
             viewBox="0 0 24 24"
           >
@@ -232,7 +232,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
           </svg>
           <span>Star on GitHub</span>
           <svg 
-            className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5" 
+            className="w-3 h-3 transition-transform duration-200 ease-out group-hover:translate-x-0.5" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -249,7 +249,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
             isDarkMode 
               ? 'bg-gradient-to-r from-slate-800/50 to-slate-700/50' 
               : 'bg-gradient-to-r from-white/80 to-gray-50/80'
-          } backdrop-blur-sm transition-all duration-300 group-focus-within:from-blue-500/10 group-focus-within:to-purple-500/10`} />
+          } backdrop-blur-sm transition-all duration-200 ease-out group-focus-within:from-blue-500/10 group-focus-within:to-purple-500/10`} />
           <input
             type="text"
             placeholder="Search algorithms..."
@@ -259,7 +259,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
               isDarkMode 
                 ? 'bg-slate-800/30 border-slate-600/30 text-white placeholder-slate-400' 
                 : 'bg-white/50 border-gray-300/30 text-gray-900 placeholder-gray-500'
-            } focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 text-sm font-medium backdrop-blur-sm`}
+            } focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 ease-out text-sm font-medium backdrop-blur-sm`}
           />
           
           {/* Search/Clear button */}

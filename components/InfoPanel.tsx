@@ -29,26 +29,27 @@ export default function InfoPanel({
         : 'bg-gradient-to-b from-white/95 to-gray-50/95 text-gray-900'
     } backdrop-blur-xl border-l ${
       isDarkMode ? 'border-slate-700/50' : 'border-gray-200/50'
-    } flex flex-col shadow-2xl`}>
+    } flex flex-col shadow-2xl animate-in slide-in-from-right-4 fade-in duration-600 delay-600`}>
       
       {/* Glassmorphism overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
       
       {/* Tabs - Fixed with premium styling */}
       <div className={`relative flex border-b ${isDarkMode ? 'border-slate-700/50' : 'border-gray-300/50'} flex-shrink-0 bg-gradient-to-r from-transparent to-transparent backdrop-blur-sm`}>
-        {tabs.map((tab) => (
+        {tabs.map((tab, index) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`relative flex-1 px-6 py-4 text-sm font-semibold border-b-2 transition-all duration-300 ${
+            className={`relative flex-1 px-6 py-4 text-sm font-semibold border-b-2 transition-all duration-200 ease-out ${
               activeTab === tab
                 ? `border-blue-500 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} bg-gradient-to-t ${isDarkMode ? 'from-blue-500/10 to-transparent' : 'from-blue-500/5 to-transparent'}`
                 : `border-transparent ${isDarkMode ? 'hover:text-slate-300 hover:bg-slate-700/30' : 'hover:text-gray-700 hover:bg-gray-100/50'}`
-            } backdrop-blur-sm`}
+            } backdrop-blur-sm hover:scale-102 hover:-translate-y-0.5 animate-in slide-in-from-top-4 fade-in duration-400`}
+            style={{ animationDelay: `${700 + index * 100}ms` }}
           >
             <span className="relative z-10">{tab}</span>
             {activeTab === tab && (
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent rounded-t-lg" />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent rounded-t-lg transition-all duration-200 ease-out" />
             )}
           </button>
         ))}

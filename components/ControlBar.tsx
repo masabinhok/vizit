@@ -51,12 +51,12 @@ export default function ControlBar({
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               disabled={!isInitialized || currentStep >= totalSteps - 1}
-              className={`flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 shadow-lg ${
+              className={`flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-200 ease-out shadow-lg ${
                 !isInitialized || currentStep >= totalSteps - 1
                   ? `${isDarkMode ? 'bg-slate-600/50 text-slate-400 shadow-slate-600/20' : 'bg-gray-200/80 text-gray-400 shadow-gray-200/40'} cursor-not-allowed`
                   : isPlaying 
-                  ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-red-500/30 hover:shadow-red-500/40 transform hover:scale-105' 
-                  : 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-emerald-500/30 hover:shadow-emerald-500/40 transform hover:scale-105'
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-red-500/30 hover:shadow-red-500/40 transform hover:scale-105 hover:-translate-y-0.5' 
+                  : 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-emerald-500/30 hover:shadow-emerald-500/40 transform hover:scale-105 hover:-translate-y-0.5'
               }`}
             >
               {isPlaying ? (
@@ -73,13 +73,13 @@ export default function ControlBar({
             <button 
               onClick={onStepBackward}
               disabled={!isInitialized || currentStep <= 0}
-              className={`p-2 rounded-xl transition-all duration-300 border backdrop-blur-sm shadow-md ${
+              className={`p-2 rounded-xl transition-all duration-200 ease-out border backdrop-blur-sm shadow-md ${
                 !isInitialized || currentStep <= 0
                   ? `${isDarkMode ? 'bg-slate-700/50 border-slate-600/30 text-slate-500 shadow-slate-600/20' : 'bg-gray-100/80 border-gray-200/30 text-gray-400 shadow-gray-200/40'} cursor-not-allowed`
                   : isDarkMode 
                   ? 'bg-slate-700/70 border-slate-600/30 text-slate-300 hover:bg-slate-600/70 hover:border-slate-500/50 hover:text-white shadow-slate-700/30 hover:shadow-slate-600/40' 
                   : 'bg-white/80 border-gray-300/30 text-gray-700 hover:bg-gray-50/90 hover:border-gray-400/40 hover:text-gray-900 shadow-white/50 hover:shadow-gray-200/60'
-              } transform hover:scale-105`}
+              } transform hover:scale-102 hover:-translate-y-0.5`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.333 4z" />
@@ -89,13 +89,13 @@ export default function ControlBar({
             <button 
               onClick={onStepForward}
               disabled={!isInitialized || currentStep >= totalSteps - 1}
-              className={`p-2 rounded-xl transition-all duration-300 border backdrop-blur-sm shadow-md ${
+              className={`p-2 rounded-xl transition-all duration-200 ease-out border backdrop-blur-sm shadow-md ${
                 !isInitialized || currentStep >= totalSteps - 1
                   ? `${isDarkMode ? 'bg-slate-700/50 border-slate-600/30 text-slate-500 shadow-slate-600/20' : 'bg-gray-100/80 border-gray-200/30 text-gray-400 shadow-gray-200/40'} cursor-not-allowed`
                   : isDarkMode 
                   ? 'bg-slate-700/70 border-slate-600/30 text-slate-300 hover:bg-slate-600/70 hover:border-slate-500/50 hover:text-white shadow-slate-700/30 hover:shadow-slate-600/40' 
                   : 'bg-white/80 border-gray-300/30 text-gray-700 hover:bg-gray-50/90 hover:border-gray-400/40 hover:text-gray-900 shadow-white/50 hover:shadow-gray-200/60'
-              } transform hover:scale-105`}
+              } transform hover:scale-102 hover:-translate-y-0.5`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
@@ -105,13 +105,13 @@ export default function ControlBar({
             <button 
               onClick={onReset}
               disabled={!isInitialized}
-              className={`p-2 rounded-xl transition-all duration-300 border backdrop-blur-sm shadow-md ${
+              className={`p-2 rounded-xl transition-all duration-200 ease-out border backdrop-blur-sm shadow-md ${
                 !isInitialized
                   ? `${isDarkMode ? 'bg-slate-700/50 border-slate-600/30 text-slate-500 shadow-slate-600/20' : 'bg-gray-100/80 border-gray-200/30 text-gray-400 shadow-gray-200/40'} cursor-not-allowed`
                   : isDarkMode 
                   ? 'bg-slate-700/70 border-slate-600/30 text-slate-300 hover:bg-slate-600/70 hover:border-slate-500/50 hover:text-white shadow-slate-700/30 hover:shadow-slate-600/40' 
                   : 'bg-white/80 border-gray-300/30 text-gray-700 hover:bg-gray-50/90 hover:border-gray-400/40 hover:text-gray-900 shadow-white/50 hover:shadow-gray-200/60'
-              } transform hover:scale-105`}
+              } transform hover:scale-102 hover:-translate-y-0.5`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -160,7 +160,7 @@ export default function ControlBar({
               placeholder="e.g., 64,34,25,12,22"
               value={inputArray}
               onChange={(e) => setInputArray(e.target.value)}
-              className={`flex-1 px-4 py-3 text-sm rounded-xl border min-w-0 transition-all duration-300 backdrop-blur-sm shadow-md ${
+              className={`flex-1 px-4 py-3 text-sm rounded-xl border min-w-0 transition-all duration-200 ease-out backdrop-blur-sm shadow-md ${
                 isDarkMode 
                   ? 'bg-slate-700/50 border-slate-600/30 text-white placeholder-slate-400 focus:bg-slate-600/50 focus:border-slate-500/50 shadow-slate-700/30' 
                   : 'bg-white/50 border-gray-300/30 text-gray-900 placeholder-gray-500 focus:bg-white/70 focus:border-gray-400/50 shadow-white/50'
@@ -168,7 +168,7 @@ export default function ControlBar({
             />
             <button 
               onClick={onInitialize}
-              className="px-6 py-3 text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl transition-all duration-300 whitespace-nowrap flex-shrink-0 shadow-lg hover:shadow-xl font-semibold transform hover:scale-105 hover:shadow-blue-500/30"
+              className="px-6 py-3 text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 shadow-lg hover:shadow-xl font-semibold transform hover:scale-102 hover:-translate-y-0.5 hover:shadow-blue-500/30"
             >
               Apply
             </button>

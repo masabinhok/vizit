@@ -12,28 +12,28 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className={`group relative p-3 rounded-xl backdrop-blur-xl border transition-all duration-500 ease-out overflow-hidden ${
+      className={`group relative p-3 rounded-xl backdrop-blur-xl border transition-all duration-200 ease-out overflow-hidden ${
         resolvedTheme === 'dark'
           ? 'bg-slate-800/90 border-slate-600/40 text-slate-400 hover:text-slate-100 hover:bg-slate-700/90'
           : 'bg-white/90 border-gray-200/40 text-gray-600 hover:text-gray-900 hover:bg-white/95'
-      } hover:scale-110 hover:shadow-xl active:scale-95 transform-gpu`}
+      } hover:scale-102 hover:-translate-y-0.5 hover:shadow-xl active:scale-98 transform-gpu`}
       aria-label="Toggle theme"
     >
       {/* Background glow effect */}
-      <div className={`absolute inset-0 rounded-xl transition-all duration-700 opacity-0 group-hover:opacity-100 ${
+      <div className={`absolute inset-0 rounded-xl transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 ${
         resolvedTheme === 'dark'
           ? 'bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-amber-500/20'
           : 'bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20'
       }`} />
       
       {/* Icon container with smooth morphing */}
-      <div className="relative w-4 h-4 transition-all duration-500 ease-out transform-gpu group-hover:rotate-[360deg]">
+      <div className="relative w-4 h-4 transition-all duration-300 ease-out transform-gpu group-hover:rotate-180">
         {/* Sun icon */}
         <svg 
-          className={`absolute inset-0 w-4 h-4 transition-all duration-500 ease-out transform-gpu ${
+          className={`absolute inset-0 w-4 h-4 transition-all duration-300 ease-out transform-gpu ${
             theme === 'light' 
               ? 'opacity-100 scale-100 rotate-0' 
-              : 'opacity-0 scale-75 rotate-180'
+              : 'opacity-0 scale-75 rotate-90'
           }`} 
           fill="currentColor" 
           viewBox="0 0 20 20"
@@ -43,10 +43,10 @@ export default function ThemeToggle() {
         
         {/* Moon icon */}
         <svg 
-          className={`absolute inset-0 w-4 h-4 transition-all duration-500 ease-out transform-gpu ${
+          className={`absolute inset-0 w-4 h-4 transition-all duration-300 ease-out transform-gpu ${
             theme === 'dark' 
               ? 'opacity-100 scale-100 rotate-0' 
-              : 'opacity-0 scale-75 rotate-[-180deg]'
+              : 'opacity-0 scale-75 rotate-[-90deg]'
           }`} 
           fill="currentColor" 
           viewBox="0 0 20 20"
@@ -56,7 +56,7 @@ export default function ThemeToggle() {
       </div>
       
       {/* Ripple effect on click */}
-      <div className="absolute inset-0 rounded-xl opacity-0 group-active:opacity-100 group-active:animate-ping bg-current" style={{ animationDuration: '0.6s' }} />
+      <div className="absolute inset-0 rounded-xl opacity-0 group-active:opacity-100 group-active:animate-ping bg-current" style={{ animationDuration: '0.4s' }} />
     </button>
   );
 }
