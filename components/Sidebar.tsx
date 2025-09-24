@@ -11,23 +11,10 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentAlgorithm }: SidebarProps) {
-  // Initialize expanded categories from localStorage or default
-  const [expandedCategories, setExpandedCategories] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('vizit-sidebar-expanded');
-      return saved ? new Set(JSON.parse(saved)) : new Set(["Algorithms"]);
-    }
-    return new Set(["Algorithms"]);
-  });
-  
-  const [manuallyExpandedCategories, setManuallyExpandedCategories] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('vizit-sidebar-manual-expanded');
-      return saved ? new Set(JSON.parse(saved)) : new Set(["Algorithms"]);
-    }
-    return new Set(["Algorithms"]);
-  });
-  
+  // Initialize with default state to prevent hydration mismatch
+  const [expandedCategories, setExpandedCategories] = useState(new Set(["Algorithms"]));
+  const [manuallyExpandedCategories, setManuallyExpandedCategories] = useState(new Set(["Algorithms"]));
+  const [isHydrated, setIsHydrated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { resolvedTheme } = useTheme();
@@ -35,22 +22,49 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
   
   const isDarkMode = resolvedTheme === 'dark';
 
-  // Save expanded categories to localStorage
+  // Hydrate from localStorage after component mounts
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const savedExpanded = localStorage.getItem('vizit-sidebar-expanded');
+    const savedManual = localStorage.getItem('vizit-sidebar-manual-expanded');
+    
+    if (savedExpanded) {
+      try {
+        setExpandedCategories(new Set(JSON.parse(savedExpanded)));
+      } catch (e) {
+        // If parsing fails, keep default
+        console.warn('Failed to parse saved expanded categories:', e);
+      }
+    }
+    if (savedManual) {
+      try {
+        setManuallyExpandedCategories(new Set(JSON.parse(savedManual)));
+      } catch (e) {
+        // If parsing fails, keep default
+        console.warn('Failed to parse saved manual categories:', e);
+      }
+    }
+    
+    setIsHydrated(true);
+  }, []);
+
+  // Save expanded categories to localStorage (only after hydration)
+  useEffect(() => {
+    if (isHydrated) {
       localStorage.setItem('vizit-sidebar-expanded', JSON.stringify([...expandedCategories]));
     }
-  }, [expandedCategories]);
+  }, [expandedCategories, isHydrated]);
 
-  // Save manually expanded categories to localStorage
+  // Save manually expanded categories to localStorage (only after hydration)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isHydrated) {
       localStorage.setItem('vizit-sidebar-manual-expanded', JSON.stringify([...manuallyExpandedCategories]));
     }
-  }, [manuallyExpandedCategories]);
+  }, [manuallyExpandedCategories, isHydrated]);
 
   // Save and restore scroll position
   useEffect(() => {
+    if (!isHydrated) return;
+    
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
       // Restore scroll position on mount
@@ -67,10 +81,12 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [isHydrated]);
 
   // Restore scroll position when expanded categories change (after search or navigation)
   useEffect(() => {
+    if (!isHydrated) return;
+    
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer && !searchQuery.trim()) {
       // Only restore scroll when not searching to avoid jumping during search
@@ -81,13 +97,15 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
         }, 100); // Small delay to ensure DOM updates are complete
       }
     }
-  }, [expandedCategories, searchQuery]);
+  }, [expandedCategories, searchQuery, isHydrated]);
 
   const handleAlgorithmSelect = (algorithmId: string) => {
-    // Save current scroll position before navigation
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      localStorage.setItem('vizit-sidebar-scroll', scrollContainer.scrollTop.toString());
+    // Save current scroll position before navigation (only after hydration)
+    if (isHydrated) {
+      const scrollContainer = scrollContainerRef.current;
+      if (scrollContainer) {
+        localStorage.setItem('vizit-sidebar-scroll', scrollContainer.scrollTop.toString());
+      }
     }
     
     // Clear search when navigating to maintain clean state
@@ -120,6 +138,9 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
 
   // Auto-expand categories with search results
   useEffect(() => {
+    // Don't run auto-expansion logic until after hydration
+    if (!isHydrated) return;
+    
     if (searchQuery.trim()) {
       // Calculate categories with results inside the effect to avoid dependency issues
       const categoriesWithResults = ALGORITHM_CATEGORIES
@@ -137,7 +158,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       // When not searching, restore manually expanded categories
       setExpandedCategories(new Set(manuallyExpandedCategories));
     }
-  }, [searchQuery, manuallyExpandedCategories]); // Removed filteredCategories from dependencies
+  }, [searchQuery, manuallyExpandedCategories, isHydrated]); // Added isHydrated dependency
 
   // Get categories to display (filtered when searching, all when not)
   const categoriesToDisplay = searchQuery.trim() 
