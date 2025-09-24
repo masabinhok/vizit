@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ibmPlexSans.className} ${ibmPlexMono.className} antialiased`}
+        className={`${ibmPlexSans.className} ${ibmPlexMono.className} antialiased bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20 min-h-screen`}
       >
         {children}
       </body>

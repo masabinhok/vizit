@@ -22,20 +22,33 @@ export default function InfoPanel({
 
   const tabs = ['Code', 'Explanation', 'Stats'] as const;
   return (
-    <aside className={`w-80 h-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'} border-l ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} flex flex-col`}>
-      {/* Tabs - Fixed */}
-      <div className={`flex border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} flex-shrink-0`}>
+    <aside className={`w-80 h-full relative ${
+      isDarkMode 
+        ? 'bg-gradient-to-b from-slate-800/95 to-slate-700/95 text-white' 
+        : 'bg-gradient-to-b from-white/95 to-gray-50/95 text-gray-900'
+    } backdrop-blur-xl border-l ${
+      isDarkMode ? 'border-slate-700/50' : 'border-gray-200/50'
+    } flex flex-col shadow-2xl`}>
+      
+      {/* Glassmorphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
+      
+      {/* Tabs - Fixed with premium styling */}
+      <div className={`relative flex border-b ${isDarkMode ? 'border-slate-700/50' : 'border-gray-300/50'} flex-shrink-0 bg-gradient-to-r from-transparent to-transparent backdrop-blur-sm`}>
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`relative flex-1 px-6 py-4 text-sm font-semibold border-b-2 transition-all duration-300 ${
               activeTab === tab
-                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : `border-transparent ${isDarkMode ? 'hover:text-gray-300' : 'hover:text-gray-600'}`
-            }`}
+                ? `border-blue-500 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} bg-gradient-to-t ${isDarkMode ? 'from-blue-500/10 to-transparent' : 'from-blue-500/5 to-transparent'}`
+                : `border-transparent ${isDarkMode ? 'hover:text-slate-300 hover:bg-slate-700/30' : 'hover:text-gray-700 hover:bg-gray-100/50'}`
+            } backdrop-blur-sm`}
           >
-            {tab}
+            <span className="relative z-10">{tab}</span>
+            {activeTab === tab && (
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent rounded-t-lg" />
+            )}
           </button>
         ))}
       </div>
