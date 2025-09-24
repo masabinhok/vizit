@@ -89,21 +89,21 @@ export default function Home() {
             {/* Main Hero */}
             <div className="text-center mb-16">
               {/* Floating badge */}
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-md border mb-8 animate-in fade-in slide-in-from-top-4 duration-1000 delay-100 group hover:scale-105 transition-all">
-                <div className={`px-3 py-1 rounded-full text-xs font-semibold group cursor-pointer transition-all duration-300 ${
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-md border mb-8 animate-in fade-in slide-in-from-top-4 duration-1000 delay-100 group hover:scale-102 hover:-translate-y-0.5 transition-all duration-200 ease-out">
+                <div className={`px-3 py-1 rounded-full text-xs font-semibold group cursor-pointer transition-all duration-200 ease-out ${
                   isDarkMode 
                     ? 'bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border-emerald-400/30 text-emerald-300 hover:from-emerald-500/30 hover:to-blue-500/30' 
                     : 'bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border-emerald-400/30 text-emerald-600 hover:from-emerald-500/20 hover:to-blue-500/20'
                 }`}>
                   <div className="flex items-center gap-1.5">
-                    <svg className="w-3 h-3 group-hover:rotate-12 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 group-hover:rotate-6 transition-transform duration-200 ease-out" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                     </svg>
                     <span>Open Source</span>
                   </div>
                   
                   {/* Tooltip */}
-                  <div className={`absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10 ${
+                  <div className={`absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out pointer-events-none z-10 ${
                     isDarkMode ? 'text-slate-300' : 'text-gray-700'
                   }`}>
                     <div className={`px-3 py-2 rounded-lg backdrop-blur-xl border shadow-lg whitespace-nowrap text-xs ${
@@ -120,7 +120,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-gray-600'} group-hover:text-blue-500 transition-colors duration-300`}>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-gray-600'} group-hover:text-blue-500 transition-colors duration-200`}>
                   Real-time Algorithm Visualization Platform
                 </span>
               </div>
@@ -150,12 +150,12 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-in slide-in-from-bottom-8 fade-in duration-1200 delay-600">
                 <button
                   onClick={() => router.push('/algorithm/bubble-sort')}
-                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 hover:scale-105 hover:-translate-y-1 overflow-hidden"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-blue-500/30 transition-all duration-200 ease-out hover:scale-102 hover:-translate-y-0.5 overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-gradient-x"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out animate-gradient-x"></div>
                   <div className="relative flex items-center gap-3">
                     <span className="text-lg">Start Learning</span>
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
@@ -163,14 +163,14 @@ export default function Home() {
                 
                 <button
                   onClick={() => router.push('/algorithm/quick-sort')}
-                  className={`group px-8 py-4 rounded-2xl font-semibold border-2 transition-all duration-500 hover:scale-105 hover:-translate-y-1 backdrop-blur-sm ${
+                  className={`group px-8 py-4 rounded-2xl font-semibold border-2 transition-all duration-200 ease-out hover:scale-102 hover:-translate-y-0.5 backdrop-blur-sm ${
                     isDarkMode 
-                      ? 'border-slate-600 text-slate-300 hover:bg-slate-800/50 hover:border-slate-400' 
-                      : 'border-gray-300 text-gray-700 hover:bg-white/80 hover:border-gray-400 hover:shadow-lg'
+                      ? 'border-slate-600 text-slate-300 hover:bg-slate-800/50 hover:border-slate-400 hover:shadow-lg hover:shadow-slate-500/20' 
+                      : 'border-gray-300 text-gray-700 hover:bg-white/80 hover:border-gray-400 hover:shadow-lg hover:shadow-gray-500/20'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M15 14h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span className="text-lg">Explore Algorithms</span>
@@ -182,21 +182,21 @@ export default function Home() {
             {/* Bento Grid Features */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
               {/* Interactive Visualization Card */}
-              <div className={`group col-span-1 lg:col-span-2 p-8 rounded-3xl backdrop-blur-xl border transition-all duration-700 hover:scale-105 hover:-translate-y-2 ${
+              <div className={`group col-span-1 lg:col-span-2 p-8 rounded-3xl backdrop-blur-xl border transition-all duration-300 ease-out hover:-translate-y-1 ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-blue-500/50' 
-                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-blue-400/50'
-              } shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 animate-in slide-in-from-left-8 fade-in duration-1000 delay-800`}>
+                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-blue-500/70 hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60' 
+                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-blue-400/70 hover:bg-gradient-to-br hover:from-white/80 hover:to-gray-50/80'
+              } shadow-xl hover:shadow-2xl hover:shadow-blue-500/15 animate-in slide-in-from-left-4 fade-in duration-600 delay-100`}>
                 <div className="flex items-start gap-6">
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-blue-500/25 group-hover:scale-110 transition-all duration-500">
-                      <svg className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-105 transition-all duration-200 ease-out">
+                      <svg className="w-8 h-8 text-white group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-blue-500 transition-colors duration-300`}>
+                    <h3 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-blue-500 transition-colors duration-200`}>
                       Real-time Interactive Visualization
                     </h3>
                     <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
@@ -215,18 +215,18 @@ export default function Home() {
               </div>
 
               {/* Code Analysis Card */}
-              <div className={`group p-8 rounded-3xl backdrop-blur-xl border transition-all duration-700 hover:scale-105 hover:-translate-y-2 ${
+              <div className={`group p-8 rounded-3xl backdrop-blur-xl border transition-all duration-300 ease-out hover:-translate-y-1 ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-purple-500/50' 
-                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-purple-400/50'
-              } shadow-xl hover:shadow-2xl hover:shadow-purple-500/10 animate-in slide-in-from-right-8 fade-in duration-1000 delay-1000`}>
+                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-purple-500/70 hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60' 
+                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-purple-400/70 hover:bg-gradient-to-br hover:from-white/80 hover:to-gray-50/80'
+              } shadow-xl hover:shadow-2xl hover:shadow-purple-500/15 animate-in slide-in-from-right-4 fade-in duration-600 delay-150`}>
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg mx-auto mb-6 group-hover:shadow-purple-500/25 group-hover:scale-110 transition-all duration-500">
-                    <svg className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg mx-auto mb-6 group-hover:shadow-purple-500/30 group-hover:scale-105 transition-all duration-200 ease-out">
+                    <svg className="w-8 h-8 text-white group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                   </div>
-                  <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-purple-500 transition-colors duration-300`}>
+                  <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-purple-500 transition-colors duration-200`}>
                     Code Analysis
                   </h3>
                   <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
@@ -241,18 +241,18 @@ export default function Home() {
               </div>
 
               {/* Educational Content Card */}
-              <div className={`group p-8 rounded-3xl backdrop-blur-xl border transition-all duration-700 hover:scale-105 hover:-translate-y-2 ${
+              <div className={`group p-8 rounded-3xl backdrop-blur-xl border transition-all duration-300 ease-out hover:-translate-y-1 ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-emerald-500/50' 
-                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-emerald-400/50'
-              } shadow-xl hover:shadow-2xl hover:shadow-emerald-500/10 animate-in slide-in-from-left-8 fade-in duration-1000 delay-1200`}>
+                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-emerald-500/70 hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60' 
+                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-emerald-400/70 hover:bg-gradient-to-br hover:from-white/80 hover:to-gray-50/80'
+              } shadow-xl hover:shadow-2xl hover:shadow-emerald-500/15 animate-in slide-in-from-left-4 fade-in duration-600 delay-200`}>
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg mx-auto mb-6 group-hover:shadow-emerald-500/25 group-hover:scale-110 transition-all duration-500">
-                    <svg className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg mx-auto mb-6 group-hover:shadow-emerald-500/30 group-hover:scale-105 transition-all duration-200 ease-out">
+                    <svg className="w-8 h-8 text-white group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
-                  <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-emerald-500 transition-colors duration-300`}>
+                  <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-emerald-500 transition-colors duration-200`}>
                     Learn by Doing
                   </h3>
                   <p className={`text-base leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
@@ -267,21 +267,21 @@ export default function Home() {
               </div>
 
               {/* Performance Metrics Card */}
-              <div className={`group col-span-1 lg:col-span-2 p-8 rounded-3xl backdrop-blur-xl border transition-all duration-700 hover:scale-105 hover:-translate-y-2 ${
+              <div className={`group col-span-1 lg:col-span-2 p-8 rounded-3xl backdrop-blur-xl border transition-all duration-300 ease-out hover:-translate-y-1 ${
                 isDarkMode 
-                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-amber-500/50' 
-                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-amber-400/50'
-              } shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 animate-in slide-in-from-right-8 fade-in duration-1000 delay-1400`}>
+                  ? 'bg-gradient-to-br from-slate-800/40 to-slate-900/40 border-slate-700/50 hover:border-amber-500/70 hover:bg-gradient-to-br hover:from-slate-800/60 hover:to-slate-900/60' 
+                  : 'bg-gradient-to-br from-white/60 to-gray-50/60 border-gray-200/50 hover:border-amber-400/70 hover:bg-gradient-to-br hover:from-white/80 hover:to-gray-50/80'
+              } shadow-xl hover:shadow-2xl hover:shadow-amber-500/15 animate-in slide-in-from-right-4 fade-in duration-600 delay-250`}>
                 <div className="flex items-center gap-8">
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:shadow-amber-500/25 group-hover:scale-110 transition-all duration-500">
-                      <svg className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:shadow-amber-500/30 group-hover:scale-105 transition-all duration-200 ease-out">
+                      <svg className="w-8 h-8 text-white group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-amber-500 transition-colors duration-300`}>
+                    <h3 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-amber-500 transition-colors duration-200`}>
                       Performance Analytics
                     </h3>
                     <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
