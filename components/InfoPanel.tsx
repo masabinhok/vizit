@@ -22,9 +22,9 @@ export default function InfoPanel({
 
   const tabs = ['Code', 'Explanation', 'Stats'] as const;
   return (
-    <aside className={`w-80 h-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} border-l border-gray-200 dark:border-gray-700 flex flex-col`}>
+    <aside className={`w-80 h-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'} border-l ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} flex flex-col`}>
       {/* Tabs - Fixed */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <div className={`flex border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} flex-shrink-0`}>
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -32,7 +32,7 @@ export default function InfoPanel({
             className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab
                 ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                : 'border-transparent hover:text-gray-700 dark:hover:text-gray-300'
+                : `border-transparent ${isDarkMode ? 'hover:text-gray-300' : 'hover:text-gray-600'}`
             }`}
           >
             {tab}
@@ -45,18 +45,18 @@ export default function InfoPanel({
         {activeTab === 'Code' && (
           <div>
             {algorithmConfig && (
-              <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} rounded-lg p-4 font-mono text-sm`}>
+              <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-white'} rounded-lg p-4 font-mono text-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                 <div className="space-y-1">
                   {algorithmConfig.code.map((line, index) => (
                     <div
                       key={index}
                       className={`px-2 py-1 rounded ${
                         currentStep?.codeLineIndex === index
-                          ? 'bg-yellow-200 dark:bg-yellow-800'
+                          ? `${isDarkMode ? 'bg-yellow-800' : 'bg-yellow-100'} ${isDarkMode ? 'text-yellow-100' : 'text-yellow-900'}`
                           : ''
                       }`}
                     >
-                      <span className="text-gray-500 dark:text-gray-400 mr-2">
+                      <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mr-2`}>
                         {(index + 1).toString().padStart(2, '0')}
                       </span>
                       {line}
@@ -68,15 +68,15 @@ export default function InfoPanel({
 
             <div className="mt-6">
               <h3 className="font-semibold mb-3">Current Step</h3>
-              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'} p-3 rounded-lg`}>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50 border border-blue-200'} p-3 rounded-lg`}>
                 <p className="text-sm">
                   {currentStep?.description || "Enter numbers separated by commas and click Apply to start visualization"}
                 </p>
               </div>
               
               {!currentStep && (
-                <div className={`mt-3 ${isDarkMode ? 'bg-gray-700' : 'bg-green-50'} p-3 rounded-lg`}>
-                  <p className="text-xs text-green-600 dark:text-green-400">
+                <div className={`mt-3 ${isDarkMode ? 'bg-gray-700' : 'bg-green-50 border border-green-200'} p-3 rounded-lg`}>
+                  <p className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
                     💡 <strong>Tip:</strong> Try these examples:<br/>
                     • Small: 3,1,4,1,5<br/>
                     • Medium: 64,34,25,12,22,11,90<br/>
@@ -92,7 +92,7 @@ export default function InfoPanel({
           <div className="space-y-4">
             <div>
               <h3 className="font-semibold mb-3">Algorithm Overview</h3>
-              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'} p-4 rounded-lg`}>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-slate-50 border border-slate-200'} p-4 rounded-lg`}>
                 <p className="text-sm leading-relaxed">
                   {algorithmConfig?.name === 'Bubble Sort' ? (
                     <>
@@ -112,7 +112,7 @@ export default function InfoPanel({
 
             <div>
               <h3 className="font-semibold mb-3">How It Works</h3>
-              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg`}>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-white border border-gray-200'} p-4 rounded-lg`}>
                 <div className="space-y-3 text-sm">
                   {algorithmConfig?.name === 'Bubble Sort' ? (
                     <>
@@ -147,11 +147,11 @@ export default function InfoPanel({
             {currentStep && (
               <div>
                 <h3 className="font-semibold mb-3">Current Action</h3>
-                <div className={`${isDarkMode ? 'bg-green-900' : 'bg-green-50'} p-4 rounded-lg border-l-4 border-green-500`}>
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                <div className={`${isDarkMode ? 'bg-green-900' : 'bg-emerald-50 border border-emerald-200'} p-4 rounded-lg border-l-4 ${isDarkMode ? 'border-green-500' : 'border-emerald-500'}`}>
+                  <p className={`text-sm font-medium ${isDarkMode ? 'text-green-200' : 'text-emerald-800'}`}>
                     {currentStep.description}
                   </p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                  <p className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-emerald-600'} mt-2`}>
                     Step {currentStepIndex + 1} of {steps.length}
                   </p>
                 </div>
@@ -189,32 +189,32 @@ export default function InfoPanel({
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Comparisons:</span>
-                  <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
+                  <span className={`font-mono font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
                     {currentStep?.comparisons || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Swaps:</span>
-                  <span className="font-mono font-bold text-red-600 dark:text-red-400">
+                  <span className={`font-mono font-bold ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
                     {currentStep?.swaps || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Array Size:</span>
-                  <span className="font-mono font-bold text-gray-600 dark:text-gray-400">
+                  <span className={`font-mono font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}>
                     {currentStep?.array.length || 0}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Current Step:</span>
-                  <span className="font-mono font-bold text-green-600 dark:text-green-400">
+                  <span className={`font-mono font-bold ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
                     {currentStepIndex + 1} / {steps.length || 1}
                   </span>
                 </div>
                 {steps.length > 0 && (
                   <div className="flex justify-between">
                     <span>Progress:</span>
-                    <span className="font-mono font-bold text-purple-600 dark:text-purple-400">
+                    <span className={`font-mono font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-700'}`}>
                       {Math.round(((currentStepIndex + 1) / steps.length) * 100)}%
                     </span>
                   </div>
@@ -224,31 +224,31 @@ export default function InfoPanel({
 
             <div>
               <h3 className="font-semibold mb-3">Time Complexity</h3>
-              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg`}>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-white border border-gray-200'} p-4 rounded-lg`}>
                 <div className="space-y-2 text-sm">
                   {algorithmConfig && (
                     <>
                       <div className="flex justify-between">
                         <span>Best Case:</span>
-                        <span className="font-mono text-green-600 dark:text-green-400">
+                        <span className={`font-mono ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
                           {algorithmConfig.timeComplexity.best}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Average Case:</span>
-                        <span className="font-mono text-yellow-600 dark:text-yellow-400">
+                        <span className={`font-mono ${isDarkMode ? 'text-yellow-400' : 'text-amber-700'}`}>
                           {algorithmConfig.timeComplexity.average}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Worst Case:</span>
-                        <span className="font-mono text-red-600 dark:text-red-400">
+                        <span className={`font-mono ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
                           {algorithmConfig.timeComplexity.worst}
                         </span>
                       </div>
-                      <div className="flex justify-between border-t border-gray-300 dark:border-gray-600 pt-2 mt-2">
+                      <div className={`flex justify-between border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-300'} pt-2 mt-2`}>
                         <span>Space Complexity:</span>
-                        <span className="font-mono text-blue-600 dark:text-blue-400">
+                        <span className={`font-mono ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
                           {algorithmConfig.spaceComplexity}
                         </span>
                       </div>
@@ -261,28 +261,28 @@ export default function InfoPanel({
             {currentStep && (
               <div>
                 <h3 className="font-semibold mb-3">Efficiency Analysis</h3>
-                <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-50'} p-4 rounded-lg`}>
+                <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-50 border border-blue-200'} p-4 rounded-lg`}>
                   <div className="space-y-2 text-sm">
-                    <p className="font-medium text-blue-800 dark:text-blue-200">
+                    <p className={`font-medium ${isDarkMode ? 'text-blue-200' : 'text-blue-800'}`}>
                       Performance Metrics
                     </p>
                     <div className="space-y-1 text-xs">
                       <div>
-                        <span className="text-gray-600 dark:text-gray-400">Comparisons per element: </span>
+                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Comparisons per element: </span>
                         <span className="font-mono">
                           {currentStep.array.length > 0 ? 
                             (currentStep.comparisons / currentStep.array.length).toFixed(1) : 0}
                         </span>
                       </div>
                       <div>
-                        <span className="text-gray-600 dark:text-gray-400">Swap ratio: </span>
+                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Swap ratio: </span>
                         <span className="font-mono">
                           {currentStep.comparisons > 0 ? 
                             ((currentStep.swaps / currentStep.comparisons) * 100).toFixed(1) : 0}%
                         </span>
                       </div>
                       <div>
-                        <span className="text-gray-600 dark:text-gray-400">Elements sorted: </span>
+                        <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Elements sorted: </span>
                         <span className="font-mono">
                           {currentStep.array.filter(el => el.isSorted).length} / {currentStep.array.length}
                         </span>
@@ -297,21 +297,21 @@ export default function InfoPanel({
               <div>
                 <h3 className="font-semibold mb-3">Algorithm Properties</h3>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
-                    <div className="font-medium text-green-800 dark:text-green-200">✓ Stable</div>
-                    <div className="text-green-600 dark:text-green-400">Preserves relative order</div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-emerald-50 border border-emerald-200'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-green-200' : 'text-emerald-800'}`}>✓ Stable</div>
+                    <div className={isDarkMode ? 'text-green-400' : 'text-emerald-600'}>Preserves relative order</div>
                   </div>
-                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
-                    <div className="font-medium text-green-800 dark:text-green-200">✓ In-place</div>
-                    <div className="text-green-600 dark:text-green-400">O(1) extra memory</div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-emerald-50 border border-emerald-200'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-green-200' : 'text-emerald-800'}`}>✓ In-place</div>
+                    <div className={isDarkMode ? 'text-green-400' : 'text-emerald-600'}>O(1) extra memory</div>
                   </div>
-                  <div className={`p-2 rounded ${isDarkMode ? 'bg-red-900' : 'bg-red-100'}`}>
-                    <div className="font-medium text-red-800 dark:text-red-200">✗ Efficient</div>
-                    <div className="text-red-600 dark:text-red-400">O(n²) comparisons</div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-red-900' : 'bg-red-50 border border-red-200'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-red-200' : 'text-red-800'}`}>✗ Efficient</div>
+                    <div className={isDarkMode ? 'text-red-400' : 'text-red-600'}>O(n²) comparisons</div>
                   </div>
-                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
-                    <div className="font-medium text-green-800 dark:text-green-200">✓ Simple</div>
-                    <div className="text-green-600 dark:text-green-400">Easy to understand</div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-emerald-50 border border-emerald-200'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-green-200' : 'text-emerald-800'}`}>✓ Simple</div>
+                    <div className={isDarkMode ? 'text-green-400' : 'text-emerald-600'}>Easy to understand</div>
                   </div>
                 </div>
               </div>
