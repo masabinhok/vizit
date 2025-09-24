@@ -15,7 +15,7 @@ export default function Home() {
       <Sidebar />
       
       {/* Main Landing Content */}
-      <main className={`flex-1 flex flex-col ${isDarkMode ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500 relative overflow-hidden`}>
+      <main className={`flex-1 overflow-y-auto ${isDarkMode ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500 relative`}>
         {/* Ambient background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
@@ -84,7 +84,7 @@ export default function Home() {
         </div>
 
         {/* Hero Section */}
-        <div className="flex-1 flex items-center justify-center relative p-12">
+        <div className="min-h-screen flex items-center justify-center relative p-12">
           <div className="max-w-6xl mx-auto">
             {/* Main Hero */}
             <div className="text-center mb-16">
