@@ -21,6 +21,66 @@ export default function Home() {
           <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
           <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
           <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
+          
+          {/* Floating Algorithm Icons */}
+          {/* Top Left Area */}
+          <div className={`absolute top-20 left-16 w-8 h-8 ${isDarkMode ? 'text-blue-400/60' : 'text-blue-500/50'} animate-float-slow`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9,7V9H7V7H9M11,11H9V9H11V11M13,13H11V11H13V13M15,15H13V13H15V15M17,17H15V15H17V17M17,7V9H15V7H17M7,11H5V9H7V11M7,17H5V15H7V17M19,17V19H17V17H19M19,7H21V9H19V7M5,19V17H7V19H5M5,7V5H7V7H5Z"/>
+            </svg>
+          </div>
+          
+          <div className={`absolute top-32 left-64 w-6 h-6 ${isDarkMode ? 'text-purple-400/55' : 'text-purple-500/45'} animate-float-medium`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15Z"/>
+            </svg>
+          </div>
+
+          {/* Top Right Area */}
+          <div className={`absolute top-24 right-20 w-7 h-7 ${isDarkMode ? 'text-emerald-400/60' : 'text-emerald-500/50'} animate-float-slow`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7.29C13,7.29 13,7.29 13,7.29L18.42,9.09C18.72,8.43 19.46,8 20.3,8A2.3,2.3 0 0,1 22.6,10.3C22.6,11.13 22.17,11.86 21.5,12.17V14.83C22.17,15.14 22.6,15.87 22.6,16.7A2.3,2.3 0 0,1 20.3,19A2.3,2.3 0 0,1 18,16.7C18,16.32 18.12,15.97 18.31,15.68L13,13.91V15.5C13.6,15.84 14,16.49 14,17.22A2.22,2.22 0 0,1 11.78,19.44A2.22,2.22 0 0,1 9.56,17.22A2.22,2.22 0 0,1 11.78,15C11.78,15 11.78,15 11.78,15L11,13.91L5.69,15.68C5.88,15.97 6,16.32 6,16.7A2.3,2.3 0 0,1 3.7,19A2.3,2.3 0 0,1 1.4,16.7A2.3,2.3 0 0,1 3.7,14.4C4.54,14.4 5.28,14.83 5.58,15.49L11,13.69V7.29C10.4,6.95 10,6.3 10,5.57A2,2 0 0,1 12,3.57A2,2 0 0,1 14,5.57C14,5.57 14,5.57 14,5.57L12,2Z"/>
+            </svg>
+          </div>
+
+          <div className={`absolute top-40 right-32 w-5 h-5 ${isDarkMode ? 'text-amber-400/55' : 'text-amber-500/45'} animate-float-fast`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9M12,1L21,5V11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1Z"/>
+            </svg>
+          </div>
+
+          {/* Middle Left */}
+          <div className={`absolute top-1/2 left-8 w-6 h-6 ${isDarkMode ? 'text-pink-400/55' : 'text-pink-500/45'} animate-float-medium`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+            </svg>
+          </div>
+
+          {/* Middle Right */}
+          <div className={`absolute top-1/2 right-12 w-8 h-8 ${isDarkMode ? 'text-cyan-400/60' : 'text-cyan-500/50'} animate-float-slow`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M14.6,16.6L19.2,12L14.6,7.4L16,6L22,12L16,18L14.6,16.6M9.4,16.6L8,18L2,12L8,6L9.4,7.4L4.8,12L9.4,16.6Z"/>
+            </svg>
+          </div>
+
+          {/* Bottom Area */}
+          <div className={`absolute bottom-32 left-24 w-7 h-7 ${isDarkMode ? 'text-indigo-400/55' : 'text-indigo-500/45'} animate-float-medium`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M5,3H7V5H5V10A2,2 0 0,1 3,12A2,2 0 0,1 5,14V19H7V21H5C3.93,20.73 3,20.1 3,19V15A2,2 0 0,0 1,13H0V11H1A2,2 0 0,0 3,9V5C3,4.1 3.1,3.27 5,3M19,3C20.9,3.27 21,4.1 21,5V9A2,2 0 0,0 23,11H24V13H23A2,2 0 0,0 21,15V19C21,20.1 20.9,20.73 19,21H17V19H19V14A2,2 0 0,1 21,12A2,2 0 0,1 19,10V5H17V3H19Z"/>
+            </svg>
+          </div>
+
+          <div className={`absolute bottom-24 right-16 w-6 h-6 ${isDarkMode ? 'text-teal-400/55' : 'text-teal-500/45'} animate-float-fast`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.46,13.97L5.82,21L12,17.27Z"/>
+            </svg>
+          </div>
+
+          <div className={`absolute bottom-40 left-1/2 w-5 h-5 ${isDarkMode ? 'text-violet-400/55' : 'text-violet-500/45'} animate-float-medium`}>
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,13.5C15.58,14.75 16.81,15.5 18.5,15.5V17.5C15.85,17.5 13.59,15.85 13.05,13.53L10.5,16.36C11.92,16.93 13,18.3 13,20C13,22.21 11.21,24 9,24C6.79,24 5,22.21 5,20C5,17.79 6.79,16 9,16C9.67,16 10.31,16.2 10.86,16.53L11.37,15.97L6,8.5C5.4,8.15 5,7.45 5,6.5C5,5.12 6.12,4 7.5,4S10,5.12 10,6.5L10,6.5L12.5,10.5V10.5C13.1,10.15 13.8,10 14.5,10C16.43,10 18.13,11.13 18.67,12.70L21,9Z"/>
+            </svg>
+          </div>
         </div>
 
         {/* Hero Section */}
