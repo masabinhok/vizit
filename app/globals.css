@@ -33,6 +33,23 @@ button {
   animation-delay: 4s;
 }
 
+/* Gradient Animation for Text and Buttons */
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
 /* Custom scrollbar for premium feel */
 ::-webkit-scrollbar {
   width: 6px;
