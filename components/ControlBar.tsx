@@ -1,5 +1,7 @@
 'use client';
 
+import { useTheme } from '../contexts/ThemeContext';
+
 interface ControlBarProps {
   isPlaying: boolean;
   setIsPlaying: (value: boolean) => void;
@@ -14,7 +16,6 @@ interface ControlBarProps {
   onStepForward: () => void;
   onStepBackward: () => void;
   onReset: () => void;
-  isDarkMode: boolean;
 }
 
 export default function ControlBar({
@@ -30,9 +31,10 @@ export default function ControlBar({
   onInitialize,
   onStepForward,
   onStepBackward,
-  onReset,
-  isDarkMode
+  onReset
 }: ControlBarProps) {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   return (
     <div className={`relative backdrop-blur-sm border-t ${
       isDarkMode 

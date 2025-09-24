@@ -2,18 +2,21 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '../contexts/ThemeContext';
 import { ALGORITHM_CATEGORIES, ALGORITHM_NAME_MAP } from '../constants/algorithms';
+import ThemeToggle from './ThemeToggle';
 
 interface SidebarProps {
-  isDarkMode: boolean;
-  setIsDarkMode: (value: boolean) => void;
   currentAlgorithm?: string;
 }
 
-export default function Sidebar({ isDarkMode, setIsDarkMode, currentAlgorithm }: SidebarProps) {
+export default function Sidebar({ currentAlgorithm }: SidebarProps) {
   const [selectedCategory, setSelectedCategory] = useState("Algorithms");
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  
+  const isDarkMode = resolvedTheme === 'dark';
 
   const handleAlgorithmSelect = (algorithmId: string) => {
     router.push(`/algorithm/${algorithmId}`);
@@ -162,51 +165,14 @@ export default function Sidebar({ isDarkMode, setIsDarkMode, currentAlgorithm }:
         </div>
       </div>
 
-      {/* Dark/Light Mode Toggle */}
+      {/* Theme Toggle - Minimal */}
       <div className="relative p-6 flex-shrink-0 border-t border-white/10">
-        <button
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className={`group w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl transition-all duration-500 relative overflow-hidden ${
-            isDarkMode
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-gray-900 hover:from-amber-400 hover:to-orange-400 shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/30'
-              : 'bg-gradient-to-r from-slate-800 to-slate-900 text-white hover:from-slate-700 hover:to-slate-800 shadow-lg shadow-slate-900/25 hover:shadow-xl hover:shadow-slate-900/30'
-          } transform hover:scale-105 active:scale-95 font-semibold text-sm tracking-wide`}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          <div className={`relative p-2 rounded-xl ${
-            isDarkMode 
-              ? 'bg-gray-900/30 backdrop-blur-sm' 
-              : 'bg-white/20 backdrop-blur-sm'
-          } transition-all duration-300 group-hover:scale-110`}>
-            {isDarkMode ? (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            )}
-          </div>
-          
-          <span className="relative">
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+        <div className="flex items-center justify-between">
+          <span className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+            Theme
           </span>
-          
-          <div className={`absolute inset-0 rounded-2xl opacity-0 group-active:opacity-100 transition-opacity duration-150 ${
-            isDarkMode 
-              ? 'bg-gradient-to-r from-amber-600 to-orange-600' 
-              : 'bg-gradient-to-r from-slate-900 to-black'
-          }`} />
-        </button>
-        
-        {/* Subtle glow effect */}
-        <div className={`absolute inset-x-6 bottom-6 h-16 rounded-2xl blur-xl opacity-30 transition-all duration-500 ${
-          isDarkMode 
-            ? 'bg-gradient-to-r from-amber-500 to-orange-500' 
-            : 'bg-gradient-to-r from-slate-800 to-slate-900'
-        }`} />
+          <ThemeToggle />
+        </div>
       </div>
     </aside>
   );

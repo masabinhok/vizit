@@ -1,20 +1,21 @@
 'use client';
 
 import { AlgorithmStep } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface VisualizationCanvasProps {
   currentStep?: AlgorithmStep;
   steps: AlgorithmStep[];
-  isDarkMode: boolean;
   isInitialized: boolean;
 }
 
 export default function VisualizationCanvas({ 
   currentStep, 
   steps, 
-  isDarkMode, 
   isInitialized 
 }: VisualizationCanvasProps) {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   if (!isInitialized || !currentStep) {
     return (
       <div className="h-full flex items-center justify-center relative">

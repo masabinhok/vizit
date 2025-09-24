@@ -2,22 +2,23 @@
 
 import { useState } from 'react';
 import { AlgorithmStep, AlgorithmConfig } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface InfoPanelProps {
   algorithmConfig?: AlgorithmConfig;
   currentStep?: AlgorithmStep;
   steps: AlgorithmStep[];
   currentStepIndex: number;
-  isDarkMode: boolean;
 }
 
 export default function InfoPanel({
   algorithmConfig,
   currentStep,
   steps,
-  currentStepIndex,
-  isDarkMode
+  currentStepIndex
 }: InfoPanelProps) {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   const [activeTab, setActiveTab] = useState<'Code' | 'Explanation' | 'Stats'>('Code');
 
   const tabs = ['Code', 'Explanation', 'Stats'] as const;

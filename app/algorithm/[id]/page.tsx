@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
+import { useTheme } from '../../../contexts/ThemeContext';
 import Sidebar from '../../../components/Sidebar';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
@@ -12,8 +13,9 @@ import { AlgorithmStep, AlgorithmConfig } from '../../../types';
 export default function AlgorithmPage() {
   const params = useParams();
   const algorithmId = params.id as string;
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [algorithmConfig, setAlgorithmConfig] = useState<AlgorithmConfig | undefined>();
   
   // Visualization state
@@ -120,11 +122,7 @@ export default function AlgorithmPage() {
   if (!algorithmConfig) {
     return (
       <div className={`min-h-screen flex ${isDarkMode ? 'dark bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500`}>
-        <Sidebar 
-          isDarkMode={isDarkMode} 
-          setIsDarkMode={setIsDarkMode}
-          currentAlgorithm={algorithmId}
-        />
+        <Sidebar currentAlgorithm={algorithmId} />
         <main className="flex-1 flex items-center justify-center">
           <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             <h1 className="text-2xl font-bold mb-2">Algorithm Not Found</h1>
@@ -145,11 +143,7 @@ export default function AlgorithmPage() {
       </div>
 
       {/* Sidebar */}
-      <Sidebar 
-        isDarkMode={isDarkMode} 
-        setIsDarkMode={setIsDarkMode} 
-        currentAlgorithm={algorithmId}
-      />
+      <Sidebar currentAlgorithm={algorithmId} />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-0 relative">
@@ -227,7 +221,6 @@ export default function AlgorithmPage() {
                 <VisualizationCanvas
                   currentStep={currentStepData}
                   steps={steps}
-                  isDarkMode={isDarkMode}
                   isInitialized={isInitialized}
                 />
               </div>
@@ -249,7 +242,6 @@ export default function AlgorithmPage() {
                 onStepForward={stepForward}
                 onStepBackward={stepBackward}
                 onReset={reset}
-                isDarkMode={isDarkMode}
               />
             </div>
           </div>
@@ -260,7 +252,6 @@ export default function AlgorithmPage() {
             currentStep={currentStepData}
             steps={steps}
             currentStepIndex={currentStep}
-            isDarkMode={isDarkMode}
           />
         </section>
       </main>
