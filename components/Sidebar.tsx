@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '../contexts/ThemeContext';
 import { ALGORITHM_CATEGORIES, ALGORITHM_NAME_MAP } from '../constants/algorithms';
@@ -11,7 +11,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentAlgorithm }: SidebarProps) {
-  const [selectedCategory, setSelectedCategory] = useState("Algorithms");
+  const [expandedCategories, setExpandedCategories] = useState(new Set(["Algorithms"])); // Track multiple expanded categories
+  const [manuallyExpandedCategories, setManuallyExpandedCategories] = useState(new Set(["Algorithms"])); // Track user's manual expansions
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const { resolvedTheme } = useTheme();
@@ -22,12 +23,55 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
     router.push(`/algorithm/${algorithmId}`);
   };
 
-  const filteredCategories = ALGORITHM_CATEGORIES.map(category => ({
-    ...category,
-    algorithms: category.algorithms.filter(algo =>
-      ALGORITHM_NAME_MAP[algo]?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })).filter(category => category.algorithms.length > 0);
+  // Toggle category expansion
+  const toggleCategoryExpansion = (categoryName: string) => {
+    setManuallyExpandedCategories(prev => {
+      const newManuallyExpanded = new Set(prev);
+      if (newManuallyExpanded.has(categoryName)) {
+        newManuallyExpanded.delete(categoryName);
+      } else {
+        newManuallyExpanded.add(categoryName);
+      }
+      return newManuallyExpanded;
+    });
+  };
+
+  const filteredCategories = useMemo(() => 
+    ALGORITHM_CATEGORIES.map(category => ({
+      ...category,
+      algorithms: category.algorithms.filter(algo =>
+        ALGORITHM_NAME_MAP[algo]?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    })).filter(category => category.algorithms.length > 0),
+    [searchQuery]
+  );
+
+  // Auto-expand categories with search results
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      // Calculate categories with results inside the effect to avoid dependency issues
+      const categoriesWithResults = ALGORITHM_CATEGORIES
+        .filter(category => 
+          category.algorithms.some(algo =>
+            ALGORITHM_NAME_MAP[algo]?.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        )
+        .map(cat => cat.name);
+      
+      setExpandedCategories(prev => {
+        const newExpanded = new Set([...manuallyExpandedCategories, ...categoriesWithResults]);
+        return newExpanded;
+      });
+    } else {
+      // When not searching, only show manually expanded categories
+      setExpandedCategories(new Set(manuallyExpandedCategories));
+    }
+  }, [searchQuery, manuallyExpandedCategories]); // Removed filteredCategories from dependencies
+
+  // Get categories to display (filtered when searching, all when not)
+  const categoriesToDisplay = searchQuery.trim() 
+    ? filteredCategories 
+    : ALGORITHM_CATEGORIES;
 
   // Count total filtered algorithms
   const totalFilteredAlgorithms = filteredCategories.reduce((sum, cat) => sum + cat.algorithms.length, 0);
@@ -151,7 +195,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+            <h3 className={`text-lg text-center font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
               No algorithms found
             </h3>
             <p className={`text-sm text-center leading-relaxed mb-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
@@ -172,16 +216,23 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
         ) : (
           /* Normal categories view */
           <div className="space-y-3">
-            {filteredCategories.map((category, categoryIndex) => (
+            {categoriesToDisplay.map((category, categoryIndex) => {
+              const isExpanded = expandedCategories.has(category.name);
+              const isManuallyExpanded = manuallyExpandedCategories.has(category.name);
+              const isAutoExpanded = isExpanded && !isManuallyExpanded && searchQuery.trim();
+              // When searching, show filtered algorithms; when not searching, show all algorithms in expanded categories
+              const algorithmsToShow = searchQuery.trim() ? category.algorithms : (isExpanded ? category.algorithms : []);
+              
+              return (
               <div key={category.name} className="group">
                 <button
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() => toggleCategoryExpansion(category.name)}
                   className={`w-full text-left font-semibold mb-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden ${
-                    selectedCategory === category.name
+                    isExpanded
                       ? `${isDarkMode 
                           ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 shadow-lg shadow-blue-500/10' 
                           : 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-700 shadow-lg shadow-blue-500/20'
-                        } backdrop-blur-sm border border-blue-500/20`
+                        } backdrop-blur-sm border ${isAutoExpanded ? 'border-amber-500/30' : 'border-blue-500/20'}`
                       : `${isDarkMode 
                           ? 'hover:bg-gradient-to-r hover:from-slate-700/50 hover:to-slate-600/50 text-slate-300' 
                           : 'hover:bg-gradient-to-r hover:from-gray-100/80 hover:to-gray-50/80 text-gray-700'
@@ -189,23 +240,34 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold tracking-wide">{category.name}</span>
+                    <span className="text-sm font-semibold tracking-wide">
+                      {category.name}
+                      {searchQuery.trim() && category.algorithms.length > 0 && (
+                        <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                          isDarkMode 
+                            ? 'bg-blue-500/20 text-blue-300' 
+                            : 'bg-blue-500/10 text-blue-600'
+                        }`}>
+                          {category.algorithms.length}
+                        </span>
+                      )}
+                    </span>
                     <div className={`transform transition-transform duration-300 ${
-                      selectedCategory === category.name ? 'rotate-90' : 'rotate-0'
+                      isExpanded ? 'rotate-90' : 'rotate-0'
                     }`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
                   </div>
-                  {selectedCategory === category.name && (
+                  {isExpanded && (
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl opacity-0 animate-pulse" />
                   )}
                 </button>
                 
-                {selectedCategory === category.name && (
+                {(isExpanded || (searchQuery.trim() && category.algorithms.length > 0)) && (
                   <div className="ml-2 space-y-1 animate-in slide-in-from-left-4 fade-in duration-300">
-                    {category.algorithms.map((algorithmId, algorithmIndex) => (
+                    {algorithmsToShow.map((algorithmId, algorithmIndex) => (
                       <button 
                         key={algorithmId}
                         onClick={() => handleAlgorithmSelect(algorithmId)}
@@ -236,7 +298,8 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
                   </div>
                 )}
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>
