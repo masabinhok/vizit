@@ -169,7 +169,9 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
       
       {/* Header */}
-      <div className="relative p-8 flex-shrink-0 border-b border-white/10">
+      <div className={`relative p-8 flex-shrink-0 border-b ${
+        isDarkMode ? 'border-white/10' : 'border-gray-500/30'
+      }`}>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,9 +186,6 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
               Visualize It
             </p>
           </div>
-        </div>
-        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-600'} leading-relaxed mb-4`}>
-          Visualize • Learn • Master
         </div>
         
         {/* GitHub Star Button */}
@@ -406,7 +405,9 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       </div>
 
       {/* Theme Toggle - Minimal */}
-      <div className="relative p-6 flex-shrink-0 border-t border-white/10">
+      <div className={`relative p-6 flex-shrink-0 border-t ${
+        isDarkMode ? 'border-white/10' : 'border-gray-500/30'
+      }`}>
         <div className="flex items-center justify-between">
           <span className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
             Theme
