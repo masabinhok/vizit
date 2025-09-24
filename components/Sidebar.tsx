@@ -193,21 +193,24 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       <div className={`relative p-8 flex-shrink-0 border-b ${
         isDarkMode ? 'border-white/10' : 'border-gray-500/30'
       }`}>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          onClick={() => router.push('/')}
+          className="flex items-center gap-3 mb-2 w-full text-left group hover:scale-105 transition-all duration-300"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:shadow-blue-500/25 transition-all duration-300">
+            <svg className="w-6 h-6 text-white group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
               Vizit
             </h1>
-            <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-400' : 'text-gray-500'} tracking-wide uppercase`}>
+            <p className={`text-xs font-medium ${isDarkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-gray-500 group-hover:text-gray-400'} tracking-wide uppercase transition-colors duration-300`}>
               Visualize It
             </p>
           </div>
-        </div>
+        </button>
         
         {/* GitHub Star Button */}
         <a
