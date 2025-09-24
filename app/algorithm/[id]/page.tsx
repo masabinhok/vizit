@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useTheme } from '../../../contexts/ThemeContext';
-import Sidebar from '@/components/Sidebar';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
@@ -121,29 +120,23 @@ export default function AlgorithmPage() {
 
   if (!algorithmConfig) {
     return (
-      <div className={`min-h-screen flex ${isDarkMode ? 'dark bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500`}>
-        <Sidebar currentAlgorithm={algorithmId} />
-        <main className="flex-1 flex items-center justify-center">
-          <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            <h1 className="text-2xl font-bold mb-2">Algorithm Not Found</h1>
-            <p className="text-gray-500">The requested algorithm "{algorithmId}" is not yet implemented.</p>
-          </div>
-        </main>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'dark bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500`}>
+        <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className="text-2xl font-bold mb-2">Algorithm Not Found</h1>
+          <p className="text-gray-500">The requested algorithm "{algorithmId}" is not yet implemented.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={`flex h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500 relative overflow-hidden`}>
+    <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500 relative overflow-hidden`}>
       {/* Ambient background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
         <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-400/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
       </div>
-
-      {/* Sidebar */}
-      <Sidebar currentAlgorithm={algorithmId} />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-0 relative">
