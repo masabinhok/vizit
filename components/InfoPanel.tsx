@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { AlgorithmStep, AlgorithmConfig } from '../types';
 
 interface InfoPanelProps {
@@ -17,15 +18,19 @@ export default function InfoPanel({
   currentStepIndex,
   isDarkMode
 }: InfoPanelProps) {
+  const [activeTab, setActiveTab] = useState<'Code' | 'Explanation' | 'Stats'>('Code');
+
+  const tabs = ['Code', 'Explanation', 'Stats'] as const;
   return (
     <aside className={`w-80 h-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} border-l border-gray-200 dark:border-gray-700 flex flex-col`}>
       {/* Tabs - Fixed */}
       <div className="flex border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-        {["Code", "Explanation", "Stats"].map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab}
+            onClick={() => setActiveTab(tab)}
             className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-              tab === "Code"
+              activeTab === tab
                 ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                 : 'border-transparent hover:text-gray-700 dark:hover:text-gray-300'
             }`}
@@ -37,91 +42,280 @@ export default function InfoPanel({
 
       {/* Content Panel - Scrollable */}
       <div className="flex-1 overflow-y-auto p-4 min-h-0">
-        {algorithmConfig && (
-          <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} rounded-lg p-4 font-mono text-sm`}>
-            <div className="space-y-1">
-              {algorithmConfig.code.map((line, index) => (
-                <div
-                  key={index}
-                  className={`px-2 py-1 rounded ${
-                    currentStep?.codeLineIndex === index
-                      ? 'bg-yellow-200 dark:bg-yellow-800'
-                      : ''
-                  }`}
-                >
-                  <span className="text-gray-500 dark:text-gray-400 mr-2">
-                    {(index + 1).toString().padStart(2, '0')}
-                  </span>
-                  {line}
+        {activeTab === 'Code' && (
+          <div>
+            {algorithmConfig && (
+              <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} rounded-lg p-4 font-mono text-sm`}>
+                <div className="space-y-1">
+                  {algorithmConfig.code.map((line, index) => (
+                    <div
+                      key={index}
+                      className={`px-2 py-1 rounded ${
+                        currentStep?.codeLineIndex === index
+                          ? 'bg-yellow-200 dark:bg-yellow-800'
+                          : ''
+                      }`}
+                    >
+                      <span className="text-gray-500 dark:text-gray-400 mr-2">
+                        {(index + 1).toString().padStart(2, '0')}
+                      </span>
+                      {line}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            )}
+
+            <div className="mt-6">
+              <h3 className="font-semibold mb-3">Current Step</h3>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'} p-3 rounded-lg`}>
+                <p className="text-sm">
+                  {currentStep?.description || "Enter numbers separated by commas and click Apply to start visualization"}
+                </p>
+              </div>
+              
+              {!currentStep && (
+                <div className={`mt-3 ${isDarkMode ? 'bg-gray-700' : 'bg-green-50'} p-3 rounded-lg`}>
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    💡 <strong>Tip:</strong> Try these examples:<br/>
+                    • Small: 3,1,4,1,5<br/>
+                    • Medium: 64,34,25,12,22,11,90<br/>
+                    • Reverse: 9,8,7,6,5,4,3,2,1
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        <div className="mt-6">
-          <h3 className="font-semibold mb-3">Current Step</h3>
-          <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'} p-3 rounded-lg`}>
-            <p className="text-sm">
-              {currentStep?.description || "Enter numbers separated by commas and click Apply to start visualization"}
-            </p>
-          </div>
-          
-          {!currentStep && (
-            <div className={`mt-3 ${isDarkMode ? 'bg-gray-700' : 'bg-green-50'} p-3 rounded-lg`}>
-              <p className="text-xs text-green-600 dark:text-green-400">
-                💡 <strong>Tip:</strong> Try these examples:<br/>
-                • Small: 3,1,4,1,5<br/>
-                • Medium: 64,34,25,12,22,11,90<br/>
-                • Reverse: 9,8,7,6,5,4,3,2,1
-              </p>
+        {activeTab === 'Explanation' && (
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-3">Algorithm Overview</h3>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-blue-50'} p-4 rounded-lg`}>
+                <p className="text-sm leading-relaxed">
+                  {algorithmConfig?.name === 'Bubble Sort' ? (
+                    <>
+                      <strong>Bubble Sort</strong> is one of the simplest sorting algorithms. It works by repeatedly stepping through the list, 
+                      comparing adjacent elements and swapping them if they're in the wrong order. The pass through the list is repeated 
+                      until the list is sorted.
+                      <br/><br/>
+                      The algorithm gets its name because smaller elements "bubble" to the beginning of the list, 
+                      just like air bubbles rise to the surface in water.
+                    </>
+                  ) : (
+                    `${algorithmConfig?.description || 'Algorithm explanation will appear here.'}`
+                  )}
+                </p>
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="mt-6">
-          <h3 className="font-semibold mb-3">Statistics</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Comparisons:</span>
-              <span className="font-mono">{currentStep?.comparisons || 0}</span>
+            <div>
+              <h3 className="font-semibold mb-3">How It Works</h3>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg`}>
+                <div className="space-y-3 text-sm">
+                  {algorithmConfig?.name === 'Bubble Sort' ? (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                        <p><strong>Compare:</strong> Start with the first two elements and compare them.</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                        <p><strong>Swap:</strong> If they're in the wrong order, swap them.</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                        <p><strong>Move:</strong> Continue with the next pair of adjacent elements.</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+                        <p><strong>Repeat:</strong> After each pass, the largest element "bubbles up" to its correct position.</p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">5</span>
+                        <p><strong>Continue:</strong> Repeat until no more swaps are needed.</p>
+                      </div>
+                    </>
+                  ) : (
+                    <p>Step-by-step explanation for {algorithmConfig?.name} will appear here.</p>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Swaps:</span>
-              <span className="font-mono">{currentStep?.swaps || 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Array Size:</span>
-              <span className="font-mono">{currentStep?.array.length || 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Current Step:</span>
-              <span className="font-mono">{currentStepIndex + 1} / {steps.length || 1}</span>
+
+            {currentStep && (
+              <div>
+                <h3 className="font-semibold mb-3">Current Action</h3>
+                <div className={`${isDarkMode ? 'bg-green-900' : 'bg-green-50'} p-4 rounded-lg border-l-4 border-green-500`}>
+                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                    {currentStep.description}
+                  </p>
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                    Step {currentStepIndex + 1} of {steps.length}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h3 className="font-semibold mb-3">Color Legend</h3>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <span>Unsorted</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                  <span>Comparing</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <span>Swapping</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span>Sorted</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {algorithmConfig && (
-          <div className="mt-6">
-            <h3 className="font-semibold mb-3">Complexity</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>Best Case:</span>
-                <span className="font-mono">{algorithmConfig.timeComplexity.best}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Average Case:</span>
-                <span className="font-mono">{algorithmConfig.timeComplexity.average}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Worst Case:</span>
-                <span className="font-mono">{algorithmConfig.timeComplexity.worst}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Space:</span>
-                <span className="font-mono">{algorithmConfig.spaceComplexity}</span>
+        {activeTab === 'Stats' && (
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold mb-3">Algorithm Performance</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Comparisons:</span>
+                  <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
+                    {currentStep?.comparisons || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Swaps:</span>
+                  <span className="font-mono font-bold text-red-600 dark:text-red-400">
+                    {currentStep?.swaps || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Array Size:</span>
+                  <span className="font-mono font-bold text-gray-600 dark:text-gray-400">
+                    {currentStep?.array.length || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Current Step:</span>
+                  <span className="font-mono font-bold text-green-600 dark:text-green-400">
+                    {currentStepIndex + 1} / {steps.length || 1}
+                  </span>
+                </div>
+                {steps.length > 0 && (
+                  <div className="flex justify-between">
+                    <span>Progress:</span>
+                    <span className="font-mono font-bold text-purple-600 dark:text-purple-400">
+                      {Math.round(((currentStepIndex + 1) / steps.length) * 100)}%
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
+
+            <div>
+              <h3 className="font-semibold mb-3">Time Complexity</h3>
+              <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} p-4 rounded-lg`}>
+                <div className="space-y-2 text-sm">
+                  {algorithmConfig && (
+                    <>
+                      <div className="flex justify-between">
+                        <span>Best Case:</span>
+                        <span className="font-mono text-green-600 dark:text-green-400">
+                          {algorithmConfig.timeComplexity.best}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Average Case:</span>
+                        <span className="font-mono text-yellow-600 dark:text-yellow-400">
+                          {algorithmConfig.timeComplexity.average}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Worst Case:</span>
+                        <span className="font-mono text-red-600 dark:text-red-400">
+                          {algorithmConfig.timeComplexity.worst}
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-t border-gray-300 dark:border-gray-600 pt-2 mt-2">
+                        <span>Space Complexity:</span>
+                        <span className="font-mono text-blue-600 dark:text-blue-400">
+                          {algorithmConfig.spaceComplexity}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {currentStep && (
+              <div>
+                <h3 className="font-semibold mb-3">Efficiency Analysis</h3>
+                <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-50'} p-4 rounded-lg`}>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-medium text-blue-800 dark:text-blue-200">
+                      Performance Metrics
+                    </p>
+                    <div className="space-y-1 text-xs">
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Comparisons per element: </span>
+                        <span className="font-mono">
+                          {currentStep.array.length > 0 ? 
+                            (currentStep.comparisons / currentStep.array.length).toFixed(1) : 0}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Swap ratio: </span>
+                        <span className="font-mono">
+                          {currentStep.comparisons > 0 ? 
+                            ((currentStep.swaps / currentStep.comparisons) * 100).toFixed(1) : 0}%
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Elements sorted: </span>
+                        <span className="font-mono">
+                          {currentStep.array.filter(el => el.isSorted).length} / {currentStep.array.length}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {algorithmConfig?.name === 'Bubble Sort' && (
+              <div>
+                <h3 className="font-semibold mb-3">Algorithm Properties</h3>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
+                    <div className="font-medium text-green-800 dark:text-green-200">✓ Stable</div>
+                    <div className="text-green-600 dark:text-green-400">Preserves relative order</div>
+                  </div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
+                    <div className="font-medium text-green-800 dark:text-green-200">✓ In-place</div>
+                    <div className="text-green-600 dark:text-green-400">O(1) extra memory</div>
+                  </div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-red-900' : 'bg-red-100'}`}>
+                    <div className="font-medium text-red-800 dark:text-red-200">✗ Efficient</div>
+                    <div className="text-red-600 dark:text-red-400">O(n²) comparisons</div>
+                  </div>
+                  <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
+                    <div className="font-medium text-green-800 dark:text-green-200">✓ Simple</div>
+                    <div className="text-green-600 dark:text-green-400">Easy to understand</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
