@@ -136,7 +136,7 @@ export default function AlgorithmPage() {
   }
 
   return (
-    <div className={`min-h-screen flex ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`h-screen flex ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <Sidebar 
         isDarkMode={isDarkMode} 
         setIsDarkMode={setIsDarkMode}
@@ -144,9 +144,9 @@ export default function AlgorithmPage() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col min-h-0">
         {/* Top Bar */}
-        <header className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-sm border-b border-gray-200 dark:border-gray-700 p-4`}>
+        <header className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-sm border-b border-gray-200 dark:border-gray-700 p-4 flex-shrink-0`}>
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">{algorithmConfig.name} Visualization</h2>
@@ -163,11 +163,12 @@ export default function AlgorithmPage() {
           </div>
         </header>
 
-        {/* Canvas Area */}
-        <section className="flex-1 flex">
+        {/* Canvas and Controls Area */}
+        <section className="flex-1 flex min-h-0">
           {/* Main Visualization Canvas */}
-          <div className="flex-1 flex flex-col">
-            <div className={`flex-1 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} relative overflow-hidden p-8`}>
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Canvas - Takes remaining space */}
+            <div className={`flex-1 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'} overflow-hidden p-4 min-h-0`}>
               <VisualizationCanvas
                 currentStep={currentStepData}
                 steps={steps}
@@ -176,24 +177,28 @@ export default function AlgorithmPage() {
               />
             </div>
 
-            <ControlBar
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              speed={speed}
-              setSpeed={setSpeed}
-              inputArray={inputArray}
-              setInputArray={setInputArray}
-              currentStep={currentStep}
-              totalSteps={steps.length}
-              isInitialized={isInitialized}
-              onInitialize={() => initializeAlgorithm()}
-              onStepForward={stepForward}
-              onStepBackward={stepBackward}
-              onReset={reset}
-              isDarkMode={isDarkMode}
-            />
+            {/* Control Bar - Fixed height */}
+            <div className="flex-shrink-0">
+              <ControlBar
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+                speed={speed}
+                setSpeed={setSpeed}
+                inputArray={inputArray}
+                setInputArray={setInputArray}
+                currentStep={currentStep}
+                totalSteps={steps.length}
+                isInitialized={isInitialized}
+                onInitialize={() => initializeAlgorithm()}
+                onStepForward={stepForward}
+                onStepBackward={stepBackward}
+                onReset={reset}
+                isDarkMode={isDarkMode}
+              />
+            </div>
           </div>
 
+          {/* Info Panel */}
           <InfoPanel
             algorithmConfig={algorithmConfig}
             currentStep={currentStepData}

@@ -32,14 +32,14 @@ export default function VisualizationCanvas({
   const maxValue = steps.length > 0 ? Math.max(...steps[0].array.map(el => el.value)) : 100;
 
   return (
-    <div className="h-full flex flex-col justify-center">
+    <div className="h-full flex flex-col justify-center p-4">
       {/* Array Visualization */}
-      <div className="flex items-end justify-center gap-2 h-80">
+      <div className="flex items-end justify-center gap-2 flex-1 max-h-96">
         {currentStep.array.map((element, index) => (
           <div key={index} className="flex flex-col items-center">
             {/* Bar */}
             <div
-              className={`w-12 rounded-t transition-all duration-300 flex items-end justify-center text-white text-sm font-bold ${
+              className={`w-8 sm:w-10 md:w-12 rounded-t transition-all duration-300 flex items-end justify-center text-white text-xs sm:text-sm font-bold ${
                 element.isSorted
                   ? 'bg-green-500'
                   : element.isSwapping
@@ -55,11 +55,11 @@ export default function VisualizationCanvas({
                   : 'bg-blue-500'
               }`}
               style={{
-                height: `${(element.value / maxValue) * 250}px`,
+                height: `${Math.max(30, (element.value / maxValue) * 200)}px`,
                 minHeight: '30px'
               }}
             >
-              <span className="mb-1">{element.value}</span>
+              <span className="mb-1 px-1">{element.value}</span>
             </div>
             {/* Index */}
             <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -70,11 +70,11 @@ export default function VisualizationCanvas({
       </div>
       
       {/* Step Info */}
-      <div className="mt-6 text-center">
-        <p className={`text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+      <div className="mt-4 text-center flex-shrink-0">
+        <p className={`text-sm sm:text-base lg:text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
           {currentStep.description}
         </p>
-        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+        <p className={`text-xs sm:text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           Step {steps.findIndex(step => step === currentStep) + 1} of {steps.length}
         </p>
       </div>

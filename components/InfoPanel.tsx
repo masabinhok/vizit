@@ -18,9 +18,9 @@ export default function InfoPanel({
   isDarkMode
 }: InfoPanelProps) {
   return (
-    <aside className={`w-80 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} border-l border-gray-200 dark:border-gray-700 flex flex-col`}>
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
+    <aside className={`w-80 h-full ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} border-l border-gray-200 dark:border-gray-700 flex flex-col`}>
+      {/* Tabs - Fixed */}
+      <div className="flex border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         {["Code", "Explanation", "Stats"].map((tab) => (
           <button
             key={tab}
@@ -35,8 +35,8 @@ export default function InfoPanel({
         ))}
       </div>
 
-      {/* Code Panel */}
-      <div className="flex-1 overflow-y-auto p-4">
+      {/* Content Panel - Scrollable */}
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
         {algorithmConfig && (
           <div className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} rounded-lg p-4 font-mono text-sm`}>
             <div className="space-y-1">

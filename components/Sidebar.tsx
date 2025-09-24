@@ -27,15 +27,15 @@ export default function Sidebar({ isDarkMode, setIsDarkMode, currentAlgorithm }:
   })).filter(category => category.algorithms.length > 0);
 
   return (
-    <aside className={`w-64 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-lg flex flex-col`}>
+    <aside className={`w-64 h-screen ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} shadow-lg flex flex-col`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <h1 className="text-2xl font-bold text-blue-600">Vizit</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Algorithm Visualizer</p>
       </div>
 
       {/* Search Bar */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <div className="relative">
           <input
             type="text"
@@ -55,7 +55,7 @@ export default function Sidebar({ isDarkMode, setIsDarkMode, currentAlgorithm }:
       </div>
 
       {/* Categories */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
         {filteredCategories.map((category) => (
           <div key={category.name} className="p-4 border-b border-gray-200 dark:border-gray-700">
             <button
@@ -91,7 +91,7 @@ export default function Sidebar({ isDarkMode, setIsDarkMode, currentAlgorithm }:
       </div>
 
       {/* Dark/Light Mode Toggle */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
         <button
           onClick={() => setIsDarkMode(!isDarkMode)}
           className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors ${
