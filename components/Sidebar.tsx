@@ -214,7 +214,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
         
         {/* GitHub Star Button */}
         <a
-          href="https://github.com/username/vizit"
+          href="https://github.com/masabinhok/vizit"
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ease-out ${
