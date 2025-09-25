@@ -89,7 +89,7 @@ export default function Home() {
             {/* Main Hero */}
             <div className="text-center mb-16">
               {/* Floating badge */}
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-md border mb-8 animate-in fade-in slide-in-from-top-4 duration-1000 delay-100 group hover:scale-102 hover:-translate-y-0.5 transition-all duration-200 ease-out">
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-md border mb-8 animate-in fade-in slide-in-from-top-4 delay-100 group hover:scale-102 hover:-translate-y-0.5 transition-all duration-200 ease-out">
                 <div className={`px-3 py-1 rounded-full text-xs font-semibold group cursor-pointer transition-all duration-200 ease-out ${
                   isDarkMode 
                     ? 'bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border-emerald-400/30 text-emerald-300 hover:from-emerald-500/30 hover:to-blue-500/30' 
