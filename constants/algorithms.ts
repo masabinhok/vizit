@@ -7,7 +7,7 @@ export const ALGORITHM_CATEGORIES: Category[] = [
   },
   {
     name: "Data Structures", 
-    algorithms: ["binary-tree", "hash-table", "stack", "queue", "linked-list"]
+    algorithms: ["binary-tree", "btree", "hash-table", "stack", "queue", "linked-list"]
   },
   {
     name: "Math",
@@ -30,6 +30,7 @@ export const ALGORITHM_NAME_MAP: Record<string, string> = {
   "binary-search": "Binary Search",
   "dijkstra": "Dijkstra's Algorithm",
   "binary-tree": "Binary Tree",
+  "btree": "B-Tree",
   "hash-table": "Hash Table",
   "stack": "Stack",
   "queue": "Queue",
