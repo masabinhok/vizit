@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface Message {
@@ -13,6 +13,8 @@ interface Bar {
   state: 'default' | 'left' | 'right' | 'mid' | 'found' | 'done';
 }
 
+type Tab = 'controls' | 'pseudocode' | 'explanation';
+
 export default function BinarySearchVisualization() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -22,30 +24,35 @@ export default function BinarySearchVisualization() {
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(400);
   const [message, setMessage] = useState<Message | null>(null);
-  const [activeTab, setActiveTab] = useState<'controls' | 'pseudocode' | 'explanation'>('controls');
+  const [activeTab, setActiveTab] = useState<Tab>('controls');
 
-  // Utility
+  // Ref to prevent stale state in async functions
+  const arrayRef = useRef<Bar[]>(array);
+  const messageTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    arrayRef.current = array;
+  }, [array]);
+
   const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const showMessage = (text: string, type: Message['type']) => {
     setMessage({ text, type });
-    setTimeout(() => setMessage(null), 3000);
+    if (messageTimeout.current) clearTimeout(messageTimeout.current);
+    messageTimeout.current = setTimeout(() => setMessage(null), 3000);
   };
 
-  // Generate sorted random array
   const generateArray = () => {
-    const arr = Array.from({ length: 15 }, () => Math.floor(Math.random() * 90) + 10)
+    const arr: Bar[] = Array.from({ length: 15 }, () => Math.floor(Math.random() * 90) + 10)
       .sort((a, b) => a - b)
       .map((v) => ({ value: v, state: 'default' as const }));
     setArray(arr);
     setMessage(null);
   };
 
-  // Clear highlights
   const resetArrayStates = () =>
     setArray((prev) => prev.map((bar) => ({ ...bar, state: 'default' })));
 
-  // Binary search animation
   const startSearch = async () => {
     if (isRunning) return;
     if (array.length === 0) {
@@ -61,9 +68,11 @@ export default function BinarySearchVisualization() {
     resetArrayStates();
 
     let left = 0;
-    let right = array.length - 1;
+    let right = arrayRef.current.length - 1;
+    const targetNum = Number(target);
 
     while (left <= right) {
+      // Update left/right highlights
       setArray((prev) =>
         prev.map((bar, i) => {
           if (i === left) return { ...bar, state: 'left' };
@@ -73,39 +82,46 @@ export default function BinarySearchVisualization() {
         })
       );
 
+      await sleep(speed);
+
       const mid = Math.floor((left + right) / 2);
+
+      // Highlight mid
       setArray((prev) =>
-        prev.map((bar, i) => {
-          if (i === mid) return { ...bar, state: 'mid' };
-          return bar;
-        })
+        prev.map((bar, i) => (i === mid ? { ...bar, state: 'mid' } : bar))
       );
 
       await sleep(speed);
 
-      if (array[mid].value === Number(target)) {
+      // Use arrayRef for latest state
+      const midValue = arrayRef.current[mid]?.value;
+      if (midValue === targetNum) {
         setArray((prev) =>
-          prev.map((bar, i) => ({
-            ...bar,
-            state: i === mid ? 'found' : 'done',
-          }))
+          prev.map((bar, i) => ({ ...bar, state: i === mid ? 'found' : 'done' }))
         );
-        showMessage(`Value ${target} found at index ${mid}`, 'success');
+        showMessage(`Value ${targetNum} found at index ${mid}`, 'success');
         setIsRunning(false);
         return;
-      } else if (array[mid].value < Number(target)) {
+      } else if (midValue! < targetNum) {
         left = mid + 1;
       } else {
         right = mid - 1;
       }
-
-      await sleep(speed);
     }
 
-    showMessage(`Value ${target} not found`, 'error');
+    showMessage(`Value ${targetNum} not found`, 'error');
     resetArrayStates();
     setIsRunning(false);
   };
+
+  const tabs: Tab[] = ['controls', 'pseudocode', 'explanation'];
+
+  // Cleanup message timer
+  useEffect(() => {
+    return () => {
+      if (messageTimeout.current) clearTimeout(messageTimeout.current);
+    };
+  }, []);
 
   return (
     <div className="h-full flex flex-col gap-4">
@@ -126,10 +142,10 @@ export default function BinarySearchVisualization() {
 
       {/* Tabs */}
       <div className="flex justify-center gap-4 mb-2">
-        {['controls', 'pseudocode', 'explanation'].map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab as any)}
+            onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
               activeTab === tab
                 ? isDarkMode
@@ -253,11 +269,7 @@ export default function BinarySearchVisualization() {
         }`}
       >
         {array.map((bar, i) => (
-          <div
-            key={i}
-            className={`flex flex-col items-center transition-all duration-300`}
-            style={{ height: `${bar.value * 2}px` }}
-          >
+          <div key={i} className="flex flex-col items-center transition-all duration-300" style={{ height: `${bar.value * 2}px` }}>
             <div
               className={`w-6 rounded-t-md transition-all duration-300 ${
                 bar.state === 'default'
@@ -276,11 +288,7 @@ export default function BinarySearchVisualization() {
               }`}
               style={{ height: `${bar.value * 2}px` }}
             ></div>
-            <span
-              className={`mt-2 text-xs font-semibold ${
-                isDarkMode ? 'text-slate-300' : 'text-gray-700'
-              }`}
-            >
+            <span className={`mt-2 text-xs font-semibold ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
               {bar.value}
             </span>
           </div>
