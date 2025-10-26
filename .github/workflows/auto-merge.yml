@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     
     # Only run for approved reviews
-    if: github.event.review.state == 'approved' || github.event_name == 'check_suite' || github.event_name == 'status'
+    if: (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') || github.event_name == 'check_suite'
     
     steps:
       - name: Checkout code

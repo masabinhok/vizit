@@ -103,9 +103,9 @@ Or use the web UI: https://github-label-sync.com/
 #### README Badges (Optional)
 - [ ] Add workflow status badges to README.md:
 ```markdown
-![CI](https://github.com/masabinhok/vizit/workflows/CI/badge.svg)
-![CodeQL](https://github.com/masabinhok/vizit/workflows/CodeQL%20Security%20Analysis/badge.svg)
-![Deploy](https://github.com/masabinhok/vizit/workflows/Deploy/badge.svg)
+![CI](https://github.com/masabinhok/vizit/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/masabinhok/vizit/actions/workflows/codeql.yml/badge.svg)
+![Deploy](https://github.com/masabinhok/vizit/actions/workflows/deploy.yml/badge.svg)
 ```
 
 #### CONTRIBUTING.md

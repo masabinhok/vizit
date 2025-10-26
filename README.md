@@ -301,8 +301,8 @@ Keeps dependencies up-to-date automatically:
 Add these badges to show workflow status:
 
 ```markdown
-![CI](https://github.com/masabinhok/vizit/workflows/CI/badge.svg)
-![CodeQL](https://github.com/masabinhok/vizit/workflows/CodeQL%20Security%20Analysis/badge.svg)
+![CI](https://github.com/masabinhok/vizit/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/masabinhok/vizit/actions/workflows/codeql.yml/badge.svg)
 ```
 
 ### 🛠️ Setting Up for Your Fork

@@ -44,7 +44,11 @@ jobs:
               labels.push('data-structure');
             }
             
-            if (title.includes('stack') || title.includes('queue') || title.includes('linked list')) {
+            if (
+              title.includes('stack') || body.includes('stack') ||
+              title.includes('queue') || body.includes('queue') ||
+              title.includes('linked list') || body.includes('linked list')
+            ) {
               labels.push('data-structure');
             }
             
