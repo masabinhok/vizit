@@ -225,6 +225,113 @@ See our [Contributing Guide](./CONTRIBUTING.md) for detailed instructions!
 
 ---
 
+## 🧩 GitHub Actions Setup
+
+Vizit uses **GitHub Actions** for continuous integration, automated testing, security scanning, and deployment. Our CI/CD pipeline ensures code quality, security, and smooth releases.
+
+### 🤖 Automated Workflows
+
+#### 🧪 **CI (Continuous Integration)** - `ci.yml`
+Runs comprehensive checks on all pull requests and pushes to `main`:
+- **Lint** - ESLint checks for code quality and style consistency
+- **Type Check** - TypeScript compiler validation
+- **Build** - Next.js production build verification
+- **Caching** - npm dependencies cached for faster runs
+
+**Triggers:** PRs and pushes to `main`
+
+#### 🎨 **Format Check** - `format.yml`
+Enforces consistent code formatting across the codebase:
+- Validates ESLint rules on all TypeScript/JavaScript files
+- Automatically comments on PRs with formatting issues
+- Helps maintain clean, readable code
+
+**Triggers:** Pull requests modifying `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, or `.css` files
+
+#### 🚀 **Deploy** - `deploy.yml`
+Automatically deploys to Vercel after successful CI:
+- Builds production-ready Next.js application
+- Deploys to Vercel hosting platform
+- Creates deployment summary with commit details
+- Only runs when CI passes successfully
+
+**Triggers:** Pushes to `main` after CI completion  
+**Requirements:** Vercel secrets (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`)
+
+#### 💬 **Greetings** - `greetings.yml`
+Welcomes first-time contributors to the project:
+- Greets users opening their first issue
+- Welcomes first-time PR contributors
+- Provides helpful links to contributing guides
+- Highlights good first issues and Hacktoberfest opportunities
+
+**Triggers:** New issues and pull requests from first-time contributors
+
+#### 🏷️ **Auto Label** - `label.yml`
+Intelligently categorizes issues and pull requests:
+- **Content-based labeling** - Analyzes title and body text
+- **File-based labeling** - Detects changes in specific directories
+- Labels: `algorithm`, `bug`, `documentation`, `enhancement`, `ui/ux`, `security`, `dependencies`, and more
+- Helps maintainers prioritize and organize contributions
+
+**Triggers:** New or edited issues and pull requests
+
+#### 🔒 **CodeQL Security Analysis** - `codeql.yml`
+Scans for security vulnerabilities and code quality issues:
+- GitHub's advanced semantic code analysis engine
+- Detects common security vulnerabilities (SQL injection, XSS, etc.)
+- Runs on TypeScript/JavaScript codebase
+- Weekly scheduled scans every Monday
+- Results visible in Security tab
+
+**Triggers:** PRs, pushes to `main`, and weekly on Mondays at 6:00 AM UTC
+
+#### 📦 **Dependabot** - `dependabot.yml`
+Keeps dependencies up-to-date automatically:
+- **npm dependencies** - Weekly updates for all packages
+- **GitHub Actions** - Weekly updates for workflow actions
+- Groups related updates (Next.js, React, TypeScript, Tailwind, ESLint)
+- Auto-labels PRs as `dependencies` and `automated`
+- Conventional commit messages (`chore(deps)`, `chore(ci)`)
+
+**Schedule:** Every Monday at 6:00 AM UTC
+
+### 🎯 Workflow Status Badges
+
+Add these badges to show workflow status:
+
+```markdown
+![CI](https://github.com/masabinhok/vizit/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/masabinhok/vizit/actions/workflows/codeql.yml/badge.svg)
+```
+
+### 🛠️ Setting Up for Your Fork
+
+If you fork this repository, you'll need to configure:
+
+1. **Vercel Deployment** (optional):
+   - Add repository secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+   - Get these from your [Vercel account settings](https://vercel.com/account/tokens)
+
+2. **GitHub Actions**:
+   - Automatically enabled for public repositories
+   - Check the "Actions" tab to see workflow runs
+
+3. **Dependabot**:
+   - Enabled by default with the configuration file
+   - Review and merge dependency update PRs regularly
+
+### 📊 Benefits
+
+✅ **Quality Assurance** - Catch bugs and issues before merging  
+✅ **Security** - Automated vulnerability scanning with CodeQL  
+✅ **Consistency** - Enforced code style and formatting  
+✅ **Automation** - Less manual work, more coding time  
+✅ **Contributor-Friendly** - Clear feedback and welcoming messages  
+✅ **Up-to-Date** - Automated dependency updates  
+
+---
+
 ## 🗺️ Roadmap
 
 ### 🎯 Upcoming Features

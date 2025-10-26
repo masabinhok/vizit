@@ -1,0 +1,41 @@
+# CODEOWNERS file
+# Each line is a file pattern followed by one or more owners.
+# These owners will be the default reviewers for pull requests.
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo
+* @masabinhok
+
+# Workflow and CI/CD configurations
+/.github/ @masabinhok
+/.github/workflows/ @masabinhok
+
+# Documentation
+/docs/ @masabinhok
+README.md @masabinhok
+CONTRIBUTING.md @masabinhok
+LICENSE @masabinhok
+
+# Core algorithm implementations
+/app/algorithms/ @masabinhok
+/app/algorithm/ @masabinhok
+
+# Components
+/components/ @masabinhok
+
+# Configuration files
+package.json @masabinhok
+tsconfig.json @masabinhok
+next.config.ts @masabinhok
+eslint.config.mjs @masabinhok
+tailwind.config.* @masabinhok
+postcss.config.mjs @masabinhok
+
+# Type definitions
+/types/ @masabinhok
+
+# Constants and configurations
+/constants/ @masabinhok
+
+# Context providers
+/contexts/ @masabinhok

@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/masabinhok/vizit/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://github.com/masabinhok/vizit/blob/main/CONTRIBUTING.md
+    about: Read the contributing guidelines and documentation
+  - name: 🎃 Hacktoberfest
+    url: https://hacktoberfest.com/
+    about: Learn about Hacktoberfest and how to participate

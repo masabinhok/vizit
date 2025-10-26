@@ -1,0 +1,202 @@
+name: Auto Label
+
+# Automatically label issues and pull requests based on content
+on:
+  issues:
+    types: [opened, edited]
+  pull_request_target:
+    types: [opened, edited, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  label:
+    name: Auto Label Issues & PRs
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Label based on title and body
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue || context.payload.pull_request;
+            const title = issue.title.toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const labels = [];
+            
+            // Algorithm-related labels
+            if (title.includes('algorithm') || body.includes('algorithm')) {
+              labels.push('algorithm');
+            }
+            
+            if (title.includes('sort') || body.includes('sort')) {
+              labels.push('sorting');
+            }
+            
+            if (title.includes('tree') || title.includes('btree') || body.includes('tree')) {
+              labels.push('data-structure');
+            }
+            
+            if (
+              title.includes('stack') || body.includes('stack') ||
+              title.includes('queue') || body.includes('queue') ||
+              title.includes('linked list') || body.includes('linked list')
+            ) {
+              labels.push('data-structure');
+            }
+            
+            // Type of contribution
+            if (title.startsWith('feat') || title.startsWith('feature') || title.includes('add ')) {
+              labels.push('enhancement');
+            }
+            
+            if (title.startsWith('fix') || title.includes('bug')) {
+              labels.push('bug');
+            }
+            
+            if (title.startsWith('docs') || title.includes('documentation') || body.includes('readme')) {
+              labels.push('documentation');
+            }
+            
+            if (title.includes('ui') || title.includes('style') || title.includes('design')) {
+              labels.push('ui/ux');
+            }
+            
+            if (title.includes('refactor') || body.includes('refactor')) {
+              labels.push('refactor');
+            }
+            
+            if (title.includes('test') || body.includes('test')) {
+              labels.push('testing');
+            }
+            
+            if (title.includes('performance') || title.includes('optimization')) {
+              labels.push('performance');
+            }
+            
+            // Good first issue detection
+            if (body.includes('good first issue') || body.includes('beginner friendly')) {
+              labels.push('good first issue');
+            }
+            
+            // Hacktoberfest
+            if (body.includes('hacktoberfest')) {
+              labels.push('hacktoberfest');
+            }
+            
+            // Help wanted
+            if (body.includes('help wanted') || body.includes('help needed')) {
+              labels.push('help wanted');
+            }
+            
+            // Security
+            if (title.includes('security') || body.includes('vulnerability') || body.includes('cve')) {
+              labels.push('security');
+            }
+            
+            // Accessibility
+            if (title.includes('accessibility') || title.includes('a11y') || body.includes('accessibility')) {
+              labels.push('accessibility');
+            }
+            
+            // Dependencies
+            if (title.includes('dependency') || title.includes('dependencies') || title.includes('npm')) {
+              labels.push('dependencies');
+            }
+            
+            // Apply labels if any were found
+            if (labels.length > 0) {
+              const uniqueLabels = [...new Set(labels)];
+              
+              if (context.payload.issue) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.issue.number,
+                  labels: uniqueLabels
+                });
+              } else if (context.payload.pull_request) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  labels: uniqueLabels
+                });
+              }
+              
+              console.log(`Applied labels: ${uniqueLabels.join(', ')}`);
+            } else {
+              console.log('No matching labels found');
+            }
+
+      - name: Label PR based on changed files
+        if: github.event_name == 'pull_request_target' && github.event.pull_request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Ensure pull_request exists in payload
+            if (!context.payload.pull_request) {
+              console.log('No pull_request in payload, skipping file-based labeling');
+              return;
+            }
+            
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            
+            const labels = [];
+            const filenames = files.map(f => f.filename);
+            
+            // Check for documentation changes
+            if (filenames.some(f => f.includes('README') || f.includes('CONTRIBUTING') || f.includes('.md'))) {
+              labels.push('documentation');
+            }
+            
+            // Check for component changes
+            if (filenames.some(f => f.includes('components/'))) {
+              labels.push('components');
+            }
+            
+            // Check for algorithm implementations
+            if (filenames.some(f => f.includes('app/algorithms/') || f.includes('app/algorithm/'))) {
+              labels.push('algorithm');
+            }
+            
+            // Check for CI/CD changes
+            if (filenames.some(f => f.includes('.github/') || f.includes('workflows/'))) {
+              labels.push('ci/cd');
+            }
+            
+            // Check for dependencies
+            if (filenames.some(f => f === 'package.json' || f === 'package-lock.json')) {
+              labels.push('dependencies');
+            }
+            
+            // Check for configuration changes
+            if (filenames.some(f => f.includes('config') || f.includes('eslint') || f.includes('tsconfig'))) {
+              labels.push('configuration');
+            }
+            
+            // Apply file-based labels
+            if (labels.length > 0) {
+              const uniqueLabels = [...new Set(labels)];
+              
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: uniqueLabels
+              });
+              
+              console.log(`Applied file-based labels: ${uniqueLabels.join(', ')}`);
+            }
