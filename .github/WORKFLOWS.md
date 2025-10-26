@@ -483,9 +483,9 @@ All workflows are designed to be:
 Add these to your README to show workflow status:
 
 ```markdown
-![CI](https://github.com/masabinhok/vizit/workflows/CI/badge.svg)
-![CodeQL](https://github.com/masabinhok/vizit/workflows/CodeQL%20Security%20Analysis/badge.svg)
-![Deploy](https://github.com/masabinhok/vizit/workflows/Deploy/badge.svg)
+![CI](https://github.com/masabinhok/vizit/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/masabinhok/vizit/actions/workflows/codeql.yml/badge.svg)
+![Deploy](https://github.com/masabinhok/vizit/actions/workflows/deploy.yml/badge.svg)
 ```
 
 ---
