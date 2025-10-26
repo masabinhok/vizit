@@ -15,7 +15,7 @@ export interface AlgorithmStep {
   codeLineIndex: number;
   comparisons: number;
   swaps: number;
-  additionalInfo?: Record<string, any>;
+  additionalInfo?: Record<string, unknown>;
 }
 
 export interface AlgorithmConfig {
