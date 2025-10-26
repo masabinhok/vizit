@@ -1,0 +1,64 @@
+name: Greetings
+
+# Welcome first-time contributors to the project
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    name: Welcome Contributors
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Greet first-time issue creator
+        if: github.event_name == 'issues'
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 **Welcome to Vizit!** 
+            
+            Thank you for opening your first issue! 🎉 We're excited to have you as part of our community.
+            
+            A maintainer will review your issue soon. In the meantime:
+            - ✅ Make sure you've provided all the necessary details
+            - 📖 Check out our [Contributing Guide](https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md)
+            - 💬 Feel free to join the discussion in other issues
+            
+            If you're interested in contributing code, check out issues labeled [`good-first-issue`](https://github.com/${{ github.repository }}/labels/good-first-issue) or [`help-wanted`](https://github.com/${{ github.repository }}/labels/help-wanted).
+            
+            Happy coding! 🚀
+
+      - name: Greet first-time pull request contributor
+        if: github.event_name == 'pull_request_target'
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-message: |
+            🎉 **Congratulations on your first Pull Request to Vizit!** 
+            
+            Thank you for taking the time to contribute! 🙌 We really appreciate it.
+            
+            **What happens next?**
+            - 🤖 Automated checks will run (linting, build, type-check)
+            - 👀 A maintainer will review your code
+            - 💬 We might ask for some changes or clarifications
+            - ✅ Once approved, your PR will be merged!
+            
+            **While you wait:**
+            - Make sure all CI checks pass ✅
+            - Review our [Contributing Guide](https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md) if you haven't already
+            - Check that your PR description clearly explains the changes
+            
+            Thanks again for contributing to making algorithm visualization better for everyone! 💙
+            
+            ---
+            
+            *🎃 **Hacktoberfest participants:** Make sure your PR follows our quality guidelines to be counted!*

@@ -1,0 +1,78 @@
+# Dependabot configuration for automated dependency updates
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      # Check for updates every week on Monday
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    # Allow up to 10 open pull requests for npm dependencies
+    open-pull-requests-limit: 10
+    # Commit message prefix
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(dev-deps)"
+      include: "scope"
+    # Group dependencies for cleaner PRs
+    groups:
+      # Group all Next.js related updates
+      nextjs:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+      # Group React dependencies
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+      # Group TypeScript dependencies
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+      # Group Tailwind CSS dependencies
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "postcss"
+      # Group ESLint dependencies
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+    # Labels to add to pull requests
+    labels:
+      - "dependencies"
+      - "automated"
+    # Versioning strategy
+    versioning-strategy: increase
+    # Automatically rebase PRs when needed
+    rebase-strategy: auto
+    # Ignore specific dependencies (if needed in future)
+    # ignore:
+    #   - dependency-name: "package-name"
+    #     versions: ["1.x", "2.x"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    labels:
+      - "ci/cd"
+      - "dependencies"
+      - "automated"

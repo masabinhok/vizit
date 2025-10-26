@@ -1,0 +1,135 @@
+# GitHub Labels Configuration
+# This file documents the labels used in the Vizit project
+# Copy this to create labels in your repository
+
+# Type of Issue/PR
+- name: bug
+  color: d73a4a
+  description: Something isn't working correctly
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+
+- name: documentation
+  color: 0075ca
+  description: Improvements or additions to documentation
+
+# Areas of Focus
+- name: algorithm
+  color: 1d76db
+  description: Related to algorithm implementations
+
+- name: sorting
+  color: 5319e7
+  description: Sorting algorithm related
+
+- name: data-structure
+  color: 7057ff
+  description: Data structure related (trees, stacks, queues, etc.)
+
+- name: components
+  color: bfd4f2
+  description: React component changes
+
+- name: ui/ux
+  color: e99695
+  description: User interface and experience improvements
+
+# Priority
+- name: critical
+  color: b60205
+  description: Critical issue that needs immediate attention
+
+- name: high priority
+  color: d93f0b
+  description: High priority issue
+
+# Contribution
+- name: good first issue
+  color: 7057ff
+  description: Good for newcomers
+
+- name: help wanted
+  color: 008672
+  description: Extra attention is needed
+
+- name: hacktoberfest
+  color: ff8c00
+  description: Hacktoberfest eligible
+
+# Status
+- name: work-in-progress
+  color: fbca04
+  description: Work in progress, not ready for review
+
+- name: ready for review
+  color: 0e8a16
+  description: Ready for maintainer review
+
+- name: needs testing
+  color: d4c5f9
+  description: Needs testing before merge
+
+# Automation
+- name: automerge
+  color: ededed
+  description: Auto-merge when all checks pass
+
+- name: do-not-merge
+  color: ee0701
+  description: Should not be merged
+
+- name: dependencies
+  color: 0366d6
+  description: Pull requests that update a dependency file
+
+- name: automated
+  color: 34d058
+  description: Automated PR (e.g., Dependabot)
+
+# Technical Areas
+- name: performance
+  color: f9d0c4
+  description: Performance improvements
+
+- name: security
+  color: ee0701
+  description: Security related
+
+- name: accessibility
+  color: fef2c0
+  description: Accessibility improvements (a11y)
+
+- name: testing
+  color: c5def5
+  description: Related to testing
+
+- name: refactor
+  color: fbca04
+  description: Code refactoring
+
+- name: ci/cd
+  color: 0052cc
+  description: Continuous integration and deployment
+
+- name: configuration
+  color: d4c5f9
+  description: Configuration file changes
+
+# Invalid/Won't Do
+- name: duplicate
+  color: cfd3d7
+  description: This issue or pull request already exists
+
+- name: invalid
+  color: e4e669
+  description: This doesn't seem right
+
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on
+
+- name: question
+  color: d876e3
+  description: Further information is requested
