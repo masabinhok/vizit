@@ -155,12 +155,13 @@ npm run start
 ```
 vizit/
 ├── app/                        # Next.js App Router
-│   ├── algorithm/             # Algorithm routes
-│   │   ├── [id]/              # Dynamic algorithm pages
+│   ├── algorithm/             # Algorithm routes (each has own page)
+│   │   ├── bubble-sort/       # Bubble Sort visualization
 │   │   ├── btree/             # B-Tree visualization
-│   │   └── stack/             # Stack visualization
+│   │   ├── stack/             # Stack visualization
+│   │   └── layout.tsx         # Shared algorithm layout
 │   ├── algorithms/            # Algorithm implementations
-│   │   └── bubble-sort.ts     # Bubble sort logic
+│   │   └── bubble-sort.ts     # Bubble sort logic & config
 │   ├── layout.tsx             # Root layout
 │   └── page.tsx               # Landing page
 ├── components/                 # React components
@@ -172,14 +173,22 @@ vizit/
 │   ├── ThemeToggle.tsx
 │   └── VisualizationCanvas.tsx
 ├── constants/                  # Configuration files
-│   ├── algorithms.ts          # Algorithm metadata
-│   └── registry.ts            # Algorithm registry
+│   ├── algorithms.ts          # Algorithm metadata & categories
+│   └── registry.ts            # Algorithm registry (reference)
 ├── contexts/                   # React contexts
 │   └── ThemeContext.tsx       # Theme management
 ├── types/                      # TypeScript definitions
 │   └── index.ts
+├── docs/                       # Documentation
+│   └── ADDING_ALGORITHMS.md   # Guide for adding algorithms
 └── public/                     # Static assets
 ```
+
+**Architecture Highlights:**
+- ✨ **Dedicated pages** - Each algorithm has its own route (no dynamic routing)
+- 🧩 **Component-based** - Reusable visualization components
+- 📝 **Type-safe** - Full TypeScript support
+- 🎨 **Modular** - Easy to add new algorithms ([see guide](./docs/ADDING_ALGORITHMS.md))
 
 ---
 
@@ -194,19 +203,18 @@ Vizit is **Hacktoberfest-friendly**! We've tagged issues with `hacktoberfest`, `
 ### How to Contribute
 
 1. **Read** our [Contributing Guide](./CONTRIBUTING.md)
-2. **Check** the [Code of Conduct](./CODE_OF_CONDUCT.md)
-3. **Find** an issue or propose a new feature
-4. **Fork** the repository
-5. **Create** a feature branch (`git checkout -b feature/amazing-algorithm`)
-6. **Commit** your changes (`git commit -m 'Add QuickSort visualization'`)
-7. **Push** to your branch (`git push origin feature/amazing-algorithm`)
-8. **Open** a Pull Request
+2. **Find** an issue or propose a new feature
+3. **Fork** the repository
+4. **Create** a feature branch (`git checkout -b feature/amazing-algorithm`)
+5. **Commit** your changes (`git commit -m 'Add QuickSort visualization'`)
+6. **Push** to your branch (`git push origin feature/amazing-algorithm`)
+7. **Open** a Pull Request
 
 ### 🌱 Good First Issues
 
 Looking to contribute but not sure where to start? Check out these beginner-friendly areas:
 
-- 🎨 Add new algorithm visualizations (Merge Sort, Quick Sort, etc.)
+- 🎨 Add new algorithm visualizations (Merge Sort, Quick Sort, etc.) - [See guide](./docs/ADDING_ALGORITHMS.md)
 - 📚 Improve documentation and code comments
 - 🐛 Fix bugs or improve existing visualizations
 - ✨ Enhance UI/UX (animations, transitions, accessibility)
@@ -246,7 +254,7 @@ See our [Contributing Guide](./CONTRIBUTING.md) for detailed instructions!
 ## 📖 Documentation
 
 - **[Contributing Guide](./CONTRIBUTING.md)** - How to contribute to Vizit
-- **[Code of Conduct](./CODE_OF_CONDUCT.md)** - Our community guidelines
+- **[Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md)** - Step-by-step guide for adding new algorithms
 - **[Architecture Guide](./docs/ARCHITECTURE.md)** - Technical deep dive *(Coming Soon)*
 - **[API Reference](./docs/API.md)** - Component and function docs *(Coming Soon)*
 

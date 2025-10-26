@@ -8,7 +8,6 @@ This guide will help you get started with contributing, whether you're fixing a 
 
 ## 📋 Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
 - [How Can I Contribute?](#how-can-i-contribute)
 - [Getting Started](#getting-started)
 - [Development Workflow](#development-workflow)
@@ -18,14 +17,6 @@ This guide will help you get started with contributing, whether you're fixing a 
 - [Commit Message Guidelines](#commit-message-guidelines)
 - [Pull Request Process](#pull-request-process)
 - [Hacktoberfest Guidelines](#hacktoberfest-guidelines)
-
----
-
-## 📜 Code of Conduct
-
-By participating in this project, you agree to abide by our [Code of Conduct](./CODE_OF_CONDUCT.md). Please read it before contributing.
-
-**TL;DR:** Be respectful, inclusive, and constructive. We're all here to learn and grow together! 🌱
 
 ---
 
@@ -203,42 +194,30 @@ git push origin feature/algorithm-quicksort
 
 ## 🎨 Adding a New Algorithm
 
-Want to add a new sorting, searching, or graph algorithm? Follow these steps:
+Want to add a new sorting, searching, or graph algorithm? We've got you covered!
 
-### Step 1: Create the Algorithm File
+**📖 Full Guide:** See our comprehensive [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md) for detailed instructions.
 
-Create a new file in `app/algorithms/`:
+### Quick Overview
+
+Each algorithm now has its own dedicated page (no more dynamic routing!). Here's the basic process:
+
+1. **Create algorithm logic** in `app/algorithms/your-algorithm.ts`
+2. **Create dedicated page** in `app/algorithm/your-algorithm/page.tsx`
+3. **Update metadata** in `constants/algorithms.ts`
+4. **Test thoroughly** with various inputs
+5. **Submit your PR**!
+
+### Example Structure
 
 ```typescript
 // app/algorithms/quick-sort.ts
-import { AlgorithmConfig, AlgorithmStep, ArrayElement } from '../../types';
-
-const quickSortCode = [
-  "function quickSort(arr, low, high) {",
-  "  if (low < high) {",
-  "    let pi = partition(arr, low, high);",
-  "    quickSort(arr, low, pi - 1);",
-  "    quickSort(arr, pi + 1, high);",
-  "  }",
-  "}",
-];
-
-const generateQuickSortSteps = (inputArr: number[]): AlgorithmStep[] => {
-  const steps: AlgorithmStep[] = [];
-  // Your step generation logic here
-  return steps;
-};
-
 export const quickSortConfig: AlgorithmConfig = {
   id: 'quick-sort',
   name: 'Quick Sort',
   category: 'Algorithms',
   description: 'Efficient divide-and-conquer sorting algorithm',
-  timeComplexity: {
-    best: 'O(n log n)',
-    average: 'O(n log n)',
-    worst: 'O(n²)'
-  },
+  timeComplexity: { best: 'O(n log n)', average: 'O(n log n)', worst: 'O(n²)' },
   spaceComplexity: 'O(log n)',
   code: quickSortCode,
   defaultInput: '64,34,25,12,22,11,90',
@@ -246,52 +225,9 @@ export const quickSortConfig: AlgorithmConfig = {
 };
 ```
 
-### Step 2: Register the Algorithm
+Then create `app/algorithm/quick-sort/page.tsx` following the pattern in our guide.
 
-Add it to `constants/registry.ts`:
-
-```typescript
-import { quickSortConfig } from '../app/algorithms/quick-sort';
-
-export const ALGORITHM_REGISTRY: Record<string, AlgorithmConfig> = {
-  'bubble-sort': bubbleSortConfig,
-  'quick-sort': quickSortConfig, // Add here
-  // ... other algorithms
-};
-```
-
-### Step 3: Add to Metadata
-
-Update `constants/algorithms.ts`:
-
-```typescript
-export const ALGORITHM_CATEGORIES: Category[] = [
-  {
-    name: "Algorithms",
-    algorithms: ["bubble-sort", "quick-sort", "merge-sort", ...]
-  },
-  // ... other categories
-];
-
-export const ALGORITHM_NAME_MAP: Record<string, string> = {
-  "bubble-sort": "Bubble Sort",
-  "quick-sort": "Quick Sort", // Add here
-  // ... other mappings
-};
-```
-
-### Step 4: Test Your Algorithm
-
-1. Run the dev server: `npm run dev`
-2. Navigate to `/algorithm/quick-sort`
-3. Test with various inputs
-4. Verify step-by-step visualization
-5. Check code highlighting
-6. Test edge cases (empty array, single element, already sorted, etc.)
-
-### Step 5: Document Your Algorithm
-
-Add explanations in the `generateSteps` function with clear `description` fields for each step.
+**For complete code examples and best practices, see [docs/ADDING_ALGORITHMS.md](./docs/ADDING_ALGORITHMS.md)**
 
 ---
 
@@ -299,61 +235,38 @@ Add explanations in the `generateSteps` function with clear `description` fields
 
 Want to add a Queue, Linked List, or Graph visualization? Here's how:
 
-### Step 1: Create the Visualization Component
+**📖 Full Guide:** See [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md#data-structure-algorithms) for complete examples.
 
-Create a new file in `components/`:
+### Quick Overview
+
+1. **Create visualization component** in `components/YourDataStructureVisualization.tsx`
+2. **Create dedicated page** in `app/algorithm/your-structure/page.tsx`
+3. **Add to metadata** in `constants/algorithms.ts`
+4. **Test all operations** (push, pop, insert, delete, etc.)
+
+### Example: Queue Page
 
 ```typescript
-// components/QueueVisualization.tsx
+// app/algorithm/queue/page.tsx
 'use client';
 
-import React, { useState } from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '../../../contexts/ThemeContext';
+import QueueVisualization from '../../../components/QueueVisualization';
 
-export default function QueueVisualization() {
+export default function QueuePage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   
-  // Your queue logic here
-  
   return (
-    <div className="flex h-full gap-4">
-      {/* Your visualization UI */}
+    <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-900...' : '...'}`}>
+      <header>{/* Header with title and complexity info */}</header>
+      <section><QueueVisualization /></section>
     </div>
   );
 }
 ```
 
-### Step 2: Create a Route
-
-Create a new folder in `app/algorithm/`:
-
-```
-app/algorithm/queue/
-  └── page.tsx
-```
-
-Import and use your component:
-
-```typescript
-// app/algorithm/queue/page.tsx
-import QueueVisualization from '@/components/QueueVisualization';
-
-export default function QueuePage() {
-  return <QueueVisualization />;
-}
-```
-
-### Step 3: Add to Sidebar
-
-The sidebar should automatically detect the new route if you've added it to the algorithm metadata.
-
-### Step 4: Test Thoroughly
-
-- Test all operations (enqueue, dequeue, peek, etc.)
-- Verify animations are smooth
-- Check responsive design
-- Test dark/light themes
+**For complete examples, see [docs/ADDING_ALGORITHMS.md](./docs/ADDING_ALGORITHMS.md#data-structure-algorithms)**
 
 ---
 

@@ -162,7 +162,7 @@ export default function Home() {
                 </button>
                 
                 <button
-                  onClick={() => router.push('/algorithm/quick-sort')}
+                  onClick={() => router.push('/algorithm/stack')}
                   className={`group px-8 py-4 rounded-2xl font-semibold border-2 transition-all duration-200 ease-out hover:scale-102 hover:-translate-y-0.5 backdrop-blur-sm ${
                     isDarkMode 
                       ? 'border-slate-600 text-slate-300 hover:bg-slate-800/50 hover:border-slate-400 hover:shadow-lg hover:shadow-slate-500/20' 
@@ -173,7 +173,7 @@ export default function Home() {
                     <svg className="w-5 h-5 group-hover:rotate-6 transition-transform duration-200 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M15 14h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-lg">Explore Algorithms</span>
+                    <span className="text-lg">Explore Data Structures</span>
                   </div>
                 </button>
               </div>

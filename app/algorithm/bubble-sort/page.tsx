@@ -1,21 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
 import { useTheme } from '../../../contexts/ThemeContext';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
-import { getAlgorithmConfig } from '../../../constants/registry';
-import { AlgorithmStep, AlgorithmConfig } from '../../../types';
+import { bubbleSortConfig } from '../../../app/algorithms/bubble-sort';
+import { AlgorithmStep } from '../../../types';
 
-export default function AlgorithmPage() {
-  const params = useParams();
-  const algorithmId = params.id as string;
+export default function BubbleSortPage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   
-  const [algorithmConfig, setAlgorithmConfig] = useState<AlgorithmConfig | undefined>();
+  const algorithmConfig = bubbleSortConfig;
   
   // Visualization state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -27,16 +24,12 @@ export default function AlgorithmPage() {
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load algorithm configuration
+  // Initialize with default input
   useEffect(() => {
-    const config = getAlgorithmConfig(algorithmId);
-    if (config) {
-      setAlgorithmConfig(config);
-      setInputArray(config.defaultInput);
-      // Auto-initialize for the first load
-      setTimeout(() => initializeAlgorithm(config), 100);
-    }
-  }, [algorithmId]);
+    setInputArray(algorithmConfig.defaultInput);
+    // Auto-initialize for the first load
+    setTimeout(() => initializeAlgorithm(), 100);
+  }, []);
 
   // Animation control
   useEffect(() => {
@@ -65,13 +58,10 @@ export default function AlgorithmPage() {
     };
   }, [isPlaying, speed, steps.length]);
 
-  const initializeAlgorithm = (config?: AlgorithmConfig) => {
-    const activeConfig = config || algorithmConfig;
-    if (!activeConfig) return;
-
+  const initializeAlgorithm = () => {
     try {
       // Use current inputArray or fallback to default
-      const arrayToProcess = inputArray.trim() || activeConfig.defaultInput;
+      const arrayToProcess = inputArray.trim() || algorithmConfig.defaultInput;
       const numbers = arrayToProcess.split(',')
         .map(n => n.trim())
         .filter(n => n.length > 0)
@@ -88,7 +78,7 @@ export default function AlgorithmPage() {
         return;
       }
       
-      const newSteps = activeConfig.generateSteps(numbers);
+      const newSteps = algorithmConfig.generateSteps(numbers);
       setSteps(newSteps);
       setCurrentStep(0);
       setIsInitialized(true);
@@ -117,17 +107,6 @@ export default function AlgorithmPage() {
   };
 
   const currentStepData = steps[currentStep];
-
-  if (!algorithmConfig) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'dark bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500`}>
-        <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          <h1 className="text-2xl font-bold mb-2">Algorithm Not Found</h1>
-          <p className="text-gray-500">The requested algorithm "{algorithmId}" is not yet implemented.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={`flex flex-col h-screen ${isDarkMode ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30'} transition-all duration-500 relative overflow-hidden`}>
@@ -231,7 +210,7 @@ export default function AlgorithmPage() {
                 currentStep={currentStep}
                 totalSteps={steps.length}
                 isInitialized={isInitialized}
-                onInitialize={() => initializeAlgorithm()}
+                onInitialize={initializeAlgorithm}
                 onStepForward={stepForward}
                 onStepBackward={stepBackward}
                 onReset={reset}
