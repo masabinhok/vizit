@@ -18,6 +18,44 @@
 </div>
 
 ---
+<details>
+  <summary><h2>📚 Table of Contents</h2></summary>
+
+1. [🌟 About Vizit](#-about-vizit)  
+2. [✨ Why Vizit?](#-why-vizit)  
+3. [🎥 Demo](#-demo)  
+4. [🚀 Features](#-features)  
+   - [🔥 Currently Implemented](#-currently-implemented)  
+   - [🎨 Visualization Features](#-visualization-features)  
+5. [🛠️ Tech Stack](#️-tech-stack)  
+   - [Architecture Highlights](#architecture-highlights)  
+6. [📦 Installation](#-installation)  
+   - [Prerequisites](#prerequisites)  
+   - [Quick Start](#quick-start)  
+   - [Build for Production](#build-for-production)  
+7. [🎯 Usage](#-usage)  
+   - [Using Vizit](#using-vizit)  
+   - [Project Structure](#project-structure)  
+8. [🤝 Contributing](#-contributing)  
+   - [🎃 Hacktoberfest 2025](#-hacktoberfest-2025)  
+   - [How to Contribute](#how-to-contribute)  
+   - [🌱 Good First Issues](#-good-first-issues)  
+9. [🧩 GitHub Actions Setup](#-github-actions-setup)  
+   - [🤖 Automated Workflows](#-automated-workflows)  
+   - [🎯 Workflow Status Badges](#-workflow-status-badges)  
+   - [🛠️ Setting Up for Your Fork](#-setting-up-for-your-fork)  
+   - [📊 Benefits](#-benefits)  
+10. [🗺️ Roadmap](#️-roadmap)  
+11. [📖 Documentation](#-documentation)  
+12. [🏆 Contributors](#-contributors)  
+13. [📄 License](#-license)  
+14. [💬 Community & Support](#-community--support)  
+15. [🙏 Acknowledgments](#-acknowledgments)  
+16. [⭐ Show Your Support](#-show-your-support)  
+
+</details>
+
+---
 
 ## 🌟 About Vizit
 
