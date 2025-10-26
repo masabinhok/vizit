@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface BTreeNode {
@@ -17,12 +17,6 @@ interface BTreeNode {
 interface Message {
   text: string;
   type: 'success' | 'error' | 'info';
-}
-
-interface AnimationStep {
-  node: BTreeNode | null;
-  description: string;
-  highlightType: 'search' | 'insert' | 'delete' | 'split';
 }
 
 export default function BTreeVisualization() {
@@ -69,8 +63,7 @@ export default function BTreeVisualization() {
     }
 
     setIsAnimating(true);
-    let currentNode: BTreeNode | null = root;
-    let found = false;
+    const currentNode: BTreeNode | null = root;
 
     const searchInNode = async (node: BTreeNode): Promise<boolean> => {
       // Highlight current node
@@ -149,7 +142,7 @@ export default function BTreeVisualization() {
     }
 
     // Make a deep copy of the root to avoid mutation issues
-    let workingRoot = JSON.parse(JSON.stringify(root));
+    const workingRoot = JSON.parse(JSON.stringify(root));
 
     // Check if root is full (maxKeys = 2*t - 1)
     if (workingRoot.keys.length === 2 * minDegree - 1) {
@@ -223,7 +216,8 @@ export default function BTreeVisualization() {
     parent.children.splice(index + 1, 0, z);
   };
 
-  // Split a full child
+  // Split a full child (no longer used - replaced by splitChildSync for better synchronization)
+  /*
   const splitChild = async (parent: BTreeNode, index: number) => {
     const t = minDegree;
     const y = parent.children[index];
@@ -260,8 +254,11 @@ export default function BTreeVisualization() {
     await sleep(50); // Small delay to ensure state updates
     setRoot(prevRoot => clearHighlights(prevRoot));
   };
+  */
 
-  // Insert into a non-full node
+
+  // Insert into a non-full node (no longer used - replaced by insertNonFullSync)
+  /*
   const insertNonFull = async (node: BTreeNode, value: number): Promise<void> => {
     if (node.leaf) {
       // Insert key in sorted position
@@ -269,6 +266,7 @@ export default function BTreeVisualization() {
       while (i >= 0 && value < node.keys[i]) i--;
       node.keys.splice(i + 1, 0, value);
       setRoot(prevRoot => ({ ...prevRoot! }));
+      return;
     } else {
       // Find the correct child to insert into
       let i = 0;
@@ -308,6 +306,8 @@ export default function BTreeVisualization() {
       await insertNonFull(node.children[i], value);
     }
   };
+  */
+
 
   // Delete a key from the B-Tree
   const deleteKey = async (value: number) => {
@@ -529,7 +529,7 @@ export default function BTreeVisualization() {
       return (
         <React.Fragment key={node.id}>
           {/* Render lines to children */}
-          {node.children.map((child, index) => (
+          {node.children.map((child) => (
             <line
               key={`line-${node.id}-${child.id}`}
               x1={node.x}
@@ -579,20 +579,20 @@ export default function BTreeVisualization() {
             />
             
             {/* Render keys */}
-            {node.keys.map((key, index) => (
-              <React.Fragment key={`key-${index}`}>
-                {index > 0 && (
+            {node.keys.map((key) => (
+              <React.Fragment key={`key-${key}-${node.id}`}>
+                {node.keys.indexOf(key) > 0 && (
                   <line
-                    x1={(index * nodeWidth) / node.keys.length}
+                    x1={(node.keys.indexOf(key) * nodeWidth) / node.keys.length}
                     y1={5}
-                    x2={(index * nodeWidth) / node.keys.length}
+                    x2={(node.keys.indexOf(key) * nodeWidth) / node.keys.length}
                     y2={nodeHeight - 5}
                     className={isDarkMode ? 'stroke-slate-500' : 'stroke-gray-300'}
                     strokeWidth="1"
                   />
                 )}
                 <text
-                  x={(index + 0.5) * (nodeWidth / node.keys.length)}
+                  x={(node.keys.indexOf(key) + 0.5) * (nodeWidth / node.keys.length)}
                   y={nodeHeight / 2}
                   textAnchor="middle"
                   dominantBaseline="middle"

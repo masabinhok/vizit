@@ -222,6 +222,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
               ? 'bg-gradient-to-r from-slate-800/60 to-slate-700/60 text-slate-300 hover:from-slate-700/70 hover:to-slate-600/70 border border-slate-600/30 hover:border-slate-500/50' 
               : 'bg-gradient-to-r from-gray-100/80 to-white/80 text-gray-700 hover:from-gray-200/80 hover:to-gray-100/80 border border-gray-300/30 hover:border-gray-400/40'
           } backdrop-blur-sm hover:shadow-lg hover:scale-102 hover:-translate-y-0.5 group`}
+          aria-label="Star Vizit on GitHub"
         >
           <svg 
             className="w-4 h-4 transition-transform duration-200 ease-out group-hover:rotate-6" 
@@ -323,7 +324,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
               No algorithms found
             </h3>
             <p className={`text-sm text-center leading-relaxed mb-4 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-              We couldn't find any algorithms matching "<span className="font-medium text-blue-500">{searchQuery}</span>". 
+              We couldn&apos;t find any algorithms matching &quot;<span className="font-medium text-blue-500">{searchQuery}</span>&quot;. 
               Try a different search term.
             </p>
             <button
@@ -340,7 +341,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
         ) : (
           /* Normal categories view */
           <div className="space-y-3">
-            {categoriesToDisplay.map((category, categoryIndex) => {
+            {categoriesToDisplay.map((category) => {
               const isExpanded = expandedCategories.has(category.name);
               const isManuallyExpanded = manuallyExpandedCategories.has(category.name);
               const isAutoExpanded = isExpanded && !isManuallyExpanded && searchQuery.trim();

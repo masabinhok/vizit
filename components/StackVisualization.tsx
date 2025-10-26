@@ -339,6 +339,7 @@ export default function StackVisualization() {
                               : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 hover:from-green-600/90 hover:to-emerald-600/90 text-white'
                             } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5`
                       }`}
+                      aria-label="Push value to stack"
                     >
                       Push
                     </button>
@@ -357,6 +358,7 @@ export default function StackVisualization() {
                               : 'bg-gradient-to-r from-red-500/90 to-pink-500/90 hover:from-red-600/90 hover:to-pink-600/90 text-white'
                             } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5`
                       }`}
+                      aria-label="Pop value from stack"
                     >
                       Pop
                     </button>
@@ -372,6 +374,7 @@ export default function StackVisualization() {
                               : 'bg-gradient-to-r from-blue-500/90 to-indigo-500/90 hover:from-blue-600/90 hover:to-indigo-600/90 text-white'
                             } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5`
                       }`}
+                      aria-label="Peek at top element"
                     >
                       Peek Top Element
                     </button>
@@ -387,6 +390,7 @@ export default function StackVisualization() {
                               : 'bg-gradient-to-r from-orange-500/90 to-red-500/90 hover:from-orange-600/90 hover:to-red-600/90 text-white'
                             } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5`
                       }`}
+                      aria-label="Clear all stack elements"
                     >
                       Clear Stack
                     </button>
@@ -462,10 +466,10 @@ export default function StackVisualization() {
                       <div className="pl-2 space-y-1">
                         <div>function push(value):</div>
                         <div className="pl-4">if stack is full:</div>
-                        <div className="pl-8">return "Stack Overflow"</div>
+                        <div className="pl-8">return &quot;Stack Overflow&quot;</div>
                         <div className="pl-4">top = top + 1</div>
                         <div className="pl-4">stack[top] = value</div>
-                        <div className="pl-4">return "Success"</div>
+                        <div className="pl-4">return &quot;Success&quot;</div>
                       </div>
                     </div>
 
@@ -476,7 +480,7 @@ export default function StackVisualization() {
                       <div className="pl-2 space-y-1">
                         <div>function pop():</div>
                         <div className="pl-4">if stack is empty:</div>
-                        <div className="pl-8">return "Stack Underflow"</div>
+                        <div className="pl-8">return &quot;Stack Underflow&quot;</div>
                         <div className="pl-4">value = stack[top]</div>
                         <div className="pl-4">top = top - 1</div>
                         <div className="pl-4">return value</div>
@@ -490,7 +494,7 @@ export default function StackVisualization() {
                       <div className="pl-2 space-y-1">
                         <div>function peek():</div>
                         <div className="pl-4">if stack is empty:</div>
-                        <div className="pl-8">return "Stack is Empty"</div>
+                        <div className="pl-8">return &quot;Stack is Empty&quot;</div>
                         <div className="pl-4">return stack[top]</div>
                       </div>
                     </div>
@@ -502,7 +506,7 @@ export default function StackVisualization() {
                       <div className="pl-2 space-y-1">
                         <div>function clear():</div>
                         <div className="pl-4">top = -1</div>
-                        <div className="pl-4">return "Stack Cleared"</div>
+                        <div className="pl-4">return &quot;Stack Cleared&quot;</div>
                       </div>
                     </div>
                   </div>

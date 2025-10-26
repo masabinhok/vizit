@@ -112,10 +112,10 @@ export default function InfoPanel({
                   {algorithmConfig?.name === 'Bubble Sort' ? (
                     <>
                       <strong>Bubble Sort</strong> is one of the simplest sorting algorithms. It works by repeatedly stepping through the list, 
-                      comparing adjacent elements and swapping them if they're in the wrong order. The pass through the list is repeated 
+                      comparing adjacent elements and swapping them if they&apos;re in the wrong order. The pass through the list is repeated 
                       until the list is sorted.
                       <br/><br/>
-                      The algorithm gets its name because smaller elements "bubble" to the beginning of the list, 
+                      The algorithm gets its name because smaller elements &quot;bubble&quot; to the beginning of the list, 
                       just like air bubbles rise to the surface in water.
                     </>
                   ) : (
@@ -137,7 +137,7 @@ export default function InfoPanel({
                       </div>
                       <div className="flex items-start gap-3">
                         <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
-                        <p><strong>Swap:</strong> If they're in the wrong order, swap them.</p>
+                        <p><strong>Swap:</strong> If they&apos;re in the wrong order, swap them.</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
@@ -145,7 +145,7 @@ export default function InfoPanel({
                       </div>
                       <div className="flex items-start gap-3">
                         <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
-                        <p><strong>Repeat:</strong> After each pass, the largest element "bubbles up" to its correct position.</p>
+                        <p><strong>Repeat:</strong> After each pass, the largest element &quot;bubbles up&quot; to its correct position.</p>
                       </div>
                       <div className="flex items-start gap-3">
                         <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">5</span>

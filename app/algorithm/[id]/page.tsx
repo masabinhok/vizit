@@ -97,7 +97,7 @@ export default function AlgorithmNotImplementedPage() {
           <p className={`text-base md:text-lg mb-4 leading-relaxed ${
             isDarkMode ? 'text-slate-300' : 'text-gray-700'
           }`}>
-            This algorithm hasn't been implemented yet, but{' '}
+            This algorithm hasn&apos;t been implemented yet, but{' '}
             <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
               you can help bring it to life!
             </span>

@@ -28,7 +28,9 @@ export default function BubbleSortPage() {
   useEffect(() => {
     setInputArray(algorithmConfig.defaultInput);
     // Auto-initialize for the first load
-    setTimeout(() => initializeAlgorithm(), 100);
+    const timer = setTimeout(() => initializeAlgorithm(), 100);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Animation control
