@@ -44,11 +44,11 @@ const createArrayState = (
 };
 
 // Global step collector and metadata
-let steps: AlgorithmStep[] = [];
+const steps: AlgorithmStep[] = [];
 let comparisons = 0;
 let swaps = 0; // Not technically swaps, but we'll count merge assignments as "operations"
-let globalArray: number[] = [];
-let originalIndices: number[] = [];
+const globalArray: number[] = [];
+const originalIndices: number[] = [];
 
 const recordStep = (
   values: number[],
