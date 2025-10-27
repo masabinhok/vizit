@@ -11,7 +11,7 @@ export default function MazeGrid({
   if (!isInitialized || !currentStep) {
     return (
       <div className="w-full h-full flex items-center justify-center text-gray-500">
-        Click "Initialize" to start
+        Click &quot;Initialize&quot; to start
       </div>
     );
   }
