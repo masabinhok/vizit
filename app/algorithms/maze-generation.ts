@@ -35,8 +35,6 @@ export const mazeGenerationConfig: AlgorithmConfig = {
     const directions = [[0, -2], [2, 0], [0, 2], [-2, 0]];
     const wallDirs = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
-    const idx = (x: number, y: number) => y * w + x;
-
     // Helper: in bounds and odd coordinates
     const inBounds = (x: number, y: number) => x > 0 && x < w - 1 && y > 0 && y < h - 1;
 
