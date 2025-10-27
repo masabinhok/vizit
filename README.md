@@ -76,9 +76,9 @@
 
 > **Coming Soon:** Screenshots and GIFs showcasing Vizit in action!
 
-| Bubble Sort | B-Tree | Stack |
-|-------------|--------|-------|
-| ![Bubble Sort Demo](#) | ![B-Tree Demo](#) | ![Stack Demo](#) |
+| Bubble Sort | Merge Sort | B-Tree | Stack |
+|-------------|------------|--------| ----- |
+| ![Bubble Sort Demo](#) | ![Merge Sort Demo](#) | ![B-Tree Demo](#) | ![Stack Demo](#) |
 
 ---
 
@@ -88,8 +88,8 @@
 
 #### **Sorting Algorithms**
 - ✅ **Bubble Sort** - Classic comparison-based sorting with step-by-step visualization
+- ✅ **Merge Sort** - Efficient divide-and-conquer sorting algorithm with interactive demo
 - 🚧 Quick Sort *(Coming Soon)*
-- 🚧 Merge Sort *(Coming Soon)*
 
 #### **Data Structures**
 - ✅ **Stack** - LIFO operations with push, pop, and peek animations
