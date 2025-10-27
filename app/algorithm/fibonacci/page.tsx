@@ -5,7 +5,7 @@ import { useTheme } from '../../../contexts/ThemeContext';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
-import { fibonacciConfig } from '../../../app/algorithms/fibonacci';
+import { fibonacciConfig } from '../../algorithms/fibonacci';
 import { AlgorithmStep } from '../../../types';
 import toast, { Toaster } from 'react-hot-toast';
 

@@ -54,7 +54,7 @@ export default function VisualizationCanvas({
   }
 
   return (
-    <div className="h-full flex flex-col justify-center p-8 relative space-y-6">
+    <div className="h-full flex flex-col justify-center p-8 relative">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 to-purple-500/3 rounded-2xl" />
       {/* Array Visualization split into rows when needed */}

@@ -24,7 +24,7 @@ const makeArrayState = (values: number[], highlight: { comparing?: number[]; new
 
 const generateFibonacciSteps = (inputArr: number[]): AlgorithmStep[] => {
   const steps: AlgorithmStep[] = [];
-  const raw = inputArr && inputArr.length > 0 ? inputArr[0] : 8;
+  const raw = inputArr?.[0] ?? 8;
   const n = Math.max(0, Math.floor(raw));
 
   // Initial state
