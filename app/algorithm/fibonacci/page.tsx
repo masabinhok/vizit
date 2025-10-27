@@ -83,7 +83,7 @@ export default function FibonacciPage() {
         return;
       }
       if (n > 25) {
-        toast.error("Please enter 50 or fewer terms for better visualization");
+        toast.error("Please enter 25 or fewer terms for better visualization");
         return;
       }
 
