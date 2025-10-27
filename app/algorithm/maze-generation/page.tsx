@@ -7,6 +7,7 @@ import MazeControlBar from '../../../components/MazeControlBar';
 import InfoPanel from '../../../components/InfoPanel';
 import { mazeGenerationConfig } from '../../algorithms/maze-generation';
 import { AlgorithmStep } from '../../../types';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function MazeGenerationPage() {
   const { resolvedTheme } = useTheme();
@@ -34,7 +35,7 @@ export default function MazeGenerationPage() {
       const h = Number(parts[1]);
 
       if (isNaN(w) || isNaN(h) || w < 5 || h < 5 || w > 31 || h > 31) {
-        alert('Please enter valid odd dimensions like "15x15" (5–31)');
+        toast.error('Please enter valid odd dimensions like "15x15" (5–31)');
         return;
       }
 
@@ -43,7 +44,7 @@ export default function MazeGenerationPage() {
       setIsInitialized(true);
     } catch (error) {
       console.error('Maze error:', error);
-      alert('Invalid input. Use format like "15x15".');
+      toast.error('Invalid input. Use format like "15x15".');
     }
   };
 
@@ -154,6 +155,7 @@ export default function MazeGenerationPage() {
             currentStepIndex={0}
           />
         </section>
+        <Toaster position="top-right" reverseOrder={false} />
       </main>
     </div>
   );
