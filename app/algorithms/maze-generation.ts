@@ -1,4 +1,3 @@
-// app/algorithms/maze-generation/maze-generation.ts
 import { AlgorithmConfig, AlgorithmStep } from '../../types';
 
 export const mazeGenerationConfig: AlgorithmConfig = {
@@ -92,7 +91,7 @@ export const mazeGenerationConfig: AlgorithmConfig = {
       }
     }
 
-    // ✅ Only ONE step: the final maze map
+    // the final maze map
     return [{
       array: flatArray,
       i: -1,
