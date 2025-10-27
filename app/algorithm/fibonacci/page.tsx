@@ -82,7 +82,7 @@ export default function FibonacciPage() {
         toast.error("Please enter a non-negative number");
         return;
       }
-      if (n > 50) {
+      if (n > 25) {
         toast.error("Please enter 50 or fewer terms for better visualization");
         return;
       }
