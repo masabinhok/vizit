@@ -7,6 +7,7 @@ import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
 import { mergeSortConfig } from '../../../app/algorithms/merge-sort';
 import { AlgorithmStep } from '../../../types';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function MergeSortPage() {
   const { resolvedTheme } = useTheme();
@@ -71,12 +72,12 @@ export default function MergeSortPage() {
         .filter(n => !isNaN(n) && isFinite(n));
       
       if (numbers.length === 0) {
-        alert("Please enter valid numbers separated by commas");
+        toast.error("Please enter valid numbers separated by commas");
         return;
       }
       
       if (numbers.length > 20) {
-        alert("Please enter no more than 20 numbers for better visualization");
+        toast.error("Please enter no more than 20 numbers for better visualization");
         return;
       }
       
@@ -87,7 +88,7 @@ export default function MergeSortPage() {
       setIsPlaying(false);
     } catch (error) {
       console.error("Algorithm initialization error:", error);
-      alert("Invalid input format. Please use numbers separated by commas (e.g., 64,34,25,12).");
+      toast.error("Invalid input format. Please use numbers separated by commas (e.g., 64,34,25,12).");
     }
   };
 
@@ -228,6 +229,7 @@ export default function MergeSortPage() {
             currentStepIndex={currentStep}
           />
         </section>
+        <Toaster position="top-right" reverseOrder={false} />
       </main>
     </div>
   );
