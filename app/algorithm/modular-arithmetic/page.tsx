@@ -66,12 +66,12 @@ export default function ModularArithmeticPage() {
         .filter((n: number) => !isNaN(n) && isFinite(n));
 
       if (numbers.length < 2) {
-        toast.error("Please enter two or three integers: (a,m) or (a,e,m)");
+        toast.error("Please enter at least two integers: (a,m) or (a,e,m)");
         return;
       }
 
       if (numbers.length > 3) {
-        toast.error("Please enter two or three integers: (a,m) or (a,e,m)");
+        toast.error("Please enter at most three integers: (a,m) or (a,e,m)");
         return;
       }
 
