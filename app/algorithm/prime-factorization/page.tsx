@@ -64,24 +64,26 @@ export default function PrimeFactorizationPage() {
   const initializeAlgorithm = () => {
     try {
       // Use current inputArray or fallback to default
-      const arrayToProcess = inputArray.trim() || algorithmConfig.defaultInput;
-      const numbers = arrayToProcess.split(',')
-        .map((n: string) => n.trim())
-        .filter((n: string) => n.length > 0)
-        .map((n: string) => parseInt(n, 10))
-        .filter((n: number) => !isNaN(n) && isFinite(n));
-      
-      if (numbers.length === 0) {
+      const raw = (inputArray.trim() || algorithmConfig.defaultInput);
+
+      // Parse exactly one integer input (no comma-separated list)
+      if (raw.includes(',')) {
+        toast.error('Please enter a single number only (no commas)');
+        return;
+      }
+
+      const parsed = parseInt(raw, 10);
+      if (isNaN(parsed) || !isFinite(parsed)) {
         toast.error("Please enter a valid positive integer (e.g., 84)");
         return;
       }
 
-      // For prime factorization we only care about the first number
-      const n = numbers[0];
+      const n = Math.floor(parsed);
       if (n <= 0) {
         toast.error("Please enter a positive integer");
         return;
       }
+
       if (n > 1000000) {
         toast.error("Please enter a number ≤ 1,000,000 for smooth visualization");
         return;

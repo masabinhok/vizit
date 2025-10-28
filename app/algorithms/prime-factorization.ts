@@ -7,11 +7,15 @@ const primeFactorizationCode = [
   '  while (d * d <= n) {',
   '    while (n % d === 0) {',
   '      factors.push(d);',
-  '      n = n / d;',
+  '      // use integer division to update the remainder',
+  '      n = Math.floor(n / d);',
   '    }',
-  '    d += (d === 2) ? 1 : 2; // skip even numbers after 2',
+  '    // increment: 2 -> 3 then skip even numbers',
+  '    d = d === 2 ? 3 : d + 2;',
   '  }',
-  '  if (n > 1) factors.push(n);',
+  '  if (n > 1) {',
+  '    factors.push(n);',
+  '  }',
   '  return factors;',
   '}'
 ];
@@ -29,10 +33,12 @@ const makeState = (remainder: number, factors: number[], highlight: { candidate?
   // Optionally show candidate as a temporary element at index 1
   if (highlight.candidate !== undefined) {
     // insert or replace the candidate slot at index 1
+    const isComparing = highlight.candidate !== undefined;
+    const isSwapping = highlight.matched === true;
     if (arr.length >= 2) {
-      arr[1] = { value: highlight.candidate, isComparing: !!highlight.candidate, isSwapping: !!highlight.matched, isSorted: false };
+      arr[1] = { value: highlight.candidate, isComparing, isSwapping, isSorted: false };
     } else {
-      arr.push({ value: highlight.candidate, isComparing: !!highlight.candidate, isSwapping: !!highlight.matched, isSorted: false });
+      arr.push({ value: highlight.candidate, isComparing, isSwapping, isSorted: false });
     }
   }
 
