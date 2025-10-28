@@ -30,9 +30,9 @@ const makeState = (remainder: number, factors: number[], highlight: { candidate?
   if (highlight.candidate !== undefined) {
     // insert or replace the candidate slot at index 1
     if (arr.length >= 2) {
-      arr[1] = { value: highlight.candidate, isComparing: !!highlight.candidate, isSwapping: !!highlight.matched, isSorted: false };
+      arr[1] = { value: highlight.candidate, isComparing: true, isSwapping: !!highlight.matched, isSorted: false };
     } else {
-      arr.push({ value: highlight.candidate, isComparing: !!highlight.candidate, isSwapping: !!highlight.matched, isSorted: false });
+      arr.push({ value: highlight.candidate, isComparing: true, isSwapping: !!highlight.matched, isSorted: false });
     }
   }
 
