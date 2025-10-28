@@ -119,6 +119,7 @@ const recordMergeResult = (
 };
 
 // Recursive merge sort with step recording
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const mergeSortRecursive = (
   values: number[],
   localIndices: number[],

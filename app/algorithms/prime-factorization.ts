@@ -26,7 +26,7 @@ const makeState = (remainder: number, factors: number[], highlight: { candidate?
   arr.push({ value: remainder, isComparing: false, isSwapping: false, isSorted: false });
 
   // Then one element per discovered factor
-  for (let f of factors) {
+    for (const f of factors) {
     arr.push({ value: f, isComparing: false, isSwapping: false, isSorted: false });
   }
 
