@@ -68,7 +68,7 @@ export default function FibonacciPage() {
       const numbers = arrayToProcess.split(',')
         .map(n => n.trim())
         .filter(n => n.length > 0)
-        .map(n => parseInt(n))
+        .map(n => parseInt(n, 10))
         .filter(n => !isNaN(n) && isFinite(n));
       
       if (numbers.length === 0) {
