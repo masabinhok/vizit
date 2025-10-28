@@ -39,7 +39,7 @@ export const ALGORITHM_CATEGORIES: Category[] = [
   {
     name: "Math",
     algorithms: [
-      "sieve",
+      "sieve-of-eratosthenes",
       "fibonacci",
       "prime-factorization",
       "gcd",
@@ -105,7 +105,7 @@ export const ALGORITHM_NAME_MAP: Record<string, string> = {
   "stack": "Stack",
   "queue": "Queue",
   "linked-list": "Linked List",
-  "sieve": "Sieve of Eratosthenes",
+  "sieve-of-eratosthenes": "Sieve of Eratosthenes",
   "fibonacci": "Fibonacci",
   "prime-factorization": "Prime Factorization",
   "pollard-rho": "Pollard's Rho",
@@ -131,3 +131,5 @@ export const ALGORITHM_NAME_MAP: Record<string, string> = {
   "langtons-ant": "Langton's Ant",
   "percolation": "Percolation"
 };
+
+

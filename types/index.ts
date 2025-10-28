@@ -5,6 +5,7 @@ export interface ArrayElement {
   isSorted: boolean;
   isSelected?: boolean;
   isPivot?: boolean;
+  isPrime?: boolean;
 }
 
 export interface AlgorithmStep {
@@ -46,3 +47,5 @@ export interface VisualizationState {
   steps: AlgorithmStep[];
   isInitialized: boolean;
 }
+
+
