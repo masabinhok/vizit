@@ -26,7 +26,7 @@ interface Message {
   type: 'success' | 'error' | 'info';
 }
 
-const SAMPLE_GRAPH: Record<NodeId, GraphNode> = {
+const SAMPLE_GRAPH: Record<NodeId, GraphNode> = Object.freeze({
   0: { id: 0, neighbors: [1, 2] },
   1: { id: 1, neighbors: [0, 3, 4] },
   2: { id: 2, neighbors: [0, 5] },
@@ -34,12 +34,14 @@ const SAMPLE_GRAPH: Record<NodeId, GraphNode> = {
   4: { id: 4, neighbors: [1, 6] },
   5: { id: 5, neighbors: [2] },
   6: { id: 6, neighbors: [4] },
-};
+});
 
 export default function BFSVisualization() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj));
 
   const [historyStack, setHistoryStack] = useState<{
     nodes: Record<NodeId, BFSNodeState>;
@@ -71,7 +73,6 @@ export default function BFSVisualization() {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [parentMap, setParentMap] = useState<Record<NodeId, NodeId | null>>({});
-  const [message, setMessage] = useState<Message | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'controls' | 'pseudocode' | 'explanation' | 'history' | 'result'>('controls');
   const [animationSpeed, setAnimationSpeed] = useState(800);
@@ -222,8 +223,9 @@ export default function BFSVisualization() {
   };
 
   const resetGraph = () => {
-    const newGraph = { ...SAMPLE_GRAPH };
+    const newGraph = deepClone(SAMPLE_GRAPH);
     setGraph(newGraph);
+    
     setNodePositions({
       0: { x: 50, y: 10 },
       1: { x: 35, y: 25 },
@@ -555,17 +557,6 @@ export default function BFSVisualization() {
     <div className="flex h-full gap-4 overflow-hidden">
       <Toaster position="top-right" reverseOrder={false} />
       <div className="flex-1 flex flex-col min-h-0 relative overflow-hidden">
-        {message && (
-          <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg backdrop-blur-sm ${message.type === 'success'
-            ? `${isDarkMode ? 'bg-green-900/90 text-green-300 border border-green-700/50' : 'bg-green-100/95 text-green-700 border border-green-300/50'}`
-            : message.type === 'error'
-              ? `${isDarkMode ? 'bg-red-900/90 text-red-300 border border-red-700/50' : 'bg-red-100/95 text-red-700 border border-red-300/50'}`
-              : `${isDarkMode ? 'bg-blue-900/90 text-blue-300 border border-blue-700/50' : 'bg-blue-100/95 text-blue-700 border border-blue-300/50'}`
-            }`}>
-            {message.text}
-          </div>
-        )}
-
         <div
           ref={canvasRef}
           className={`flex-1 overflow-auto rounded-2xl ${isDarkMode
