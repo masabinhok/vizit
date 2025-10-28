@@ -36,8 +36,8 @@ const generateModularSteps = (inputArr: number[]): AlgorithmStep[] => {
   }
 
   const aRaw = inputArr[0] ?? 0;
-  const bRaw = inputArr[1] ?? 0; // exponent or modulus depending on length
-  const cRaw = inputArr[2] ?? 1; // modulus if present
+  const bRaw = inputArr[1] ?? 0; // modulus for 2-arg input, exponent for 3-arg input
+  const cRaw = inputArr[2] ?? 1; // modulus for 3-arg input (unused for 2-arg)
 
   const a = Math.floor(Number.isFinite(aRaw) ? aRaw : 0);
   const b = Math.floor(Number.isFinite(bRaw) ? bRaw : 0);
