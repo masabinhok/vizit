@@ -105,7 +105,7 @@ const generateFibonacciSteps = (inputArr: number[]): AlgorithmStep[] => {
       swaps: 0
     });
 
-    const next = seq[i - 1] + seq[i - 2];
+    const next = seq[i - 2] + seq[i - 1];
     seq.push(next);
 
     // push state showing new element
