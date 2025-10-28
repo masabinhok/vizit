@@ -5,7 +5,7 @@ import { useTheme } from '../../../contexts/ThemeContext';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
-import { radixSortConfig } from '../../algorithms/radix-sort';
+import { radixSortConfig } from '../../../app/algorithms/radix-sort';
 import { AlgorithmStep } from '../../../types';
 import { Toaster, toast } from 'sonner';
 import { Play, Pause, ChevronLeft, ChevronRight, RotateCcw, Check, X, Wand2, Settings2, Zap } from 'lucide-react';
