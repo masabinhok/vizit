@@ -76,9 +76,9 @@
 
 > **Coming Soon:** Screenshots and GIFs showcasing Vizit in action!
 
-| Bubble Sort | Merge Sort | B-Tree | Stack |
-|-------------|------------|--------| ----- |
-| ![Bubble Sort Demo](#) | ![Merge Sort Demo](#) | ![B-Tree Demo](#) | ![Stack Demo](#) |
+| Bubble Sort | Merge Sort | B-Tree | Stack | Queue |
+|-------------|------------|--------| ----- | ----- |
+| ![Bubble Sort Demo](#) | ![Merge Sort Demo](#) | ![B-Tree Demo](#) | ![Stack Demo](#) | ![Queue Demo](#) |
 
 ---
 
@@ -93,6 +93,7 @@
 
 #### **Data Structures**
 - ✅ **Stack** - LIFO operations with push, pop, and peek animations
+- ✅ **Queue** - FIFO operations with enqueue, dequeue, and peek animations
 - ✅ **B-Tree** - Self-balancing tree with configurable minimum degree
 - 🚧 Binary Search Tree *(Coming Soon)*
 - 🚧 Hash Table *(Coming Soon)*
