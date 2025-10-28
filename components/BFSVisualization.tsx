@@ -55,12 +55,11 @@ const NODE_POSITIONS: Record<NodeId, { x: number; y: number }> = {
   6: { x: 45, y: 55 },
 };
 
-
 export default function BFSVisualization() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   const canvasRef = useRef<HTMLDivElement>(null);
-  
+
   const [historyStack, setHistoryStack] = useState<{
     nodes: Record<NodeId, BFSNodeState>;
     bfsQueue: QueueElement[];
@@ -81,6 +80,7 @@ export default function BFSVisualization() {
     return initial;
   });
 
+  const [startNodeId, setStartNodeId] = useState<NodeId | null>(0);
   const [bfsQueue, setBfsQueue] = useState<QueueElement[]>([]);
   const [hasBFSStarted, setHasBFSStarted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
@@ -113,22 +113,26 @@ export default function BFSVisualization() {
     });
     setNodes(resetNodes);
     setBfsQueue([]);
-    setHasBFSStarted(false);
     setIsRunning(false);
     setIsPaused(false);
-    setParentMap({ 0: null });
+    setParentMap({});
     setHistory([]);
     setStats({ visitedCount: 0, queueMaxLength: 0, steps: 0 });
+    setHasBFSStarted(false);
+    setStartNodeId(null);
+    setHistoryStack([]);
     showMessage('Graph reset', 'info');
   };
 
-  const undoStep = useCallback(() => {
-  if (historyStack.length === 0) {
-    showMessage('No steps to undo', 'info');
-    return;
-  }
 
-  const lastState = historyStack[historyStack.length - 1];
+  const undoStep = useCallback(() => {
+    if (historyStack.length === 0) {
+      showMessage('No steps to undo', 'info');
+      return;
+    }
+
+
+    const lastState = historyStack[historyStack.length - 1];
     setNodes(lastState.nodes);
     setBfsQueue(lastState.bfsQueue);
     setParentMap(lastState.parentMap);
@@ -165,15 +169,19 @@ export default function BFSVisualization() {
 
   const stepBFS = useCallback(() => {
     if (!hasBFSStarted) {
-      const startNode = 0;
+      if (startNodeId === null) {
+        showMessage('Please select a start node first!', 'error');
+        return;
+      }
+
       setHasBFSStarted(true);
-      setParentMap({ [startNode]: null });
+      setParentMap({ [startNodeId]: null });
       setNodes(prev => ({
         ...prev,
-        [startNode]: { ...prev[startNode], status: 'queued', distance: 0 }
+        [startNodeId]: { ...prev[startNodeId], status: 'queued', distance: 0 }
       }));
-      setBfsQueue([{ id: Date.now(), value: startNode, operation: 'enqueue' }]);
-      addToHistory(`Initialized BFS from node ${startNode}`);
+      setBfsQueue([{ id: Date.now(), value: startNodeId, operation: 'enqueue' }]);
+      addToHistory(`Initialized BFS from node ${startNodeId}`);
       setStats(prev => ({ ...prev, queueMaxLength: 1 }));
       return;
     }
@@ -253,7 +261,7 @@ export default function BFSVisualization() {
         setIsPaused(false);
       }
     }, 300);
-  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength]);
+  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength, startNodeId]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -312,7 +320,12 @@ export default function BFSVisualization() {
           let stroke = '';
           let textColor = '';
 
-          if (node.status === 'visited') {
+          // Special highlight for selected start node (before BFS starts)
+          if (!hasBFSStarted && startNodeId === node.id) {
+            fill = isDarkMode ? '#4f46e5' : '#6366f1'; // indigo
+            stroke = isDarkMode ? '#4338ca' : '#4f46e5';
+            textColor = '#ffffff';
+          } else if (node.status === 'visited') {
             fill = isDarkMode ? '#059669' : '#10b981';
             stroke = isDarkMode ? '#065f46' : '#059669';
             textColor = '#ffffff';
@@ -325,6 +338,13 @@ export default function BFSVisualization() {
             stroke = isDarkMode ? '#b45309' : '#d97706';
             textColor = '#ffffff';
           } else {
+            // unvisited
+            fill = isDarkMode ? '#334155' : '#e5e7eb';
+            stroke = isDarkMode ? '#475569' : '#d1d5db';
+            textColor = isDarkMode ? '#cbd5e1' : '#374151';
+          }
+
+          if (!fill) {
             fill = isDarkMode ? '#334155' : '#e5e7eb';
             stroke = isDarkMode ? '#475569' : '#d1d5db';
             textColor = isDarkMode ? '#cbd5e1' : '#374151';
@@ -347,6 +367,17 @@ export default function BFSVisualization() {
                 stroke={stroke}
                 strokeWidth="0.5"
                 className={node.status === 'visiting' ? 'animate-pulse' : ''}
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent parent interference
+                  if (!hasBFSStarted) {
+                    setStartNodeId(node.id);
+                    showMessage(`Start node selected: ${node.id}`, 'info');
+                  }
+                }}
+                style={{
+                  cursor: !hasBFSStarted ? 'pointer' : 'default',
+                  pointerEvents: 'all' // ensure it receives clicks
+                }}
               />
               <text
                 x={pos.x}
@@ -365,9 +396,9 @@ export default function BFSVisualization() {
       </svg>
     );
   };
-  
-  const isBFSComplete = hasBFSStarted && 
-    bfsQueue.length === 0 && 
+
+  const isBFSComplete = hasBFSStarted &&
+    bfsQueue.length === 0 &&
     !Object.values(nodes).some(n => n.status === 'queued' || n.status === 'visiting');
 
   return (
@@ -375,10 +406,10 @@ export default function BFSVisualization() {
       <div className="flex-1 flex flex-col min-h-0 relative overflow-hidden">
         {message && (
           <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg backdrop-blur-sm ${message.type === 'success'
-              ? `${isDarkMode ? 'bg-green-900/90 text-green-300 border border-green-700/50' : 'bg-green-100/95 text-green-700 border border-green-300/50'}`
-              : message.type === 'error'
-                ? `${isDarkMode ? 'bg-red-900/90 text-red-300 border border-red-700/50' : 'bg-red-100/95 text-red-700 border border-red-300/50'}`
-                : `${isDarkMode ? 'bg-blue-900/90 text-blue-300 border border-blue-700/50' : 'bg-blue-100/95 text-blue-700 border border-blue-300/50'}`
+            ? `${isDarkMode ? 'bg-green-900/90 text-green-300 border border-green-700/50' : 'bg-green-100/95 text-green-700 border border-green-300/50'}`
+            : message.type === 'error'
+              ? `${isDarkMode ? 'bg-red-900/90 text-red-300 border border-red-700/50' : 'bg-red-100/95 text-red-700 border border-red-300/50'}`
+              : `${isDarkMode ? 'bg-blue-900/90 text-blue-300 border border-blue-700/50' : 'bg-blue-100/95 text-blue-700 border border-blue-300/50'}`
             }`}>
             {message.text}
           </div>
@@ -387,8 +418,8 @@ export default function BFSVisualization() {
         <div
           ref={canvasRef}
           className={`flex-1 overflow-auto rounded-2xl ${isDarkMode
-              ? 'bg-slate-800/30 border border-slate-700/30'
-              : 'bg-white/30 border border-gray-200/30'
+            ? 'bg-slate-800/30 border border-slate-700/30'
+            : 'bg-white/30 border border-gray-200/30'
             } backdrop-blur-sm flex items-center justify-center`}
         >
           {renderGraph()}
@@ -411,12 +442,12 @@ export default function BFSVisualization() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex-1 px-3 py-3 text-sm font-medium rounded-t-xl transition-all duration-200 ${activeTab === tab.id
-                  ? isDarkMode
-                    ? 'bg-slate-700/70 text-white border-b-2 border-blue-400'
-                    : 'bg-gray-100/70 text-gray-900 border-b-2 border-blue-500'
-                  : isDarkMode
-                    ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/30'
+                ? isDarkMode
+                  ? 'bg-slate-700/70 text-white border-b-2 border-blue-400'
+                  : 'bg-gray-100/70 text-gray-900 border-b-2 border-blue-500'
+                : isDarkMode
+                  ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/30'
                 }`}
             >
               <span className="mr-1">{tab.icon}</span>
@@ -428,8 +459,8 @@ export default function BFSVisualization() {
         {/* Tab Content */}
         <div
           className={`flex-1 overflow-y-auto rounded-b-2xl ${isDarkMode
-              ? 'bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-l border-r border-b border-slate-600/30'
-              : 'bg-gradient-to-br from-white/50 to-gray-50/50 border-l border-r border-b border-gray-200/30'
+            ? 'bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-l border-r border-b border-slate-600/30'
+            : 'bg-gradient-to-br from-white/50 to-gray-50/50 border-l border-r border-b border-gray-200/30'
             } backdrop-blur-sm shadow-lg`}
         >
           <div className="p-5">
@@ -439,30 +470,51 @@ export default function BFSVisualization() {
                   BFS Controls
                 </h3>
 
+                <div className="mb-3">
+                  <label className={`block text-sm mb-3 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                    Select Start Node:
+                  </label>
+                  <select
+                    value={startNodeId ?? ''}
+                    onChange={(e) => setStartNodeId(e.target.value ? Number(e.target.value) : null)}
+                    disabled={hasBFSStarted}
+                    className={`w-full p-2 rounded-lg mb-2 ${isDarkMode ? 'bg-slate-700 text-white' : 'bg-white text-gray-900 border'}`}
+                  >
+                    <option value="">-- Choose --</option>
+                    {Object.keys(SAMPLE_GRAPH).map(id => (
+                      <option key={id} value={id}>Node {id}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <button
                   onClick={() => {
-                    if (!hasBFSStarted && !isBFSComplete) {
-                      // Start BFS and begin auto-run
-                      startBFS();
-                    } else {
-                      if (isRunning) {
-                        // Toggle pause/resume
-                        setIsPaused(!isPaused);
-                      } else {
-                        // Resume from stopped state
-                        setIsRunning(true);
-                        setIsPaused(false);
+                    if (isBFSComplete) return;
+
+                    if (!hasBFSStarted) {
+                      if (startNodeId === null) {
+                        showMessage('Select a start node first!', 'error');
+                        return;
                       }
+                      // Trigger first step to initialize
+                      stepBFS();
+                    }
+
+                    // Toggle auto-run
+                    if (isRunning) {
+                      setIsPaused(!isPaused);
+                    } else {
+                      setIsRunning(true);
+                      setIsPaused(false);
                     }
                   }}
                   disabled={isBFSComplete}
-                  className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
-                    isBFSComplete
+                  className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isBFSComplete
                       ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
                       : isRunning && !isPaused
                         ? `${isDarkMode ? 'bg-amber-600/80 text-white' : 'bg-amber-500/90 text-white'}`
                         : `${isDarkMode ? 'bg-blue-600/80 text-white' : 'bg-blue-500/90 text-white'}`
-                  }`}
+                    }`}
                 >
                   {isRunning && !isPaused ? 'Pause' : 'Play'}
                 </button>
@@ -472,14 +524,13 @@ export default function BFSVisualization() {
                   <button
                     onClick={undoStep}
                     disabled={historyStack.length === 0}
-                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
-                      historyStack.length === 0
+                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${historyStack.length === 0
                         ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
                         : `${isDarkMode
-                            ? 'bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white'
-                            : 'bg-gradient-to-r from-rose-500/90 to-red-500/90 text-white'
-                          } hover:shadow-lg hover:scale-102`
-                    }`}
+                          ? 'bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white'
+                          : 'bg-gradient-to-r from-rose-500/90 to-red-500/90 text-white'
+                        } hover:shadow-lg hover:scale-102`
+                      }`}
                   >
                     Previous Step
                   </button>
@@ -488,14 +539,13 @@ export default function BFSVisualization() {
                   <button
                     onClick={stepBFS}
                     disabled={isBFSComplete}
-                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
-                      isBFSComplete
+                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isBFSComplete
                         ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
                         : `${isDarkMode
-                            ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
-                            : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
-                          } hover:shadow-lg hover:scale-102`
-                    }`}
+                          ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
+                          : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
+                        } hover:shadow-lg hover:scale-102`
+                      }`}
                   >
                     Next Step
                   </button>
@@ -504,8 +554,8 @@ export default function BFSVisualization() {
                 <button
                   onClick={resetGraph}
                   className={`w-full px-4 py-2.5 rounded-xl font-medium ${isDarkMode
-                      ? 'bg-gradient-to-r from-orange-600/80 to-red-600/80 hover:from-orange-500/90 hover:to-red-500/90 text-white'
-                      : 'bg-gradient-to-r from-orange-500/90 to-red-500/90 hover:from-orange-600/90 hover:to-red-600/90 text-white'
+                    ? 'bg-gradient-to-r from-orange-600/80 to-red-600/80 hover:from-orange-500/90 hover:to-red-500/90 text-white'
+                    : 'bg-gradient-to-r from-orange-500/90 to-red-500/90 hover:from-orange-600/90 hover:to-red-600/90 text-white'
                     } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5 transition-all duration-200`}
                 >
                   Reset Graph
@@ -541,8 +591,8 @@ export default function BFSVisualization() {
                 </h3>
                 <div
                   className={`p-4 rounded-xl font-mono text-xs ${isDarkMode
-                      ? 'bg-slate-900/50 text-slate-200 border border-slate-700/30'
-                      : 'bg-gray-100/80 text-gray-800 border border-gray-200/30'
+                    ? 'bg-slate-900/50 text-slate-200 border border-slate-700/30'
+                    : 'bg-gray-100/80 text-gray-800 border border-gray-200/30'
                     } overflow-x-auto`}
                 >
                   <div className="space-y-2 leading-relaxed">
@@ -652,7 +702,7 @@ export default function BFSVisualization() {
             {activeTab === 'result' && (
               <div className="space-y-4">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Shortest Paths (from Node 0)
+                  Shortest Paths (from Node {startNodeId})
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                   BFS guarantees the shortest path in unweighted graphs.
