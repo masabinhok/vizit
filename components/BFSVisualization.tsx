@@ -21,11 +21,6 @@ interface QueueElement {
   value: NodeId;
 }
 
-interface Message {
-  text: string;
-  type: 'success' | 'error' | 'info';
-}
-
 const SAMPLE_GRAPH: Record<NodeId, GraphNode> = Object.freeze({
   0: { id: 0, neighbors: [1, 2] },
   1: { id: 1, neighbors: [0, 3, 4] },
