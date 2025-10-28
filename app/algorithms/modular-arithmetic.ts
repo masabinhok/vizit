@@ -67,7 +67,6 @@ const generateModularSteps = (inputArr: number[]): AlgorithmStep[] => {
   steps.push({ array: makeState([result, base, exp]), i: result, j: exp, description: `Initial: result=${result}, base=${base}, exp=${exp}`, codeLineIndex: 5, comparisons, swaps });
 
   while (exp > 0) {
-    // if (exp % 2 === 1) result = (result * base) % mod;
     if (exp % 2 === 1) {
       const newResult = (result * base) % mod;
       steps.push({ array: makeState([result, base, exp], { comparing: true }), i: result, j: base, description: `exp is odd -> result = (result * base) % ${mod} => ${newResult}`, codeLineIndex: 6, comparisons: ++comparisons, swaps });

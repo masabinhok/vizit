@@ -65,13 +65,13 @@ export default function ModularArithmeticPage() {
         .map((n: string) => parseInt(n))
         .filter((n: number) => !isNaN(n) && isFinite(n));
 
-      if (numbers.length === 0) {
-        toast.error("Please enter numbers separated by commas (e.g., 5,3,13 or 14,5)");
+      if (numbers.length < 2) {
+        toast.error("Please enter two or three integers: (a,m) or (a,e,m)");
         return;
       }
 
       if (numbers.length > 3) {
-        toast.error("Please enter at most three integers: (a) or (a,m) or (a,e,m)");
+        toast.error("Please enter two or three integers: (a,m) or (a,e,m)");
         return;
       }
 
