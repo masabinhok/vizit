@@ -29,8 +29,7 @@ export default function PrimeFactorizationPage() {
   useEffect(() => {
     setInputArray(algorithmConfig.defaultInput);
     // Auto-initialize for the first load
-    const timer = setTimeout(() => initializeAlgorithm(), 100);
-    return () => clearTimeout(timer);
+    initializeAlgorithm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
