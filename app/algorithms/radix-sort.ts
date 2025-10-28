@@ -1,5 +1,27 @@
 import { AlgorithmConfig, AlgorithmStep, ArrayElement } from '../../types';
 
+interface RadixSortInfo {
+  currentPass: number;
+  totalPasses: number;
+  buckets: number[][];
+  currentDigit: string;
+  currentExp: number;
+}
+
+const getDigitName = (exp: number): string => {
+  switch(exp) {
+    case 1: return "ones";
+    case 10: return "tens";
+    case 100: return "hundreds";
+    case 1000: return "thousands";
+    default: return `10^${Math.log10(exp)} place`;
+  }
+};
+
+export const generateRandomArray = (size: number = 8, max: number = 999): number[] => {
+  return Array.from({ length: size }, () => Math.floor(Math.random() * max));
+};
+
 const radixSortCode = [
   "function radixSort(arr) {",
   "  let max = Math.max(...arr);",
@@ -56,7 +78,9 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
   if (n === 0) return steps;
 
   const max = getMax(arr);
-
+  const maxDigits = Math.floor(Math.log10(Math.max(...inputArr))) + 1;
+  
+  // Initial step
   steps.push({
     array: [...arr.map(el => ({ ...el }))],
     description: "Starting Radix Sort algorithm",
@@ -64,22 +88,38 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
     i: -1,
     j: -1,
     comparisons,
-    swaps
+    swaps,
+    additionalInfo: {
+      currentPass: 0,
+      totalPasses: maxDigits,
+      buckets: Array.from({ length: 10 }, () => []),
+      currentDigit: "starting",
+      currentExp: 0
+    }
   });
 
+  let currentPass = 1;
   for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    const buckets: number[][] = Array.from({ length: 10 }, () => []);
+    
     steps.push({
       array: [...arr.map(el => ({ ...el, isComparing: false, isSwapping: false }))],
-      description: `Starting pass for digit ${exp} (10^${Math.log10(exp)})`,
+      description: `Starting pass ${currentPass}/${maxDigits} for ${getDigitName(exp)} digit`,
       codeLineIndex: 6,
       i: -1,
       j: -1,
       comparisons,
-      swaps
+      swaps,
+      additionalInfo: {
+        currentPass,
+        totalPasses: maxDigits,
+        buckets,
+        currentDigit: getDigitName(exp),
+        currentExp: exp
+      }
     });
 
-    const buckets: number[][] = Array.from({ length: 10 }, () => []);
-    
+    // Distribution phase
     for (let i = 0; i < n; i++) {
       const digit = Math.floor(arr[i].value / exp) % 10;
       buckets[digit].push(arr[i].value);
@@ -93,20 +133,27 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
 
       steps.push({
         array: [...placingArr],
-        description: `Placing ${arr[i].value} into bucket ${digit}`,
+        description: `Placing ${arr[i].value} into ${getDigitName(exp)} digit bucket ${digit}`,
         codeLineIndex: 18,
         i,
         j: -1,
         comparisons,
-        swaps
+        swaps,
+        additionalInfo: {
+          currentPass,
+          totalPasses: maxDigits,
+          buckets: [...buckets],
+          currentDigit: getDigitName(exp),
+          currentExp: exp
+        }
       });
     }
 
+    // Collection phase
     let arrIndex = 0;
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < buckets[i].length; j++) {
         const value = buckets[i][j];
-        
         const oldArrIndex = arr.findIndex((el, idx) => el.value === value && !el.isSorted);
         
         arr[arrIndex].value = value;
@@ -128,12 +175,19 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
 
         steps.push({
           array: [...collectingArr],
-          description: `Collecting ${value} from bucket ${i} and placing at index ${arrIndex}`,
+          description: `Collecting ${value} from ${getDigitName(exp)} digit bucket ${i}`,
           codeLineIndex: 29,
           i,
           j,
           comparisons,
-          swaps
+          swaps,
+          additionalInfo: {
+            currentPass,
+            totalPasses: maxDigits,
+            buckets: [...buckets],
+            currentDigit: getDigitName(exp),
+            currentExp: exp
+          }
         });
 
         arrIndex++;
@@ -146,23 +200,40 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
 
     steps.push({
       array: [...arr.map(el => ({ ...el, isComparing: false, isSwapping: false }))],
-      description: `Completed pass for digit ${exp}. Array is now sorted by this digit.`,
+      description: `Completed pass ${currentPass}/${maxDigits} for ${getDigitName(exp)} digit`,
       codeLineIndex: 35,
       i: -1,
       j: -1,
       comparisons,
-      swaps
+      swaps,
+      additionalInfo: {
+        currentPass,
+        totalPasses: maxDigits,
+        buckets,
+        currentDigit: getDigitName(exp),
+        currentExp: exp
+      }
     });
+
+    currentPass++;
   }
 
+  // Final step
   steps.push({
     array: [...arr.map(el => ({ ...el, isComparing: false, isSwapping: false, isSorted: true }))],
-    description: "Radix Sort completed! Array is now sorted.",
+    description: "Radix Sort completed! Array is now fully sorted.",
     codeLineIndex: 8,
     i: -1,
     j: -1,
     comparisons,
-    swaps
+    swaps,
+    additionalInfo: {
+      currentPass: maxDigits,
+      totalPasses: maxDigits,
+      buckets: Array.from({ length: 10 }, () => []),
+      currentDigit: "completed",
+      currentExp: 0
+    }
   });
 
   return steps;
@@ -172,7 +243,7 @@ export const radixSortConfig: AlgorithmConfig = {
   id: 'radix-sort',
   name: 'Radix Sort',
   category: 'Algorithms',
-  description: 'A non-comparative sorting algorithm that sorts integers by processing individual digits.',
+  description: 'A non-comparative sorting algorithm that processes each digit position, starting from the least significant digit.',
   timeComplexity: {
     best: 'O(d(n+k))',
     average: 'O(d(n+k))',
@@ -181,5 +252,6 @@ export const radixSortConfig: AlgorithmConfig = {
   spaceComplexity: 'O(n+k)',
   code: radixSortCode,
   defaultInput: '170,45,75,90,802,24,2,66',
+  generateRandomArray,
   generateSteps: generateRadixSortSteps
 };

@@ -10,6 +10,8 @@ import { AlgorithmStep } from '../../../types';
 import { Toaster, toast } from 'sonner';
 import { Play, Pause, ChevronLeft, ChevronRight, RotateCcw, Check, X, Wand2, Settings2, Zap } from 'lucide-react';
 
+import BucketVisualization from '../../../components/BucketVisualization';
+
 export default function RadixSortPage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -199,12 +201,52 @@ export default function RadixSortPage() {
                 : 'bg-gradient-to-br from-white/30 to-gray-50/30'
             } backdrop-blur-sm animate-in fade-in duration-800 delay-400`}>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
-              <div className="relative h-full">
-                <VisualizationCanvas
-                  currentStep={currentStepData}
-                  steps={steps}
-                  isInitialized={isInitialized}
-                />
+              <div className="relative h-full flex flex-col overflow-y-auto">
+                {/* Main visualization */}
+                <div className="flex-none mb-4">
+                  <VisualizationCanvas
+                    currentStep={currentStepData}
+                    steps={steps}
+                    isInitialized={isInitialized}
+                  />
+                </div>
+                
+                {/* Bucket visualization */}
+                {currentStepData?.additionalInfo && (
+                  <div className={`p-4 rounded-lg flex-none mb-4 ${
+                    isDarkMode
+                      ? 'bg-slate-800/50 border border-slate-700'
+                      : 'bg-white/50 border border-gray-200'
+                  }`}>
+                    {/* Progress bar */}
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Progress: Pass {(currentStepData.additionalInfo as any).currentPass} of {(currentStepData.additionalInfo as any).totalPasses}
+                        </span>
+                        <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                          {(currentStepData.additionalInfo as any).currentDigit !== "completed" && (currentStepData.additionalInfo as any).currentDigit !== "starting" ? 
+                            `Processing ${(currentStepData.additionalInfo as any).currentDigit} digit` : 
+                            (currentStepData.additionalInfo as any).currentDigit === "completed" ? "Completed" : "Starting"}
+                        </span>
+                      </div>
+                      <div className={`w-full bg-${isDarkMode ? 'slate-700' : 'gray-200'} rounded-full h-2`}>
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${((currentStepData.additionalInfo as any).currentPass / (currentStepData.additionalInfo as any).totalPasses) * 100}%`
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bucket visualization */}
+                    <BucketVisualization
+                      buckets={(currentStepData.additionalInfo as any).buckets}
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -223,7 +265,26 @@ export default function RadixSortPage() {
                 onStepForward={stepForward}
                 onStepBackward={stepBackward}
                 onReset={reset}
-              />
+              >
+                {/* Random array button */}
+                <button
+                  onClick={() => {
+                    if (algorithmConfig.generateRandomArray) {
+                      const randomArr = algorithmConfig.generateRandomArray(8, 999);
+                      setInputArray(randomArr.join(','));
+                      initializeAlgorithm();
+                    }
+                  }}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg ${
+                    isDarkMode
+                      ? 'bg-slate-800 hover:bg-slate-700 text-gray-200'
+                      : 'bg-white hover:bg-gray-50 text-gray-700'
+                  } border transition-all duration-200`}
+                >
+                  <Wand2 className="w-4 h-4 mr-2" />
+                  Random Array
+                </button>
+              </ControlBar>
             </div>
           </div>
 

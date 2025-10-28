@@ -32,6 +32,7 @@ export interface AlgorithmConfig {
   code: string[];
   defaultInput: string;
   generateSteps: (input: number[]) => AlgorithmStep[];
+  generateRandomArray?: (size?: number, max?: number) => number[];
 }
 
 export interface Category {

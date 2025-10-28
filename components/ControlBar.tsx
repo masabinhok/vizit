@@ -16,6 +16,7 @@ interface ControlBarProps {
   onStepForward: () => void;
   onStepBackward: () => void;
   onReset: () => void;
+  children?: React.ReactNode;
 }
 
 export default function ControlBar({
@@ -31,7 +32,8 @@ export default function ControlBar({
   onInitialize,
   onStepForward,
   onStepBackward,
-  onReset
+  onReset,
+  children
 }: ControlBarProps) {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -172,6 +174,7 @@ export default function ControlBar({
             >
               Apply
             </button>
+            {children}
           </div>
         </div>
       </div>
