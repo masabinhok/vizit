@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from '../../../contexts/ThemeContext';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
@@ -8,7 +8,7 @@ import InfoPanel from '../../../components/InfoPanel';
 import { radixSortConfig } from '../../../app/algorithms/radix-sort';
 import { AlgorithmStep } from '../../../types';
 import { Toaster, toast } from 'sonner';
-import { Play, Pause, ChevronLeft, ChevronRight, RotateCcw, Check, X, Wand2, Settings2, Zap } from 'lucide-react';
+import { Wand2 } from 'lucide-react';
 
 import BucketVisualization from '../../../components/BucketVisualization';
 
@@ -27,11 +27,56 @@ export default function RadixSortPage() {
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const showToast = useCallback((message: string, isError: boolean = false) => {
+    if (isError) {
+      toast.error(message);
+    } else {
+      toast.success(message);
+    }
+  }, []);
+
+  const initializeAlgorithm = useCallback(() => {
+    try {
+      const arrayToProcess = inputArray.trim() || algorithmConfig.defaultInput;
+      const numbers = arrayToProcess.split(',')
+        .map(n => n.trim())
+        .filter(n => n.length > 0)
+        .map(n => {
+          const num = parseInt(n);
+          if (num < 0) {
+            throw new Error("Negative numbers are not supported for this Radix Sort.");
+          }
+          return num;
+        })
+        .filter(n => !isNaN(n) && isFinite(n));
+      
+      if (numbers.length === 0) {
+        showToast("Please enter valid, non-negative numbers separated by commas.", true);
+        return;
+      }
+      
+      if (numbers.length > 20) {
+        showToast("Please enter no more than 20 numbers for better visualization.", true);
+        return;
+      }
+      
+      const newSteps = algorithmConfig.generateSteps(numbers);
+      setSteps(newSteps);
+      setCurrentStep(0);
+      setIsInitialized(true);
+      setIsPlaying(false);
+    } catch (error) {
+      console.error("Algorithm initialization error:", error);
+      const errorMessage = (error instanceof Error) ? error.message : "Invalid input format. Please use non-negative numbers (e.g., 170,45,75).";
+      showToast(errorMessage, true);
+    }
+  }, [inputArray, algorithmConfig, showToast]);
+
   useEffect(() => {
     setInputArray(algorithmConfig.defaultInput);
     const timer = setTimeout(() => initializeAlgorithm(), 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [algorithmConfig.defaultInput, initializeAlgorithm]);
 
   useEffect(() => {
     if (isPlaying && steps.length > 0) {
@@ -59,51 +104,7 @@ export default function RadixSortPage() {
     };
   }, [isPlaying, speed, steps.length]);
 
-  const showToast = (message: string, isError: boolean = false) => {
-    if (isError) {
-      toast.error(message);
-    } else {
-      toast.success(message);
-    }
-  };
-
-  const initializeAlgorithm = () => {
-    try {
-      const arrayToProcess = inputArray.trim() || algorithmConfig.defaultInput;
-      const numbers = arrayToProcess.split(',')
-        .map(n => n.trim())
-        .filter(n => n.length > 0)
-        .map(n => {
-          const num = parseInt(n);
-          if (num < 0) {
-            // Radix sort implementation doesn't support negative numbers
-            throw new Error("Negative numbers are not supported for this Radix Sort.");
-          }
-          return num;
-        })
-        .filter(n => !isNaN(n) && isFinite(n));
-      
-      if (numbers.length === 0) {
-        showToast("Please enter valid, non-negative numbers separated by commas.", true);
-        return;
-      }
-      
-      if (numbers.length > 20) {
-        showToast("Please enter no more than 20 numbers for better visualization.", true);
-        return;
-      }
-      
-      const newSteps = algorithmConfig.generateSteps(numbers);
-      setSteps(newSteps);
-      setCurrentStep(0);
-      setIsInitialized(true);
-      setIsPlaying(false);
-    } catch (error) {
-      console.error("Algorithm initialization error:", error);
-      const errorMessage = (error instanceof Error) ? error.message : "Invalid input format. Please use non-negative numbers (e.g., 170,45,75).";
-      showToast(errorMessage, true);
-    }
-  };
+  /* Functions moved to useCallback above */
 
   const stepForward = () => {
     if (currentStep < steps.length - 1) {
@@ -222,19 +223,19 @@ export default function RadixSortPage() {
                     <div className="mb-4">
                       <div className="flex justify-between items-center mb-2">
                         <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Progress: Pass {(currentStepData.additionalInfo as any).currentPass} of {(currentStepData.additionalInfo as any).totalPasses}
+                          Progress: Pass {currentStepData.additionalInfo?.currentPass} of {currentStepData.additionalInfo?.totalPasses}
                         </span>
                         <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                          {(currentStepData.additionalInfo as any).currentDigit !== "completed" && (currentStepData.additionalInfo as any).currentDigit !== "starting" ? 
-                            `Processing ${(currentStepData.additionalInfo as any).currentDigit} digit` : 
-                            (currentStepData.additionalInfo as any).currentDigit === "completed" ? "Completed" : "Starting"}
+                          {currentStepData.additionalInfo?.currentDigit !== "completed" && currentStepData.additionalInfo?.currentDigit !== "starting" ? 
+                            `Processing ${currentStepData.additionalInfo?.currentDigit} digit` : 
+                            currentStepData.additionalInfo?.currentDigit === "completed" ? "Completed" : "Starting"}
                         </span>
                       </div>
                       <div className={`w-full bg-${isDarkMode ? 'slate-700' : 'gray-200'} rounded-full h-2`}>
                         <div
                           className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                           style={{
-                            width: `${((currentStepData.additionalInfo as any).currentPass / (currentStepData.additionalInfo as any).totalPasses) * 100}%`
+                            width: `${((currentStepData.additionalInfo?.currentPass ?? 0) / (currentStepData.additionalInfo?.totalPasses ?? 1)) * 100}%`
                           }}
                         />
                       </div>
@@ -242,7 +243,7 @@ export default function RadixSortPage() {
 
                     {/* Bucket visualization */}
                     <BucketVisualization
-                      buckets={(currentStepData.additionalInfo as any).buckets}
+                      buckets={currentStepData.additionalInfo?.buckets ?? []}
                       isDarkMode={isDarkMode}
                     />
                   </div>

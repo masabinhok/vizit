@@ -154,7 +154,7 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < buckets[i].length; j++) {
         const value = buckets[i][j];
-        const oldArrIndex = arr.findIndex((el, idx) => el.value === value && !el.isSorted);
+        const oldArrIndex = arr.findIndex(el => el.value === value && !el.isSorted);
         
         arr[arrIndex].value = value;
         swaps++;

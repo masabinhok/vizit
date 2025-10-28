@@ -16,7 +16,13 @@ export interface AlgorithmStep {
   codeLineIndex: number;
   comparisons: number;
   swaps: number;
-  additionalInfo?: Record<string, unknown>;
+  additionalInfo?: {
+    currentPass: number;
+    totalPasses: number;
+    buckets: number[][];
+    currentDigit: string;
+    currentExp: number;
+  };
 }
 
 export interface AlgorithmConfig {
