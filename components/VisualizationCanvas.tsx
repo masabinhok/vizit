@@ -45,48 +45,62 @@ export default function VisualizationCanvas({
 
   const maxValue = steps.length > 0 ? Math.max(...steps[0].array.map(el => el.value)) : 100;
 
+  // When the array becomes wide, split it into multiple rows to keep the UI readable.
+  const maxPerRow = 12; // wrap into new line after this many elements (tweakable)
+  const arrayLen = currentStep.array.length;
+  const rows: typeof currentStep.array[] = [];
+  for (let i = 0; i < arrayLen; i += maxPerRow) {
+    rows.push(currentStep.array.slice(i, i + maxPerRow));
+  }
+
   return (
     <div className="h-full flex flex-col justify-center p-8 relative">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 to-purple-500/3 rounded-2xl" />
-      
-      {/* Array Visualization */}
-      <div className="flex items-end justify-center gap-1 sm:gap-2 flex-1 max-h-96 relative z-10">
-        {currentStep.array.map((element, index) => (
-          <div key={index} className="flex flex-col items-center group">
-            {/* Bar with premium styling */}
-            <div
-              className={`relative w-6 sm:w-8 md:w-10 lg:w-12 rounded-t-xl transition-all duration-500 flex items-end justify-center text-white text-xs sm:text-sm font-bold shadow-lg transform hover:scale-105 ${
-                element.isSorted
-                  ? 'bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-emerald-500/30'
-                  : element.isSwapping
-                  ? 'bg-gradient-to-t from-red-500 to-red-400 animate-pulse shadow-red-500/40'
-                  : element.isComparing
-                  ? 'bg-gradient-to-t from-amber-500 to-amber-400 shadow-amber-500/40'
-                  : element.isPivot
-                  ? 'bg-gradient-to-t from-purple-500 to-purple-400 shadow-purple-500/30'
-                  : element.isSelected
-                  ? 'bg-gradient-to-t from-orange-500 to-orange-400 shadow-orange-500/30'
-                  : isDarkMode
-                  ? 'bg-gradient-to-t from-blue-500 to-blue-400 shadow-blue-500/30'
-                  : 'bg-gradient-to-t from-blue-600 to-blue-500 shadow-blue-600/30'
-              }`}
-              style={{
-                height: `${Math.max(40, (element.value / maxValue) * 280)}px`,
-                minHeight: '40px'
-              }}
-            >
-              {/* Glossy overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/40 rounded-t-xl" />
-              <span className="relative z-10 mb-2 px-1 drop-shadow-sm">{element.value}</span>
-            </div>
-            
-            {/* Index with premium styling */}
-            <div className={`text-xs mt-2 font-medium transition-colors duration-300 ${
-              isDarkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-gray-500 group-hover:text-gray-700'
-            }`}>
-              {index}
-            </div>
+      {/* Array Visualization split into rows when needed */}
+      <div className="flex flex-col items-center justify-center gap-4 flex-1 max-h-96 relative z-10 w-full">
+        {rows.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex items-end justify-center gap-1 sm:gap-2 w-full">
+            {row.map((element, idx) => {
+              const globalIndex = rowIndex * maxPerRow + idx;
+              return (
+                <div key={globalIndex} className="flex flex-col items-center group">
+                  {/* Bar with premium styling */}
+                  <div
+                    className={`relative w-6 sm:w-8 md:w-10 lg:w-12 rounded-t-xl transition-all duration-500 flex items-end justify-center text-white text-xs sm:text-sm font-bold shadow-lg transform hover:scale-105 ${
+                      element.isSorted
+                        ? 'bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-emerald-500/30'
+                        : element.isSwapping
+                        ? 'bg-gradient-to-t from-red-500 to-red-400 animate-pulse shadow-red-500/40'
+                        : element.isComparing
+                        ? 'bg-gradient-to-t from-amber-500 to-amber-400 shadow-amber-500/40'
+                        : element.isPivot
+                        ? 'bg-gradient-to-t from-purple-500 to-purple-400 shadow-purple-500/30'
+                        : element.isSelected
+                        ? 'bg-gradient-to-t from-orange-500 to-orange-400 shadow-orange-500/30'
+                        : isDarkMode
+                        ? 'bg-gradient-to-t from-blue-500 to-blue-400 shadow-blue-500/30'
+                        : 'bg-gradient-to-t from-blue-600 to-blue-500 shadow-blue-600/30'
+                    }`}
+                    style={{
+                      height: `${Math.max(40, (element.value / maxValue) * 280)}px`,
+                      minHeight: '40px'
+                    }}
+                  >
+                    {/* Glossy overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/40 rounded-t-xl" />
+                    <span className="relative z-10 mb-2 px-1 drop-shadow-sm">{element.value}</span>
+                  </div>
+
+                  {/* Index with premium styling */}
+                  <div className={`text-xs mt-2 font-medium transition-colors duration-300 ${
+                    isDarkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-gray-500 group-hover:text-gray-700'
+                  }`}>
+                    {globalIndex}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>
