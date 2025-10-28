@@ -55,10 +55,23 @@ const NODE_POSITIONS: Record<NodeId, { x: number; y: number }> = {
   6: { x: 45, y: 55 },
 };
 
+
 export default function BFSVisualization() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   const canvasRef = useRef<HTMLDivElement>(null);
+  
+  const [historyStack, setHistoryStack] = useState<{
+    nodes: Record<NodeId, BFSNodeState>;
+    bfsQueue: QueueElement[];
+    parentMap: Record<NodeId, NodeId | null>;
+    stats: {
+      visitedCount: number;
+      queueMaxLength: number;
+      steps: number;
+    };
+    hasBFSStarted: boolean;
+  }[]>([]);
 
   const [nodes, setNodes] = useState<Record<NodeId, BFSNodeState>>(() => {
     const initial: Record<NodeId, BFSNodeState> = {};
@@ -69,6 +82,7 @@ export default function BFSVisualization() {
   });
 
   const [bfsQueue, setBfsQueue] = useState<QueueElement[]>([]);
+  const [hasBFSStarted, setHasBFSStarted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [parentMap, setParentMap] = useState<Record<NodeId, NodeId | null>>({});
@@ -99,6 +113,7 @@ export default function BFSVisualization() {
     });
     setNodes(resetNodes);
     setBfsQueue([]);
+    setHasBFSStarted(false);
     setIsRunning(false);
     setIsPaused(false);
     setParentMap({ 0: null });
@@ -107,15 +122,34 @@ export default function BFSVisualization() {
     showMessage('Graph reset', 'info');
   };
 
+  const undoStep = useCallback(() => {
+  if (historyStack.length === 0) {
+    showMessage('No steps to undo', 'info');
+    return;
+  }
+
+  const lastState = historyStack[historyStack.length - 1];
+    setNodes(lastState.nodes);
+    setBfsQueue(lastState.bfsQueue);
+    setParentMap(lastState.parentMap);
+    setStats(lastState.stats);
+    setHasBFSStarted(lastState.hasBFSStarted);
+
+    // Remove last state from history
+    setHistoryStack(prev => prev.slice(0, -1));
+
+    // Stop auto-run when undoing
+    setIsRunning(false);
+    setIsPaused(true);
+  }, [historyStack]);
+
   const startBFS = () => {
-    if (isRunning) {
+    if (hasBFSStarted && isRunning) {
       showMessage('BFS already running', 'error');
       return;
     }
     resetGraph();
-    setIsRunning(true);
-    setIsPaused(false);
-
+    setHasBFSStarted(true);
     const startNode = 0;
     setParentMap({ [startNode]: null });
     setNodes(prev => ({
@@ -123,22 +157,43 @@ export default function BFSVisualization() {
       [startNode]: { ...prev[startNode], status: 'queued', distance: 0 }
     }));
     setBfsQueue([{ id: Date.now(), value: startNode, operation: 'enqueue' }]);
+    setIsRunning(true);
+    setIsPaused(false);
     addToHistory(`Started BFS from node ${startNode}`);
     setStats(prev => ({ ...prev, queueMaxLength: 1 }));
   };
 
   const stepBFS = useCallback(() => {
+    if (!hasBFSStarted) {
+      const startNode = 0;
+      setHasBFSStarted(true);
+      setParentMap({ [startNode]: null });
+      setNodes(prev => ({
+        ...prev,
+        [startNode]: { ...prev[startNode], status: 'queued', distance: 0 }
+      }));
+      setBfsQueue([{ id: Date.now(), value: startNode, operation: 'enqueue' }]);
+      addToHistory(`Initialized BFS from node ${startNode}`);
+      setStats(prev => ({ ...prev, queueMaxLength: 1 }));
+      return;
+    }
+
+    // Save current state for undo
+    setHistoryStack(prev => [
+      ...prev,
+      { nodes, bfsQueue, parentMap, stats, hasBFSStarted }
+    ]);
+
     if (bfsQueue.length === 0) {
       const queued = Object.values(nodes).find(n => n.status === 'queued');
       if (queued) {
         setBfsQueue([{ id: Date.now(), value: queued.id, operation: 'enqueue' }]);
         return;
       }
-      if (isRunning) {
-        showMessage('BFS completed!', 'success');
-        setIsRunning(false);
-        setIsPaused(false);
-      }
+
+      showMessage('BFS completed!', 'success');
+      setIsRunning(false);
+      setIsPaused(false);
       return;
     }
 
@@ -148,37 +203,33 @@ export default function BFSVisualization() {
     setNodes(prev => ({ ...prev, [nodeId]: { ...prev[nodeId], status: 'visiting' } }));
 
     setTimeout(() => {
-      // Dequeue
       const newQueue = bfsQueue.slice(1);
       setBfsQueue(newQueue);
 
-      // Mark as visited
-      setNodes(prev => {
-        const updated = { ...prev };
-        updated[nodeId] = { ...updated[nodeId], status: 'visited' };
-        return updated;
-      });
+      setNodes(prev => ({
+        ...prev,
+        [nodeId]: { ...prev[nodeId], status: 'visited' },
+      }));
 
       setStats(prev => ({ ...prev, visitedCount: prev.visitedCount + 1 }));
 
-      // Enqueue unvisited neighbors
       const currentNode = SAMPLE_GRAPH[nodeId];
       const updatedNodes = { ...nodes };
       updatedNodes[nodeId] = { ...updatedNodes[nodeId], status: 'visited' };
 
       const newEnqueues: QueueElement[] = [];
       currentNode.neighbors.forEach(neighborId => {
-        if (updatedNodes[neighborId].status === 'unvisited') {
+        if (updatedNodes[neighborId]?.status === 'unvisited') {
           updatedNodes[neighborId] = {
             ...updatedNodes[neighborId],
             status: 'queued',
-            distance: (updatedNodes[nodeId].distance ?? 0) + 1
+            distance: (updatedNodes[nodeId].distance ?? 0) + 1,
           };
           setParentMap(prev => ({ ...prev, [neighborId]: nodeId }));
           newEnqueues.push({
             id: Date.now() + newEnqueues.length,
             value: neighborId,
-            operation: 'enqueue'
+            operation: 'enqueue',
           });
           addToHistory(`Enqueued neighbor ${neighborId} from ${nodeId}`);
         }
@@ -186,7 +237,7 @@ export default function BFSVisualization() {
 
       setNodes(updatedNodes);
       if (newEnqueues.length > 0) {
-        const nextQueue = [...bfsQueue.slice(1), ...newEnqueues];
+        const nextQueue = [...newQueue, ...newEnqueues];
         setBfsQueue(nextQueue);
         if (nextQueue.length > stats.queueMaxLength) {
           setStats(prev => ({ ...prev, queueMaxLength: nextQueue.length }));
@@ -194,8 +245,15 @@ export default function BFSVisualization() {
       }
 
       addToHistory(`Visited node ${nodeId} (distance: ${updatedNodes[nodeId].distance})`);
+
+      // Auto-complete check
+      if (newQueue.length === 0 && newEnqueues.length === 0) {
+        showMessage('BFS completed!', 'success');
+        setIsRunning(false);
+        setIsPaused(false);
+      }
     }, 300);
-  }, [bfsQueue, nodes, isRunning, stats.queueMaxLength]);
+  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -307,6 +365,10 @@ export default function BFSVisualization() {
       </svg>
     );
   };
+  
+  const isBFSComplete = hasBFSStarted && 
+    bfsQueue.length === 0 && 
+    !Object.values(nodes).some(n => n.status === 'queued' || n.status === 'visiting');
 
   return (
     <div className="flex h-full gap-4 overflow-hidden">
@@ -378,45 +440,64 @@ export default function BFSVisualization() {
                 </h3>
 
                 <button
-                  onClick={startBFS}
-                  disabled={isRunning}
-                  className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isRunning
+                  onClick={() => {
+                    if (!hasBFSStarted && !isBFSComplete) {
+                      // Start BFS and begin auto-run
+                      startBFS();
+                    } else {
+                      if (isRunning) {
+                        // Toggle pause/resume
+                        setIsPaused(!isPaused);
+                      } else {
+                        // Resume from stopped state
+                        setIsRunning(true);
+                        setIsPaused(false);
+                      }
+                    }
+                  }}
+                  disabled={isBFSComplete}
+                  className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                    isBFSComplete
                       ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-                      : `${isDarkMode
-                        ? 'bg-gradient-to-r from-blue-600/80 to-indigo-600/80 hover:from-blue-500/90 hover:to-indigo-500/90 text-white'
-                        : 'bg-gradient-to-r from-blue-500/90 to-indigo-500/90 hover:from-blue-600/90 hover:to-indigo-600/90 text-white'
-                      } hover:shadow-lg hover:scale-102 hover:-translate-y-0.5`
-                    }`}
+                      : isRunning && !isPaused
+                        ? `${isDarkMode ? 'bg-amber-600/80 text-white' : 'bg-amber-500/90 text-white'}`
+                        : `${isDarkMode ? 'bg-blue-600/80 text-white' : 'bg-blue-500/90 text-white'}`
+                  }`}
                 >
-                  Start BFS (from Node 0)
+                  {isRunning && !isPaused ? 'Pause' : 'Play'}
                 </button>
 
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Previous Step */}
                   <button
-                    onClick={stepBFS}
-                    disabled={!isRunning || isPaused}
-                    className={`flex-1 px-3 py-2 rounded-xl font-medium transition-all duration-200 ${!isRunning || isPaused
+                    onClick={undoStep}
+                    disabled={historyStack.length === 0}
+                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                      historyStack.length === 0
                         ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
                         : `${isDarkMode
-                          ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
-                          : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
-                        } hover:scale-102`
-                      }`}
+                            ? 'bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white'
+                            : 'bg-gradient-to-r from-rose-500/90 to-red-500/90 text-white'
+                          } hover:shadow-lg hover:scale-102`
+                    }`}
                   >
-                    Step
+                    Previous Step
                   </button>
 
+                  {/* Next Step */}
                   <button
-                    onClick={() => setIsPaused(!isPaused)}
-                    disabled={!isRunning}
-                    className={`flex-1 px-3 py-2 rounded-xl font-medium transition-all duration-200 ${!isRunning
+                    onClick={stepBFS}
+                    disabled={isBFSComplete}
+                    className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                      isBFSComplete
                         ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-                        : isPaused
-                          ? `${isDarkMode ? 'bg-green-600/80 text-white' : 'bg-green-500/90 text-white'}`
-                          : `${isDarkMode ? 'bg-amber-600/80 text-white' : 'bg-amber-500/90 text-white'}`
-                      }`}
+                        : `${isDarkMode
+                            ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
+                            : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
+                          } hover:shadow-lg hover:scale-102`
+                    }`}
                   >
-                    {isPaused ? 'Resume' : 'Pause'}
+                    Next Step
                   </button>
                 </div>
 
