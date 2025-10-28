@@ -36,8 +36,6 @@ export default function BFSVisualization() {
   const isDarkMode = resolvedTheme === 'dark';
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj));
-
   const [historyStack, setHistoryStack] = useState<{
     nodes: Record<NodeId, BFSNodeState>;
     bfsQueue: QueueElement[];
@@ -218,7 +216,15 @@ export default function BFSVisualization() {
   };
 
   const resetGraph = () => {
-    const newGraph = deepClone(SAMPLE_GRAPH);
+    const newGraph: Record<NodeId, GraphNode> = {
+      0: { id: 0, neighbors: [1, 2] },
+      1: { id: 1, neighbors: [0, 3, 4] },
+      2: { id: 2, neighbors: [0, 5] },
+      3: { id: 3, neighbors: [1] },
+      4: { id: 4, neighbors: [1, 6] },
+      5: { id: 5, neighbors: [2] },
+      6: { id: 6, neighbors: [4] },
+    };
     setGraph(newGraph);
     
     setNodePositions({
