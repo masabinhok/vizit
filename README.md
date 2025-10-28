@@ -100,6 +100,13 @@
 - 🚧 Queue *(Coming Soon)*
 - 🚧 Linked List *(Coming Soon)*
 
+#### **Graph**
+- ✅ **Breadth-First Search (BFS)** - Explore Graphs Level-by-Level to Find Shortest Paths
+- 🚧 Depth-first Search (DFS) *(Coming Soon)*
+- 🚧 Kruskal's MST *(Coming Soon)*
+- 🚧 Prim's MST *(Coming Soon)*
+- 🚧 Topological Sort *(Coming Soon)*
+
 ### 🎨 Visualization Features
 
 - **Step-by-step execution** with pause/play controls
