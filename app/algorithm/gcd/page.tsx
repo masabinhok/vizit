@@ -5,15 +5,15 @@ import { useTheme } from '../../../contexts/ThemeContext';
 import VisualizationCanvas from '../../../components/VisualizationCanvas';
 import ControlBar from '../../../components/ControlBar';
 import InfoPanel from '../../../components/InfoPanel';
-import { fibonacciConfig } from '../../algorithms/fibonacci';
+import { gcdConfig } from '../../algorithms/gcd';
 import { AlgorithmStep } from '../../../types';
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function FibonacciPage() {
+export default function GcdPage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   
-  const algorithmConfig = fibonacciConfig;
+  const algorithmConfig = gcdConfig;
   
   // Visualization state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,7 +28,6 @@ export default function FibonacciPage() {
   // Initialize with default input
   useEffect(() => {
     setInputArray(algorithmConfig.defaultInput);
-    // Auto-initialize for the first load
     const timer = setTimeout(() => initializeAlgorithm(), 100);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,38 +62,41 @@ export default function FibonacciPage() {
 
   const initializeAlgorithm = () => {
     try {
-      // Use current inputArray or fallback to default
       const arrayToProcess = inputArray.trim() || algorithmConfig.defaultInput;
       const numbers = arrayToProcess.split(',')
-        .map(n => n.trim())
-        .filter(n => n.length > 0)
-        .map(n => parseInt(n, 10))
-        .filter(n => !isNaN(n) && isFinite(n));
+        .map((n: string) => n.trim())
+        .filter((n: string) => n.length > 0)
+        .map((n: string) => parseInt(n, 10))
+        .filter((n: number) => !isNaN(n) && isFinite(n));
       
-      if (numbers.length === 0) {
-        toast.error("Please enter a valid number (e.g., 8)");
+      // Reject input with more than two integers — visualization expects up to two values
+      if (numbers.length > 2) {
+        toast.error("Please enter exactly two integers separated by a comma (e.g., 48,18)");
         return;
       }
 
-      // For Fibonacci we only care about the first number
-      const n = numbers[0];
-      if (n < 0) {
-        toast.error("Please enter a non-negative number");
-        return;
-      }
-      if (n > 25) {
-        toast.error("Please enter 25 or fewer terms for better visualization");
+      if (numbers.length < 1) {
+        toast.error("Please enter two integers separated by a comma (e.g., 48,18)");
         return;
       }
 
-      const newSteps = algorithmConfig.generateSteps([n]);
+      // If only one number provided, assume second is 0
+      const a = numbers[0];
+      const b = numbers.length > 1 ? numbers[1] : 0;
+
+      if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        toast.error("Please enter valid integers");
+        return;
+      }
+
+      const newSteps = algorithmConfig.generateSteps([a, b]);
       setSteps(newSteps);
       setCurrentStep(0);
       setIsInitialized(true);
       setIsPlaying(false);
     } catch (error) {
       console.error("Algorithm initialization error:", error);
-      toast.error("Invalid input format. Please use a single number (e.g., 8).");
+      toast.error("Invalid input format. Please use two integers separated by a comma (e.g., 48,18).");
     }
   };
 
