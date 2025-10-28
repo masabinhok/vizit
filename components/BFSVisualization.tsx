@@ -147,26 +147,6 @@ export default function BFSVisualization() {
     setIsPaused(true);
   }, [historyStack]);
 
-  const startBFS = () => {
-    if (hasBFSStarted && isRunning) {
-      showMessage('BFS already running', 'error');
-      return;
-    }
-    resetGraph();
-    setHasBFSStarted(true);
-    const startNode = 0;
-    setParentMap({ [startNode]: null });
-    setNodes(prev => ({
-      ...prev,
-      [startNode]: { ...prev[startNode], status: 'queued', distance: 0 }
-    }));
-    setBfsQueue([{ id: Date.now(), value: startNode, operation: 'enqueue' }]);
-    setIsRunning(true);
-    setIsPaused(false);
-    addToHistory(`Started BFS from node ${startNode}`);
-    setStats(prev => ({ ...prev, queueMaxLength: 1 }));
-  };
-
   const stepBFS = useCallback(() => {
     if (!hasBFSStarted) {
       if (startNodeId === null) {
@@ -339,12 +319,6 @@ export default function BFSVisualization() {
             textColor = '#ffffff';
           } else {
             // unvisited
-            fill = isDarkMode ? '#334155' : '#e5e7eb';
-            stroke = isDarkMode ? '#475569' : '#d1d5db';
-            textColor = isDarkMode ? '#cbd5e1' : '#374151';
-          }
-
-          if (!fill) {
             fill = isDarkMode ? '#334155' : '#e5e7eb';
             stroke = isDarkMode ? '#475569' : '#d1d5db';
             textColor = isDarkMode ? '#cbd5e1' : '#374151';
