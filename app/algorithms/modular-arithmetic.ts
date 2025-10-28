@@ -31,7 +31,7 @@ const generateModularSteps = (inputArr: number[]): AlgorithmStep[] => {
   }
 
   if (inputArr.length > 3) {
-    steps.push({ array: [], i: -1, j: -1, description: `Invalid input: expected 2 or 3 integers but received ${inputArr.length} values (${inputArr.join(', ')})`, codeLineIndex: 0, comparisons: 0, swaps: 0 });
+    steps.push({ array: [], i: -1, j: -1, description: `Please enter two or three integers. Received ${inputArr.length} values (${inputArr.join(', ')})`, codeLineIndex: 0, comparisons: 0, swaps: 0 });
     return steps;
   }
 
