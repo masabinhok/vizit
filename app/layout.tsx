@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import "./globals.css";
+import HacktoberfestBanner from "../components/HacktoberfestBanner";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${ibmPlexSans.className} ${ibmPlexMono.className} antialiased bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20 min-h-screen transition-colors duration-500`}
       >
         <ThemeProvider>
+          <HacktoberfestBanner />
           {children}
         </ThemeProvider>
       </body>
