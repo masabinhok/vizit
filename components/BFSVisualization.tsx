@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import toast, { Toaster } from 'react-hot-toast';
 
 type NodeId = number;
 interface GraphNode {
@@ -18,8 +19,6 @@ interface BFSNodeState {
 interface QueueElement {
   id: number;
   value: NodeId;
-  isAnimating?: boolean;
-  operation?: 'enqueue' | 'dequeue';
 }
 
 interface Message {
@@ -27,7 +26,6 @@ interface Message {
   type: 'success' | 'error' | 'info';
 }
 
-// Fixed sample graph
 const SAMPLE_GRAPH: Record<NodeId, GraphNode> = {
   0: { id: 0, neighbors: [1, 2] },
   1: { id: 1, neighbors: [0, 3, 4] },
@@ -36,23 +34,6 @@ const SAMPLE_GRAPH: Record<NodeId, GraphNode> = {
   4: { id: 4, neighbors: [1, 6] },
   5: { id: 5, neighbors: [2] },
   6: { id: 6, neighbors: [4] },
-};
-
-const NODE_POSITIONS: Record<NodeId, { x: number; y: number }> = {
-  // Level 0
-  0: { x: 50, y: 10 },
-
-  // Level 1
-  1: { x: 35, y: 25 },
-  2: { x: 65, y: 25 },
-
-  // Level 2
-  3: { x: 25, y: 40 },
-  4: { x: 45, y: 40 },
-  5: { x: 65, y: 40 },
-
-  // Level 3
-  6: { x: 45, y: 55 },
 };
 
 export default function BFSVisualization() {
@@ -81,6 +62,10 @@ export default function BFSVisualization() {
   });
 
   const [startNodeId, setStartNodeId] = useState<NodeId | null>(0);
+  const [selectedNodeIds, setSelectedNodeIds] = useState<NodeId[]>([]);
+  const nextNodeId = useRef(Math.max(...Object.keys(SAMPLE_GRAPH).map(Number)) + 1);
+  const [draggingNodeId, setDraggingNodeId] = useState<NodeId | null>(null);
+  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [bfsQueue, setBfsQueue] = useState<QueueElement[]>([]);
   const [hasBFSStarted, setHasBFSStarted] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
@@ -89,26 +74,140 @@ export default function BFSVisualization() {
   const [message, setMessage] = useState<Message | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'controls' | 'pseudocode' | 'explanation' | 'history' | 'result'>('controls');
-  const [animationSpeed, setAnimationSpeed] = useState(800); // ms per step
+  const [animationSpeed, setAnimationSpeed] = useState(800);
   const [stats, setStats] = useState({
     visitedCount: 0,
     queueMaxLength: 0,
     steps: 0,
   });
 
-  const showMessage = (text: string, type: 'success' | 'error' | 'info') => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage(null), 3000);
-  };
+  const [graph, setGraph] = useState<Record<NodeId, GraphNode>>(() => ({ ...SAMPLE_GRAPH }));
+  const [nodePositions, setNodePositions] = useState<Record<NodeId, { x: number; y: number }>>(() => ({
+    0: { x: 50, y: 10 },
+    1: { x: 35, y: 25 },
+    2: { x: 65, y: 25 },
+    3: { x: 25, y: 40 },
+    4: { x: 45, y: 40 },
+    5: { x: 65, y: 40 },
+    6: { x: 45, y: 55 }
+  }));
 
   const addToHistory = (msg: string) => {
     setHistory(prev => [...prev, `${new Date().toLocaleTimeString()} - ${msg}`]);
     setStats(prev => ({ ...prev, steps: prev.steps + 1 }));
   };
 
-  const resetGraph = () => {
+  const addNode = () => {
+    if (Object.keys(graph).length >= 15) {
+      toast.error('Max 15 nodes allowed');
+      return;
+    }
+
+    const newId = nextNodeId.current;
+    nextNodeId.current += 1;
+
+    const newGraph = {
+      ...graph,
+      [newId]: { id: newId, neighbors: [] }
+    };
+    setGraph(newGraph);
+
+    setNodePositions(prev => {
+      const nodeCount = Object.keys(prev).length;
+      let x, y;
+
+      if (nodeCount === 0) {
+        x = 50; y = 10;
+      } else if (nodeCount <= 2) {
+        x = nodeCount === 1 ? 35 : 65;
+        y = 25;
+      } else if (nodeCount <= 5) {
+        const levelIndex = nodeCount - 2;
+        x = levelIndex === 1 ? 25 : levelIndex === 2 ? 45 : 65;
+        y = 40;
+      } else if (nodeCount <= 6) {
+        x = 45; y = 55;
+      } else {
+        const remaining = nodeCount - 6;
+        const level = 4 + Math.floor(remaining / 3);
+        const levelIndex = remaining % 3;
+        
+        y = Math.min(65, 10 + level * 12);
+        
+        if (levelIndex === 0) {
+          x = 30;
+        } else if (levelIndex === 1) {
+          x = 50;
+        } else {
+          x = 70;
+        }
+      }
+
+      x = Math.max(10, Math.min(90, x));
+      y = Math.max(10, Math.min(65, y));
+
+      return { ...prev, [newId]: { x, y } };
+    });
+
+    resetBFSState();
+    toast.success(`Added node ${newId}`);
+  };
+
+  const deleteSelectedNodes = () => {
+    if (selectedNodeIds.length === 0) {
+      toast.error('Select a node to delete');
+      return;
+    }
+
+    const newGraph = { ...graph };
+    selectedNodeIds.forEach(id => {
+      delete newGraph[id];
+      Object.values(newGraph).forEach(node => {
+        node.neighbors = node.neighbors.filter(n => n !== id);
+      });
+    });
+    setGraph(newGraph);
+    
+    setNodePositions(prev => {
+      const newPositions = { ...prev };
+      selectedNodeIds.forEach(id => delete newPositions[id]);
+      return newPositions;
+    });
+
+    setSelectedNodeIds([]);
+    resetBFSState();
+    toast.success(`Deleted ${selectedNodeIds.length} node(s)`);
+  };
+
+  const createOrDeleteEdge = () => {
+    if (selectedNodeIds.length !== 2) {
+      toast.error('Select exactly two nodes');
+      return;
+    }
+    const [a, b] = selectedNodeIds;
+    if (!graph[a] || !graph[b]) return;
+
+    const newGraph = { ...graph };
+    const hasEdge = newGraph[a].neighbors.includes(b);
+
+    if (hasEdge) {
+      newGraph[a].neighbors = newGraph[a].neighbors.filter(n => n !== b);
+      newGraph[b].neighbors = newGraph[b].neighbors.filter(n => n !== a);
+      toast.success(`Removed edge ${a}–${b}`);
+    } else {
+      newGraph[a].neighbors.push(b);
+      newGraph[b].neighbors.push(a);
+      toast.success(`Added edge ${a}–${b}`);
+    }
+
+    setGraph(newGraph);
+    setSelectedNodeIds([]);
+    resetBFSState();
+  };
+
+  const resetBFSState = () => {
     const resetNodes: Record<NodeId, BFSNodeState> = {};
-    Object.keys(SAMPLE_GRAPH).forEach(id => {
+    Object.keys(graph).forEach(id => {
       resetNodes[Number(id)] = { id: Number(id), status: 'unvisited', distance: null };
     });
     setNodes(resetNodes);
@@ -119,18 +218,46 @@ export default function BFSVisualization() {
     setHistory([]);
     setStats({ visitedCount: 0, queueMaxLength: 0, steps: 0 });
     setHasBFSStarted(false);
-    setStartNodeId(null);
     setHistoryStack([]);
-    showMessage('Graph reset', 'info');
   };
 
+  const resetGraph = () => {
+    const newGraph = { ...SAMPLE_GRAPH };
+    setGraph(newGraph);
+    setNodePositions({
+      0: { x: 50, y: 10 },
+      1: { x: 35, y: 25 },
+      2: { x: 65, y: 25 },
+      3: { x: 25, y: 40 },
+      4: { x: 45, y: 40 },
+      5: { x: 65, y: 40 },
+      6: { x: 45, y: 55 }
+    });
+
+    const resetNodes: Record<NodeId, BFSNodeState> = {};
+    Object.keys(newGraph).forEach(id => {
+      resetNodes[Number(id)] = { id: Number(id), status: 'unvisited', distance: null };
+    });
+    setNodes(resetNodes);
+    setBfsQueue([]);
+    setIsRunning(false);
+    setIsPaused(false);
+    setParentMap({});
+    setHistory([]);
+    setStats({ visitedCount: 0, queueMaxLength: 0, steps: 0 });
+    setHasBFSStarted(false);
+    setStartNodeId(0);
+    setHistoryStack([]);
+    setSelectedNodeIds([]);
+    setDraggingNodeId(null);
+    toast.success('Graph reset');
+  };
 
   const undoStep = useCallback(() => {
     if (historyStack.length === 0) {
-      showMessage('No steps to undo', 'info');
+      toast.success('No steps to undo');
       return;
     }
-
 
     const lastState = historyStack[historyStack.length - 1];
     setNodes(lastState.nodes);
@@ -138,11 +265,7 @@ export default function BFSVisualization() {
     setParentMap(lastState.parentMap);
     setStats(lastState.stats);
     setHasBFSStarted(lastState.hasBFSStarted);
-
-    // Remove last state from history
     setHistoryStack(prev => prev.slice(0, -1));
-
-    // Stop auto-run when undoing
     setIsRunning(false);
     setIsPaused(true);
   }, [historyStack]);
@@ -150,7 +273,7 @@ export default function BFSVisualization() {
   const stepBFS = useCallback(() => {
     if (!hasBFSStarted) {
       if (startNodeId === null) {
-        showMessage('Please select a start node first!', 'error');
+        toast.error('Please select a start node first!');
         return;
       }
 
@@ -160,13 +283,12 @@ export default function BFSVisualization() {
         ...prev,
         [startNodeId]: { ...prev[startNodeId], status: 'queued', distance: 0 }
       }));
-      setBfsQueue([{ id: Date.now(), value: startNodeId, operation: 'enqueue' }]);
+      setBfsQueue([{ id: Date.now(), value: startNodeId }]);
       addToHistory(`Initialized BFS from node ${startNodeId}`);
       setStats(prev => ({ ...prev, queueMaxLength: 1 }));
       return;
     }
 
-    // Save current state for undo
     setHistoryStack(prev => [
       ...prev,
       { nodes, bfsQueue, parentMap, stats, hasBFSStarted }
@@ -175,11 +297,11 @@ export default function BFSVisualization() {
     if (bfsQueue.length === 0) {
       const queued = Object.values(nodes).find(n => n.status === 'queued');
       if (queued) {
-        setBfsQueue([{ id: Date.now(), value: queued.id, operation: 'enqueue' }]);
+        setBfsQueue([{ id: Date.now(), value: queued.id }]);
         return;
       }
 
-      showMessage('BFS completed!', 'success');
+      toast.success('BFS completed!');
       setIsRunning(false);
       setIsPaused(false);
       return;
@@ -201,7 +323,9 @@ export default function BFSVisualization() {
 
       setStats(prev => ({ ...prev, visitedCount: prev.visitedCount + 1 }));
 
-      const currentNode = SAMPLE_GRAPH[nodeId];
+      const currentNode = graph[nodeId];
+      if (!currentNode) return;
+
       const updatedNodes = { ...nodes };
       updatedNodes[nodeId] = { ...updatedNodes[nodeId], status: 'visited' };
 
@@ -214,11 +338,7 @@ export default function BFSVisualization() {
             distance: (updatedNodes[nodeId].distance ?? 0) + 1,
           };
           setParentMap(prev => ({ ...prev, [neighborId]: nodeId }));
-          newEnqueues.push({
-            id: Date.now() + newEnqueues.length,
-            value: neighborId,
-            operation: 'enqueue',
-          });
+          newEnqueues.push({ id: Date.now() + newEnqueues.length, value: neighborId });
           addToHistory(`Enqueued neighbor ${neighborId} from ${nodeId}`);
         }
       });
@@ -234,43 +354,71 @@ export default function BFSVisualization() {
 
       addToHistory(`Visited node ${nodeId} (distance: ${updatedNodes[nodeId].distance})`);
 
-      // Auto-complete check
       if (newQueue.length === 0 && newEnqueues.length === 0) {
-        showMessage('BFS completed!', 'success');
+        toast.success('BFS completed!');
         setIsRunning(false);
         setIsPaused(false);
       }
     }, 300);
-  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength, startNodeId]);
+  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength, startNodeId, graph]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isRunning && !isPaused) {
-      interval = setInterval(() => {
-        stepBFS();
-      }, animationSpeed);
+      interval = setInterval(() => stepBFS(), animationSpeed);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isRunning, isPaused, animationSpeed, stepBFS]);
 
-  // render graph
+  useEffect(() => {
+    if (draggingNodeId === null) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const svg = canvasRef.current?.querySelector('svg');
+      if (!svg) return;
+
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const local = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+
+      const newX = local.x - dragOffset.x;
+      const newY = local.y - dragOffset.y;
+      const boundedX = Math.max(5, Math.min(95, newX));
+      const boundedY = Math.max(5, Math.min(65, newY));
+
+      setNodePositions(prev => ({ ...prev, [draggingNodeId]: { x: boundedX, y: boundedY } }));
+    };
+
+    const handleMouseUp = () => setDraggingNodeId(null);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [draggingNodeId, dragOffset, canvasRef]);
+
   const renderGraph = () => {
     return (
       <svg
         width="100%"
         height="100%"
-        viewBox="0 0 100 60"
+        viewBox="0 0 100 70"
         preserveAspectRatio="xMidYMid meet"
         className="min-h-full"
       >
-        {/* Edges: render all connections */}
-        {Object.values(SAMPLE_GRAPH).flatMap(node =>
+        {Object.values(graph).flatMap(node =>
           node.neighbors.map(neighborId => {
-            const p1 = NODE_POSITIONS[node.id];
-            const p2 = NODE_POSITIONS[neighborId];
-            // Optional: avoid duplicate lines by only drawing once
+            if (!graph[neighborId]) return null;
+            const p1 = nodePositions[node.id];
+            const p2 = nodePositions[neighborId];
+            if (!p1 || !p2) return null;
+
             if (node.id < neighborId) {
               return (
                 <line
@@ -281,7 +429,6 @@ export default function BFSVisualization() {
                   y2={p2.y}
                   stroke={isDarkMode ? '#94a3b8' : '#9ca3af'}
                   strokeWidth="0.4"
-                  strokeDasharray="0.8,0.8"
                 />
               );
             }
@@ -289,9 +436,18 @@ export default function BFSVisualization() {
           })
         )}
 
-        {/* Nodes */}
-        {Object.values(nodes).map(node => {
-          const pos = NODE_POSITIONS[node.id];
+        {Object.values(graph).map(graphNode => {
+          if (!graphNode) return null;
+
+          const bfsNode = nodes[graphNode.id] || {
+            id: graphNode.id,
+            status: 'unvisited',
+            distance: null,
+          };
+
+          const pos = nodePositions[graphNode.id];
+          if (!pos) return null;
+
           const width = 10;
           const height = 6;
           const radius = 1.5;
@@ -300,36 +456,39 @@ export default function BFSVisualization() {
           let stroke = '';
           let textColor = '';
 
-          // Special highlight for selected start node (before BFS starts)
-          if (!hasBFSStarted && startNodeId === node.id) {
-            fill = isDarkMode ? '#4f46e5' : '#6366f1'; // indigo
+          if (!hasBFSStarted && startNodeId === graphNode.id) {
+            fill = isDarkMode ? '#4f46e5' : '#6366f1';
             stroke = isDarkMode ? '#4338ca' : '#4f46e5';
             textColor = '#ffffff';
-          } else if (node.status === 'visited') {
+          } else if (bfsNode.status === 'visited') {
             fill = isDarkMode ? '#059669' : '#10b981';
             stroke = isDarkMode ? '#065f46' : '#059669';
             textColor = '#ffffff';
-          } else if (node.status === 'visiting') {
+          } else if (bfsNode.status === 'visiting') {
             fill = isDarkMode ? '#2563eb' : '#3b82f6';
             stroke = isDarkMode ? '#1d4ed8' : '#2563eb';
             textColor = '#ffffff';
-          } else if (node.status === 'queued') {
+          } else if (bfsNode.status === 'queued') {
             fill = isDarkMode ? '#d97706' : '#f59e0b';
             stroke = isDarkMode ? '#b45309' : '#d97706';
             textColor = '#ffffff';
           } else {
-            // unvisited
             fill = isDarkMode ? '#334155' : '#e5e7eb';
             stroke = isDarkMode ? '#475569' : '#d1d5db';
             textColor = isDarkMode ? '#cbd5e1' : '#374151';
           }
 
-          const label = node.distance !== null && node.status !== 'unvisited'
-            ? `${node.id}(${node.distance})`
-            : String(node.id);
+          if (selectedNodeIds.includes(graphNode.id) && !hasBFSStarted) {
+            stroke = isDarkMode ? '#f43f5e' : '#f43f5e';
+            fill = isDarkMode ? '#3f3f46' : '#f3f4f6';
+          }
+
+          const label = bfsNode.distance !== null && bfsNode.status !== 'unvisited'
+            ? `${graphNode.id}(${bfsNode.distance})`
+            : String(graphNode.id);
 
           return (
-            <g key={node.id}>
+            <g key={graphNode.id}>
               <rect
                 x={pos.x - width / 2}
                 y={pos.y - height / 2}
@@ -340,17 +499,34 @@ export default function BFSVisualization() {
                 fill={fill}
                 stroke={stroke}
                 strokeWidth="0.5"
-                className={node.status === 'visiting' ? 'animate-pulse' : ''}
+                className={bfsNode.status === 'visiting' ? 'animate-pulse' : ''}
+                onMouseDown={(e) => {
+                  if (isRunning || hasBFSStarted) return;
+                  const svg = e.currentTarget.ownerSVGElement;
+                  if (!svg) return;
+
+                  const pt = svg.createSVGPoint();
+                  pt.x = e.clientX;
+                  pt.y = e.clientY;
+                  const local = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+
+                  setDraggingNodeId(graphNode.id);
+                  setDragOffset({ x: local.x - pos.x, y: local.y - pos.y });
+                  e.stopPropagation();
+                }}
                 onClick={(e) => {
-                  e.stopPropagation(); // prevent parent interference
-                  if (!hasBFSStarted) {
-                    setStartNodeId(node.id);
-                    showMessage(`Start node selected: ${node.id}`, 'info');
+                  if (draggingNodeId !== null || isRunning) return;
+                  e.stopPropagation();
+                  if (selectedNodeIds.includes(graphNode.id)) {
+                    setSelectedNodeIds(prev => prev.filter(id => id !== graphNode.id));
+                  } else {
+                    setSelectedNodeIds(prev => prev.length < 2 ? [...prev, graphNode.id] : [graphNode.id]);
                   }
                 }}
                 style={{
-                  cursor: !hasBFSStarted ? 'pointer' : 'default',
-                  pointerEvents: 'all' // ensure it receives clicks
+                  cursor: isRunning || hasBFSStarted ? 'default' : 
+                         draggingNodeId === graphNode.id ? 'grabbing' : 'move',
+                  pointerEvents: 'all'
                 }}
               />
               <text
@@ -377,6 +553,7 @@ export default function BFSVisualization() {
 
   return (
     <div className="flex h-full gap-4 overflow-hidden">
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="flex-1 flex flex-col min-h-0 relative overflow-hidden">
         {message && (
           <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 shadow-lg backdrop-blur-sm ${message.type === 'success'
@@ -430,7 +607,6 @@ export default function BFSVisualization() {
           ))}
         </div>
 
-        {/* Tab Content */}
         <div
           className={`flex-1 overflow-y-auto rounded-b-2xl ${isDarkMode
             ? 'bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-l border-r border-b border-slate-600/30'
@@ -444,6 +620,60 @@ export default function BFSVisualization() {
                   BFS Controls
                 </h3>
 
+                <div className="pt-4 border-t border-slate-700/20 dark:border-slate-600/30">
+                  <h4 className={`text-md font-semibold mb-3 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>
+                    Graph Editor ({Object.keys(graph).length}/15 nodes)
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={addNode}
+                      disabled={Object.keys(graph).length >= 15}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium ${Object.keys(graph).length >= 15
+                          ? `${isDarkMode ? 'bg-slate-800 text-slate-600' : 'bg-gray-100 text-gray-400'} cursor-not-allowed`
+                          : `${isDarkMode ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`
+                        }`}
+                    >
+                      ➕ Add Node
+                    </button>
+                    <button
+                      onClick={deleteSelectedNodes}
+                      disabled={selectedNodeIds.length === 0}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium ${selectedNodeIds.length === 0
+                          ? `${isDarkMode ? 'bg-slate-800 text-slate-600' : 'bg-gray-100 text-gray-400'} cursor-not-allowed`
+                          : `${isDarkMode ? 'bg-red-700/80 hover:bg-red-600 text-white' : 'bg-red-500/90 hover:bg-red-600 text-white'}`
+                        }`}
+                    >
+                      🗑️ Delete
+                    </button>
+                    <button
+                      onClick={createOrDeleteEdge}
+                      disabled={selectedNodeIds.length !== 2}
+                      className={`col-span-2 px-3 py-2 rounded-lg text-sm font-medium ${selectedNodeIds.length !== 2
+                          ? `${isDarkMode ? 'bg-slate-800 text-slate-600' : 'bg-gray-100 text-gray-400'} cursor-not-allowed`
+                          : `${isDarkMode ? 'bg-purple-700/80 hover:bg-purple-600 text-white' : 'bg-purple-500/90 hover:bg-purple-600 text-white'}`
+                        }`}
+                    >
+                      {selectedNodeIds.length === 2
+                        ? graph[selectedNodeIds[0]]?.neighbors.includes(selectedNodeIds[1])
+                          ? '🔗 Remove Edge'
+                          : '🔗 Connect Nodes'
+                        : 'Select 2 Nodes'}
+                    </button>
+                  </div>
+
+                  <div className={`mt-3 p-3 rounded-lg text-xs ${isDarkMode ? 'bg-slate-800/50 text-slate-400' : 'bg-gray-100/80 text-gray-600'}`}>
+                    <p className="font-medium mb-1">💡 How to move nodes:</p>
+                    <p>• Click and drag any node to reposition it</p>
+                    <p>• Dragging is disabled during BFS execution</p>
+                  </div>
+
+                  {selectedNodeIds.length > 0 && (
+                    <p className={`text-xs mt-2 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                      Selected: {selectedNodeIds.join(', ')}
+                    </p>
+                  )}
+                </div>
+
                 <div className="mb-3">
                   <label className={`block text-sm mb-3 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                     Select Start Node:
@@ -455,7 +685,7 @@ export default function BFSVisualization() {
                     className={`w-full p-2 rounded-lg mb-2 ${isDarkMode ? 'bg-slate-700 text-white' : 'bg-white text-gray-900 border'}`}
                   >
                     <option value="">-- Choose --</option>
-                    {Object.keys(SAMPLE_GRAPH).map(id => (
+                    {Object.keys(graph).map(id => (
                       <option key={id} value={id}>Node {id}</option>
                     ))}
                   </select>
@@ -464,17 +694,13 @@ export default function BFSVisualization() {
                 <button
                   onClick={() => {
                     if (isBFSComplete) return;
-
                     if (!hasBFSStarted) {
                       if (startNodeId === null) {
-                        showMessage('Select a start node first!', 'error');
+                        toast.error('Select a start node first!');
                         return;
                       }
-                      // Trigger first step to initialize
                       stepBFS();
                     }
-
-                    // Toggle auto-run
                     if (isRunning) {
                       setIsPaused(!isPaused);
                     } else {
@@ -484,41 +710,39 @@ export default function BFSVisualization() {
                   }}
                   disabled={isBFSComplete}
                   className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isBFSComplete
-                      ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-                      : isRunning && !isPaused
-                        ? `${isDarkMode ? 'bg-amber-600/80 text-white' : 'bg-amber-500/90 text-white'}`
-                        : `${isDarkMode ? 'bg-blue-600/80 text-white' : 'bg-blue-500/90 text-white'}`
+                    ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
+                    : isRunning && !isPaused
+                      ? `${isDarkMode ? 'bg-amber-600/80 text-white' : 'bg-amber-500/90 text-white'}`
+                      : `${isDarkMode ? 'bg-blue-600/80 text-white' : 'bg-blue-500/90 text-white'}`
                     }`}
                 >
                   {isRunning && !isPaused ? 'Pause' : 'Play'}
                 </button>
 
                 <div className="grid grid-cols-2 gap-3">
-                  {/* Previous Step */}
                   <button
                     onClick={undoStep}
                     disabled={historyStack.length === 0}
                     className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${historyStack.length === 0
-                        ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-                        : `${isDarkMode
-                          ? 'bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white'
-                          : 'bg-gradient-to-r from-rose-500/90 to-red-500/90 text-white'
-                        } hover:shadow-lg hover:scale-102`
+                      ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
+                      : `${isDarkMode
+                        ? 'bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white'
+                        : 'bg-gradient-to-r from-rose-500/90 to-red-500/90 text-white'
+                      } hover:shadow-lg hover:scale-102`
                       }`}
                   >
                     Previous Step
                   </button>
 
-                  {/* Next Step */}
                   <button
                     onClick={stepBFS}
                     disabled={isBFSComplete}
                     className={`w-full px-4 py-2.5 rounded-xl font-medium transition-all duration-200 ${isBFSComplete
-                        ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-                        : `${isDarkMode
-                          ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
-                          : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
-                        } hover:shadow-lg hover:scale-102`
+                      ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
+                      : `${isDarkMode
+                        ? 'bg-gradient-to-r from-green-600/80 to-emerald-600/80 text-white'
+                        : 'bg-gradient-to-r from-green-500/90 to-emerald-500/90 text-white'
+                      } hover:shadow-lg hover:scale-102`
                       }`}
                   >
                     Next Step
@@ -535,7 +759,6 @@ export default function BFSVisualization() {
                   Reset Graph
                 </button>
 
-                {/* Animation Speed */}
                 <div className="space-y-3">
                   <label className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                     Animation Speed: {animationSpeed}ms
@@ -676,14 +899,14 @@ export default function BFSVisualization() {
             {activeTab === 'result' && (
               <div className="space-y-4">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Shortest Paths (from Node {startNodeId})
+                  Shortest Paths {startNodeId !== null ? `(from Node ${startNodeId})` : ''}
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                   BFS guarantees the shortest path in unweighted graphs.
                 </p>
 
                 <div className="space-y-3">
-                  {Object.keys(SAMPLE_GRAPH).map(nodeIdStr => {
+                  {Object.keys(graph).map(nodeIdStr => {
                     const nodeId = Number(nodeIdStr);
                     const distance = nodes[nodeId]?.distance;
                     const isReachable = distance !== null && distance >= 0;
@@ -708,7 +931,7 @@ export default function BFSVisualization() {
                             To Node <span className="font-bold">{nodeId}</span>:
                           </span>
                           {isReachable ? (
-                            <span className={`font-bold ${nodeId === 0 ? 'text-emerald-500' : 'text-blue-500'
+                            <span className={`font-bold ${nodeId === startNodeId ? 'text-emerald-500' : 'text-blue-500'
                               }`}>
                               {distance === 0 ? 'Start' : `${distance} step${distance === 1 ? '' : 's'}`}
                             </span>
