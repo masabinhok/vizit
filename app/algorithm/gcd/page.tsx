@@ -66,7 +66,7 @@ export default function GcdPage() {
       const numbers = arrayToProcess.split(',')
         .map((n: string) => n.trim())
         .filter((n: string) => n.length > 0)
-        .map((n: string) => parseInt(n))
+        .map((n: string) => parseInt(n, 10))
         .filter((n: number) => !isNaN(n) && isFinite(n));
       
       // Reject input with more than two integers — visualization expects up to two values
