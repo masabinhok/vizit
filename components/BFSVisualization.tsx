@@ -504,7 +504,7 @@ export default function BFSVisualization() {
                     <ul className={`text-sm space-y-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
                       <li>• Finding shortest path (e.g., in games or maps)</li>
                       <li>• Web crawlers (exploring links level-by-level)</li>
-                      <li>• Social network "degrees of separation"</li>
+                      <li>• Social network &quot;degrees of separation&quot;</li>
                       <li>• Broadcasting in peer-to-peer networks</li>
                     </ul>
                   </div>
@@ -583,7 +583,7 @@ export default function BFSVisualization() {
                     const distance = nodes[nodeId]?.distance;
                     const isReachable = distance !== null && distance >= 0;
 
-                    let path: NodeId[] = [];
+                    const path: NodeId[] = [];
                     if (isReachable) {
                       let current: NodeId | null = nodeId;
                       while (current !== null) {
