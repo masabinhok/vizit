@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useMemo, useState } from 'react';
 import type { AlgorithmStep, ArrayElement } from '../types';
 
@@ -44,7 +43,7 @@ export default function SieveVisualization({ currentStep }: Props) {
         position: 'relative',
         width: '100%',
         minHeight: '300px',
-        paddingBottom: '100px',
+        paddingBottom: '100px'
       }}
     >
       {/* floating dialog that moves with scroll */}
@@ -69,23 +68,17 @@ export default function SieveVisualization({ currentStep }: Props) {
           maxWidth: '30rem',
           opacity: dialogVisible ? 1 : 0,
           transform: dialogVisible ? 'translateY(0)' : 'translateY(10px)',
-          transition: 'opacity 250ms ease, transform 250ms ease',
+          transition: 'opacity 250ms ease, transform 250ms ease'
         }}
       >
         <div style={{ fontWeight: 700, fontSize: 14 }}>
           Step info
-          {currentStep && typeof currentStep.codeLineIndex === 'number'
-            ? ` · line ${currentStep.codeLineIndex}`
-            : ''}
+          {currentStep && typeof currentStep.codeLineIndex === 'number' ? ` · line ${currentStep.codeLineIndex}` : ''}
         </div>
         <div style={{ fontSize: 13, lineHeight: 1.25 }}>{dialogText}</div>
         <div style={{ fontSize: 12, opacity: 0.9 }}>
-          {typeof currentStep?.comparisons === 'number'
-            ? `Comparisons: ${currentStep.comparisons}`
-            : null}
-          {typeof currentStep?.swaps === 'number'
-            ? ` · Swaps: ${currentStep.swaps}`
-            : null}
+          {typeof currentStep?.comparisons === 'number' ? `Comparisons: ${currentStep?.comparisons}` : null}
+          {typeof currentStep?.swaps === 'number' ? ` · Swaps: ${currentStep?.swaps}` : null}
         </div>
       </div>
 
@@ -100,28 +93,20 @@ export default function SieveVisualization({ currentStep }: Props) {
           justifyItems: 'center',
           width: '100%',
           paddingTop: 8,
-          paddingBottom: 8,
+          paddingBottom: 8
         }}
+        role="list"
       >
         {array.map((el, idx) => {
-          const key = (el as any).id ?? `${el.value}-${idx}`;
+          const key = `${el.value}-${idx}`; // stable-enough key
           const value = el.value ?? '';
-
           const isCurrent = !!el.isComparing;
           const isAction = !!el.isSwapping;
           const isFinal = !!el.isSorted;
-          const isPrime = !!(el as any).isPrime;
+          const isPrime = !!el.isPrime;
 
-          const background = isFinal
-            ? isPrime
-              ? primeGreenBg
-              : compositeRedBg
-            : defaultBlueBg;
-          const borderColor = isFinal
-            ? isPrime
-              ? primeGreenSolid
-              : compositeRedSolid
-            : defaultBlueSolid;
+          const background = isFinal ? (isPrime ? primeGreenBg : compositeRedBg) : defaultBlueBg;
+          const borderColor = isFinal ? (isPrime ? primeGreenSolid : compositeRedSolid) : defaultBlueSolid;
 
           const style: React.CSSProperties = {
             width: '52px',
@@ -130,24 +115,15 @@ export default function SieveVisualization({ currentStep }: Props) {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 8,
-            transition:
-              'transform 140ms cubic-bezier(.2,.9,.2,1), box-shadow 140ms ease, background-color 140ms ease, border-color 140ms ease',
+            transition: 'transform 140ms cubic-bezier(.2,.9,.2,1), box-shadow 140ms ease, background-color 140ms ease, border-color 140ms ease',
             userSelect: 'none',
             cursor: 'default',
             background,
-            border: isCurrent
-              ? currentBorder
-              : isAction
-              ? actionBorder
-              : `2px solid ${borderColor}`,
-            boxShadow: isCurrent
-              ? '0 16px 36px rgba(250,204,21,0.14)'
-              : isAction
-              ? '0 10px 28px rgba(37,99,235,0.10)'
-              : 'none',
+            border: isCurrent ? currentBorder : isAction ? actionBorder : `2px solid ${borderColor}`,
+            boxShadow: isCurrent ? '0 16px 36px rgba(250,204,21,0.14)' : isAction ? '0 10px 28px rgba(37,99,235,0.10)' : 'none',
             transform: isCurrent ? 'translateY(-4px)' : isAction ? 'scale(1.035)' : 'none',
             fontWeight: 800,
-            color: '#0f172a',
+            color: '#0f172a'
           };
 
           const ariaLabel = `Number ${value}${isPrime ? ' — prime' : isFinal ? ' — composite' : ''}`;
@@ -157,7 +133,7 @@ export default function SieveVisualization({ currentStep }: Props) {
               <span
                 style={{
                   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, monospace',
-                  fontSize: 13,
+                  fontSize: 13
                 }}
               >
                 {String(value)}

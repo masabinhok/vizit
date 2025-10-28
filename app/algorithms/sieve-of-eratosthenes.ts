@@ -24,19 +24,18 @@ const sieveCode = [
 export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
   // sanitize input
   const raw = inputArr && inputArr.length > 0 ? inputArr[0] : NaN;
-  const n = (typeof raw === 'number' && isFinite(raw) && raw >= 2) ? Math.floor(raw) : 30;
+  const n = typeof raw === 'number' && isFinite(raw) && raw >= 2 ? Math.floor(raw) : 30;
 
   const steps: AlgorithmStep[] = [];
-
   // create elements for values 2..n
   const arr: ArrayElement[] = Array.from({ length: n - 1 }, (_, idx) => ({
     value: idx + 2,
     isComparing: false,
     isSwapping: false,
     isSorted: false,
-    // optional semantic flag (doesn't break VisualizationCanvas if it ignores it)
-    isPrime: true as unknown as boolean
-  } as ArrayElement));
+    // semantic flag for prime/composite
+    isPrime: true
+  }));
 
   const isPrime: boolean[] = new Array(n + 1).fill(true);
   isPrime[0] = false;
@@ -54,7 +53,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
   });
 
   let comparisons = 0;
-  let swaps = 0;
+  const swaps = 0; // never reassigned — keep const to satisfy linter
 
   for (let p = 2; p * p <= n; p++) {
     comparisons++;
@@ -73,7 +72,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
 
     if (!isPrime[p]) {
       // already composite: mark presentation state and continue
-      arr[pIdx] = { ...arr[pIdx], isPrime: false as any, isSorted: true, isComparing: false, isSwapping: false };
+      arr[pIdx] = { ...arr[pIdx], isPrime: false, isSorted: true, isComparing: false, isSwapping: false };
       steps.push({
         array: [...arr],
         i: pIdx,
@@ -90,7 +89,6 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
     for (let multiple = p * p; multiple <= n; multiple += p) {
       comparisons++;
       const multIdx = multiple - 2;
-
       // transient marking step (use isSwapping for action emphasis)
       steps.push({
         array: arr.map((el, idx) => ({ ...el, isComparing: idx === pIdx, isSwapping: idx === multIdx })),
@@ -104,7 +102,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
 
       // mark model
       isPrime[multiple] = false;
-      arr[multIdx] = { ...arr[multIdx], isPrime: false as any, isSorted: true, isComparing: false, isSwapping: false };
+      arr[multIdx] = { ...arr[multIdx], isPrime: false, isSorted: true, isComparing: false, isSwapping: false };
 
       // snapshot after marking
       steps.push({
@@ -119,7 +117,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
     }
 
     // confirm p as prime visually
-    arr[pIdx] = { ...arr[pIdx], isPrime: true as any, isSorted: true, isComparing: false, isSwapping: false };
+    arr[pIdx] = { ...arr[pIdx], isPrime: true, isSorted: true, isComparing: false, isSwapping: false };
     steps.push({
       array: [...arr],
       i: pIdx,
@@ -133,7 +131,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
 
   // finalize final visual flags (so canvas draws final state)
   for (let idx = 0; idx < arr.length; idx++) {
-    arr[idx] = { ...arr[idx], isComparing: false, isSwapping: false, isSorted: arr[idx].isSorted || (arr[idx] as any).isPrime };
+    arr[idx] = { ...arr[idx], isComparing: false, isSwapping: false, isSorted: arr[idx].isSorted || !!arr[idx].isPrime };
   }
 
   steps.push({
@@ -147,7 +145,7 @@ export const generateSieveSteps = (inputArr: number[]): AlgorithmStep[] => {
   });
 
   // final informational step listing primes (optional)
-  const primes = arr.filter(a => (a as any).isPrime).map(a => a.value);
+  const primes = arr.filter(a => !!a.isPrime).map(a => a.value);
   steps.push({
     array: [...arr],
     i: -1,
