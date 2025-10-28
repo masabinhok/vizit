@@ -7,11 +7,13 @@ const primeFactorizationCode = [
   '  while (d * d <= n) {',
   '    while (n % d === 0) {',
   '      factors.push(d);',
-  '      n = n / d;',
+  '      n = Math.floor(n / d);',
   '    }',
   '    d += (d === 2) ? 1 : 2; // skip even numbers after 2',
   '  }',
-  '  if (n > 1) factors.push(n);',
+  '  if (n > 1) {',
+  '    factors.push(n);',
+  '  }',
   '  return factors;',
   '}'
 ];
