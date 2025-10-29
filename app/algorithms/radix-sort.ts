@@ -82,7 +82,7 @@ const generateRadixSortSteps = (inputArr: number[]): AlgorithmStep[] => {
   for (let pass = 0; pass < totalPasses; pass++) {
     const passName = passNames[pass] || `10^${pass}`;
     const messagePrefix = `Pass ${pass + 1}/${totalPasses} (${passName} place)`;
-    let buckets: ArrayElement[][] = Array.from({ length: 10 }, () => []);
+    const buckets: ArrayElement[][] = Array.from({ length: 10 }, () => []);
 
    
     steps.push(
