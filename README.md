@@ -24,7 +24,9 @@
 - [Contributing](#-contributing)
 - [Project Structure](#-project-structure)
 - [Documentation](#-documentation)
+- [Roadmap](#-roadmap)
 - [Community](#-community)
+- [Contributors](#-contributors)
 - [License](#-license)
 
 ---
@@ -144,7 +146,6 @@ Perfect for first-time contributors:
 ---
 
 ## 📁 Project Structure
-vizit/
 
 ```
 vizit/
@@ -158,8 +159,28 @@ vizit/
 │   │   ├── gcd/
 │   │   ├── maze-generation/
 │   │   ├── prime-factorization/
-
+│   │   └── ...
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/
+│   └── visualizers/
+├── lib/
+│   └── utils/
+├── public/
+├── docs/
+│   ├── CONTRIBUTING.md
+│   └── ADDING_ALGORITHMS.md
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
+
+**Key Architecture:**
+- Each algorithm/data structure has its own dedicated page and logic file
+- Reusable, type-safe visualization components
+- Easy to extend – see [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md)
+
 ---
 
 ## 📖 Documentation
@@ -170,12 +191,6 @@ vizit/
 
 ---
 
-```
-
-**Key Architecture:**
-- Each algorithm/data structure has its own dedicated page and logic file
-- Reusable, type-safe visualization components
-- Easy to extend – see [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md)
 ## 🗺️ Roadmap
 
 ### Coming Soon
