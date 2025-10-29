@@ -10,13 +10,20 @@ export interface ArrayElement {
 
 export interface AlgorithmStep {
   array: ArrayElement[];
-  i: number;
-  j: number;
   description: string;
   codeLineIndex: number;
-  comparisons: number;
-  swaps: number;
   additionalInfo?: Record<string, unknown>;
+
+  // --- Made optional for Selection Sort ---
+  i?: number;
+  j?: number;
+  comparisons?: number;
+  swaps?: number;
+
+  // --- Added for Radix Sort ---
+  buckets?: ArrayElement[][];
+  passCompleted?: number;
+  totalPasses?: number;
 }
 
 export interface AlgorithmConfig {

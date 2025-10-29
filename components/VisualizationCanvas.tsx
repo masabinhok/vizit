@@ -44,21 +44,19 @@ export default function VisualizationCanvas({
   }
 
   const maxValue = steps.length > 0 ? Math.max(...steps[0].array.map(el => el.value)) : 100;
-
-  // When the array becomes wide, split it into multiple rows to keep the UI readable.
-  const maxPerRow = 12; // wrap into new line after this many elements (tweakable)
+  const maxPerRow = 12;
   const arrayLen = currentStep.array.length;
   const rows: typeof currentStep.array[] = [];
   for (let i = 0; i < arrayLen; i += maxPerRow) {
     rows.push(currentStep.array.slice(i, i + maxPerRow));
   }
 
+  const isRadixSort = currentStep.buckets !== undefined;
+
   return (
-    <div className="h-full flex flex-col justify-center p-8 relative">
-      {/* Background gradient overlay */}
+    <div className="h-full flex flex-col justify-around p-8 relative">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 to-purple-500/3 rounded-2xl" />
-      {/* Array Visualization split into rows when needed */}
-      <div className="flex flex-col items-center justify-center gap-4 flex-1 max-h-96 relative z-10 w-full">
+      <div className="flex flex-col items-center justify-center gap-4 relative z-10 w-full">
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="flex items-end justify-center gap-1 sm:gap-2 w-full">
             {row.map((element, idx) => {
@@ -83,8 +81,9 @@ export default function VisualizationCanvas({
                         : 'bg-gradient-to-t from-blue-600 to-blue-500 shadow-blue-600/30'
                     }`}
                     style={{
-                      height: `${Math.max(40, (element.value / maxValue) * 280)}px`,
-                      minHeight: '40px'
+                     
+                      height: `${Math.max(30, (element.value / maxValue) * 180)}px`,
+                      minHeight: '30px'
                     }}
                   >
                     {/* Glossy overlay */}
@@ -105,12 +104,48 @@ export default function VisualizationCanvas({
         ))}
       </div>
       
+      {/* Bucket Visualization (for Radix Sort) */}
+      {isRadixSort && currentStep.buckets && (
+        <div className="flex justify-between gap-2 w-full mt-4 px-4 relative z-10">
+          {currentStep.buckets.map((bucket, index) => (
+            <div 
+              key={index} 
+              className={`flex-1 min-w-0 rounded-lg shadow-md border ${
+                isDarkMode 
+                  ? 'bg-slate-800/50 border-slate-700/30' 
+                  : 'bg-white/50 border-gray-200/30'
+              } overflow-hidden`}
+            >
+              <div className={`text-center text-xs font-bold py-1 ${
+                isDarkMode ? 'bg-slate-700 text-slate-300' : 'bg-gray-200 text-gray-700'
+              }`}>
+                {index}
+              </div>
+              <div className="flex flex-col items-center p-1 gap-1 min-h-[50px]">
+                {bucket.map((element, elIndex) => (
+                  <div 
+                    key={elIndex} 
+                    className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isDarkMode 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-blue-600 text-white'
+                    }`}
+                  >
+                    {element.value}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Step Info with glassmorphism */}
-      <div className="mt-8 text-center flex-shrink-0 relative z-10">
+      <div className="text-center flex-shrink-0 relative z-10">
         <div className={`inline-block px-6 py-4 rounded-2xl backdrop-blur-sm ${
           isDarkMode 
             ? 'bg-slate-800/30 border border-slate-700/30' 
-            : 'bg-white/50 border border-gray-200/30'
+            : 'bg-white/50 border-gray-200/30'
         } shadow-xl`}>
           <p className={`text-sm sm:text-base lg:text-lg font-medium ${
             isDarkMode ? 'text-white' : 'text-gray-800'
@@ -122,13 +157,22 @@ export default function VisualizationCanvas({
               Step {steps.findIndex(step => step === currentStep) + 1} of {steps.length}
             </span>
             <div className="w-1 h-1 rounded-full bg-gray-400" />
-            <span className={`font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-              {currentStep.comparisons} comparisons
-            </span>
-            <div className="w-1 h-1 rounded-full bg-gray-400" />
-            <span className={`font-medium ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
-              {currentStep.swaps} swaps
-            </span>
+            
+            {isRadixSort ? (
+              <span className={`font-medium ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                Pass {currentStep.passCompleted} of {currentStep.totalPasses}
+              </span>
+            ) : (
+              <>
+                <span className={`font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                  {currentStep.comparisons} comparisons
+                </span>
+                <div className="w-1 h-1 rounded-full bg-gray-400" />
+                <span className={`font-medium ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                  {currentStep.swaps} swaps
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -21,6 +21,9 @@ export default function InfoPanel({
   const isDarkMode = resolvedTheme === 'dark';
   const [activeTab, setActiveTab] = useState<'Code' | 'Explanation' | 'Stats'>('Code');
 
+  // Check if the current step is from Radix Sort (by checking for the 'buckets' property)
+  const isRadixSort = currentStep?.buckets !== undefined;
+
   const tabs = ['Code', 'Explanation', 'Stats'] as const;
   return (
     <aside className={`w-80 h-full relative ${
@@ -202,18 +205,33 @@ export default function InfoPanel({
             <div>
               <h3 className="font-semibold mb-3">Algorithm Performance</h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Comparisons:</span>
-                  <span className={`font-mono font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-                    {currentStep?.comparisons || 0}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Swaps:</span>
-                  <span className={`font-mono font-bold ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
-                    {currentStep?.swaps || 0}
-                  </span>
-                </div>
+                
+                {/* --- THIS BLOCK IS NOW CONDITIONAL --- */}
+                {isRadixSort ? (
+                  <div className="flex justify-between">
+                    <span>Pass Progress:</span>
+                    <span className={`font-mono font-bold ${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
+                      {currentStep?.passCompleted || 0} / {currentStep?.totalPasses || 0}
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex justify-between">
+                      <span>Comparisons:</span>
+                      <span className={`font-mono font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
+                        {currentStep?.comparisons || 0}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Swaps:</span>
+                      <span className={`font-mono font-bold ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
+                        {currentStep?.swaps || 0}
+                      </span>
+                    </div>
+                  </>
+                )}
+                {/* --- END CONDITIONAL BLOCK --- */}
+
                 <div className="flex justify-between">
                   <span>Array Size:</span>
                   <span className={`font-mono font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}>
@@ -273,7 +291,8 @@ export default function InfoPanel({
               </div>
             </div>
 
-            {currentStep && (
+            {/* --- THIS BLOCK IS NOW CONDITIONAL --- */}
+            {currentStep && !isRadixSort && (
               <div>
                 <h3 className="font-semibold mb-3">Efficiency Analysis</h3>
                 <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-50 border border-blue-200'} p-4 rounded-lg`}>
@@ -286,14 +305,14 @@ export default function InfoPanel({
                         <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Comparisons per element: </span>
                         <span className="font-mono">
                           {currentStep.array.length > 0 ? 
-                            (currentStep.comparisons / currentStep.array.length).toFixed(1) : 0}
+                            ((currentStep.comparisons || 0) / currentStep.array.length).toFixed(1) : 0}
                         </span>
                       </div>
                       <div>
                         <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Swap ratio: </span>
                         <span className="font-mono">
-                          {currentStep.comparisons > 0 ? 
-                            ((currentStep.swaps / currentStep.comparisons) * 100).toFixed(1) : 0}%
+                          {(currentStep.comparisons || 0) > 0 ? 
+                            (((currentStep.swaps || 0) / (currentStep.comparisons || 1)) * 100).toFixed(1) : 0}%
                         </span>
                       </div>
                       <div>
@@ -307,6 +326,8 @@ export default function InfoPanel({
                 </div>
               </div>
             )}
+            {/* --- END CONDITIONAL BLOCK --- */}
+
 
             {algorithmConfig?.name === 'Bubble Sort' && (
               <div>
@@ -326,7 +347,7 @@ export default function InfoPanel({
                   </div>
                   <div className={`p-2 rounded ${isDarkMode ? 'bg-green-900' : 'bg-emerald-50 border border-emerald-200'}`}>
                     <div className={`font-medium ${isDarkMode ? 'text-green-200' : 'text-emerald-800'}`}>✓ Simple</div>
-                    <div className={isDarkMode ? 'text-green-400' : 'text-emerald-600'}>Easy to understand</div>
+                    <div className={isDarkMode ? 'text-green-4f00' : 'text-emerald-600'}>Easy to understand</div>
                   </div>
                 </div>
               </div>

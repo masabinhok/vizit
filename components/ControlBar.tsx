@@ -1,6 +1,8 @@
 'use client';
 
 import { useTheme } from '../contexts/ThemeContext';
+// 1. Import a new icon for the randomize button
+import { RefreshCw } from 'lucide-react';
 
 interface ControlBarProps {
   isPlaying: boolean;
@@ -16,6 +18,8 @@ interface ControlBarProps {
   onStepForward: () => void;
   onStepBackward: () => void;
   onReset: () => void;
+  onRandomize?: () => void;
+  showRandomizeButton?: boolean;
 }
 
 export default function ControlBar({
@@ -31,7 +35,9 @@ export default function ControlBar({
   onInitialize,
   onStepForward,
   onStepBackward,
-  onReset
+  onReset,
+  onRandomize,
+  showRandomizeButton = false,
 }: ControlBarProps) {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -120,7 +126,7 @@ export default function ControlBar({
           </div>
 
           {/* Speed Control */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3">
             <label className={`text-sm font-semibold tracking-wide hidden sm:block ${
               isDarkMode ? 'text-slate-300' : 'text-gray-700'
             }`}>
@@ -166,6 +172,18 @@ export default function ControlBar({
                   : 'bg-white/50 border-gray-300/30 text-gray-900 placeholder-gray-500 focus:bg-white/70 focus:border-gray-400/50 shadow-white/50'
               } focus:ring-2 focus:ring-blue-500/50 focus:border-transparent hover:shadow-lg font-medium`}
             />
+
+            {/* 2. Add the new Randomize button */}
+            {showRandomizeButton && (
+              <button
+                onClick={onRandomize}
+                title="Generate Random Array"
+                className={`p-3 text-sm bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 shadow-lg hover:shadow-xl font-semibold transform hover:scale-102 hover:-translate-y-0.5 hover:shadow-blue-500/30`}
+              >
+                <RefreshCw size={20} />
+              </button>
+            )}
+
             <button 
               onClick={onInitialize}
               className="px-6 py-3 text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl transition-all duration-200 ease-out whitespace-nowrap flex-shrink-0 shadow-lg hover:shadow-xl font-semibold transform hover:scale-102 hover:-translate-y-0.5 hover:shadow-blue-500/30"
