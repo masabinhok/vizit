@@ -44,28 +44,36 @@ Vizit is an educational platform that brings algorithms to life through smooth, 
 
 ## ✨ Features
 
-### Currently Available
+### Available Visualizations
 
 **Sorting Algorithms**
-- ✅ Bubble Sort
-- ✅ Merge Sort
-- 🚧 Quick Sort *(in progress)*
+- Bubble Sort
+- Merge Sort
+- Selection Sort
+
+**Math Algorithms**
+- Fibonacci
+- GCD (Greatest Common Divisor)
+- Modular Arithmetic
+- Sieve of Eratosthenes
+- Prime Factorization
 
 **Data Structures**
-- ✅ Stack (push, pop, peek)
-- ✅ Queue (enqueue, dequeue, peek)
-- ✅ B-Tree (insert, delete, search)
+- Stack
+- Queue
+- B-Tree
 
 **Graph Algorithms**
-- ✅ Breadth-First Search (BFS)
-- 🚧 Depth-First Search (DFS) *(in progress)*
+- Breadth-First Search (BFS)
+- Maze Generation
 
-### Visualization Controls
-- Variable speed control (100ms - 2000ms)
-- Step forward/backward navigation
-- Code highlighting synchronized with visualization
-- Custom input testing
-- Responsive design for desktop and tablet
+**Visualization Controls**
+- Step-by-step execution (play, pause, step, reset)
+- Speed control
+- Code highlighting
+- Custom input
+- Responsive design
+- Dark/Light themes
 
 ---
 
@@ -136,46 +144,22 @@ Perfect for first-time contributors:
 ---
 
 ## 📁 Project Structure
+vizit/
 
 ```
 vizit/
 ├── app/
-│   ├── algorithm/          # Algorithm pages
-│   │   ├── bubble-sort/   # Bubble sort visualization
-│   │   ├── btree/         # B-Tree visualization
-│   │   └── stack/         # Stack visualization
-│   ├── algorithms/        # Algorithm logic
-│   └── layout.tsx         # Root layout
-├── components/            # React components
-│   ├── VisualizationCanvas.tsx
-│   ├── ControlBar.tsx
-│   ├── InfoPanel.tsx
-│   └── Sidebar.tsx
-├── constants/
-│   └── algorithms.ts      # Algorithm registry
-├── contexts/
-│   └── ThemeContext.tsx   # Theme management
-├── types/                 # TypeScript types
-└── docs/                  # Documentation
+│   ├── algorithm/
+│   │   ├── bfs/
+│   │   ├── binary-search/
+│   │   ├── btree/
+│   │   ├── bubble-sort/
+│   │   ├── fibonacci/
+│   │   ├── gcd/
+│   │   ├── maze-generation/
+│   │   ├── prime-factorization/
+
 ```
-
-**Key Architecture:**
-- Each algorithm has its own dedicated page
-- Reusable visualization components
-- Type-safe with TypeScript
-- Easy to extend - see [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md)
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|-----------|---------|
-| **Next.js 15.5** | React framework with App Router |
-| **React 19.1** | UI components and hooks |
-| **TypeScript 5.x** | Type safety |
-| **Tailwind CSS 4.x** | Styling and animations |
-
 ---
 
 ## 📖 Documentation
@@ -186,6 +170,12 @@ vizit/
 
 ---
 
+```
+
+**Key Architecture:**
+- Each algorithm/data structure has its own dedicated page and logic file
+- Reusable, type-safe visualization components
+- Easy to extend – see [Adding Algorithms Guide](./docs/ADDING_ALGORITHMS.md)
 ## 🗺️ Roadmap
 
 ### Coming Soon
