@@ -24,6 +24,15 @@ export interface AlgorithmStep {
   buckets?: ArrayElement[][];
   passCompleted?: number;
   totalPasses?: number;
+
+  // --- Added for Counting Sort ---
+  countArray?: number[];
+  outputArray?: ArrayElement[];
+  currentIndex?: number;
+  currentValue?: number;
+  phase?: 'init' | 'counting' | 'cumulative' | 'placing' | 'complete';
+  highlightCountIndex?: number;
+  originalIndices?: number[];
 }
 
 export interface AlgorithmConfig {
