@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import LISDPVisualize from "./LISDPVisualize";
-import LISPatienceVisualize from "./LISPatienceVisualize";
+import LISDPVisualize from "../../visualizations/LIS/LISDPVisualize";
+import LISPatienceVisualize from "../../visualizations/LIS/LISPatienceVisualize";
+
 
 export default function LISPage() {
   const [method, setMethod] = useState<"dp" | "patience">("dp");

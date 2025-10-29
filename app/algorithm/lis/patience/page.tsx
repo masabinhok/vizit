@@ -29,7 +29,7 @@ export default function LISPatiencePage() {
   const arr = [10, 9, 2, 5, 3, 7, 101, 18];
   const steps = Array.from(lisPatienceSteps(arr));
   const current = steps[index];
-
+  
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <h1 className="text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">

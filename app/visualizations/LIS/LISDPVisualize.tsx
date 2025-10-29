@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { lisDpSteps } from "./utils";
 
 export default function LISDPVisualizer() {
@@ -8,12 +8,19 @@ export default function LISDPVisualizer() {
   const steps = Array.from(lisDpSteps(arr));
   const current = steps[index];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (steps.length > 1) {
+      setIndex(1); // automatically start visualization
+    }
+  }, []);
+
   return (
     <div className="p-6 text-center">
       <h2 className="text-xl font-bold mb-4">LIS (DP approach)</h2>
       <p className="mb-2">{current.step}</p>
       <div className="flex justify-center gap-2 mb-4">
-        {current.dp.map((v, i) => (
+        {current?.dp?.map((v, i) => (
           <div key={i} className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded">
             {v}
           </div>

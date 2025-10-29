@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 /**
  * Generator function for LIS using Patience Sorting (O(n log n))
@@ -33,6 +33,13 @@ export default function LISPatienceVisualize() {
   const arr = [10, 9, 2, 5, 3, 7, 101, 18];
   const steps = Array.from(lisPatienceSteps(arr));
   const current = steps[index];
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (steps.length > 1) {
+      setIndex(1); // automatically start visualization
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">

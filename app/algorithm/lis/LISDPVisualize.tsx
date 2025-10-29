@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function* lisDpSteps(arr: number[]) {
   const n = arr.length;
@@ -24,6 +24,11 @@ export default function LISDPVisualize() {
   const steps = Array.from(lisDpSteps(arr));
   const current = steps[index];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (steps.length > 1) setIndex(1); // automatically start visualization
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 text-white">
       <h1 className="text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
@@ -32,8 +37,8 @@ export default function LISDPVisualize() {
 
       <p className="mb-4 text-lg">{current.message}</p>
 
-      <div className="flex gap-3 mb-6">
-        {current.dp.map((v, i) => (
+      <div className="flex gap-3 mb-6 max-h-[70vh] overflow-y-auto p-4">
+        {current?.dp?.map((v, i) => (
           <div
             key={i}
             className="w-10 h-10 bg-blue-600 flex items-center justify-center rounded-lg font-semibold shadow-md"

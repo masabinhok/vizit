@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function* lisPatienceSteps(arr: number[]) {
   const piles: number[][] = [];
@@ -28,6 +28,13 @@ export default function LISPatienceVisualize() {
   const steps = Array.from(lisPatienceSteps(arr));
   const current = steps[index];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (steps.length > 1) {
+      setIndex(1); // automatically start visualization
+    }
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 text-white">
       <h1 className="text-4xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
@@ -37,7 +44,7 @@ export default function LISPatienceVisualize() {
       <p className="mb-4 text-lg">{current.message}</p>
 
       <div className="flex gap-6 mb-6">
-        {current.piles.map((pile, i) => (
+        {current?.piles?.map((pile, i) => (
           <div key={i} className="flex flex-col-reverse items-center">
             {pile.map((v, j) => (
               <div
