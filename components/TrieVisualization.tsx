@@ -3,10 +3,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 // Assuming useTheme is in '@/contexts/ThemeContext' as per your code
 // We will mock it for this self-contained example
-// import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 // --- Mock useTheme for standalone example ---
 // In the real project, you'd use the import above
+/*
 const useTheme = () => {
   const [theme, setTheme] = useState('light');
   
@@ -19,6 +20,7 @@ const useTheme = () => {
 
   return { resolvedTheme: theme };
 };
+*/
 // --- End of Mock ---
 
 // --- Core Trie Data Structures ---
@@ -169,7 +171,7 @@ export default function TrieVisualization() {
     setOperationHistory(prev => [
       { operation, value, timestamp: Date.now() },
       ...prev,
-    ]);
+    ].slice(0, 50)); // Keep last 50
   };
 
   /**
@@ -195,9 +197,19 @@ export default function TrieVisualization() {
    */
   const callGeminiApi = async (prompt: string, expectJson: boolean = false): Promise<string | null> => {
     const apiKey = ""; // Leave empty, will be handled by the environment
-    const apiUrl = `https://generativethinking.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    // FIX: Corrected the Gemini API URL
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-    const payload: any = {
+    const payload: {
+      contents: { parts: { text: string }[] }[];
+      generationConfig?: {
+        responseMimeType: string;
+        responseSchema: {
+          type: string;
+          items: { type: string };
+        };
+      };
+    } = {
       contents: [{ parts: [{ text: prompt }] }],
     };
 
@@ -269,7 +281,7 @@ export default function TrieVisualization() {
 
       if (!parentNode) break; // Safety break
 
-      let childNode = parentNode.children[char];
+      const childNode = parentNode.children[char];
 
       if (!childNode) {
         // Node does not exist - create it
@@ -296,7 +308,7 @@ export default function TrieVisualization() {
         // If it's the last char, we need to update isEndOfWord
         if (isLastChar && !childNode.isEndOfWord) {
           newTrie = JSON.parse(JSON.stringify(newTrie));
-          let nodeToMark = findNodeInTrie(newTrie, currentNodeId);
+          const nodeToMark = findNodeInTrie(newTrie, currentNodeId);
           if (nodeToMark) nodeToMark.isEndOfWord = true;
         }
         
@@ -349,7 +361,7 @@ export default function TrieVisualization() {
         
         // Create a deep copy to safely mutate
         let newTrie = JSON.parse(JSON.stringify(trieRef.current));
-        let newTrieParent = findNodeInTrie(newTrie, currentNodeId);
+        const newTrieParent = findNodeInTrie(newTrie, currentNodeId);
         
         if (newTrieParent) {
           const newNodeId = `${currentNodeId}-${char}`;
@@ -365,7 +377,7 @@ export default function TrieVisualization() {
           // Reset all other states
           newTrie = resetAllNodeStates(newTrie);
           // Re-highlight the new node
-          let nodeToHighlight = findNodeInTrie(newTrie, newNodeId);
+          const nodeToHighlight = findNodeInTrie(newTrie, newNodeId);
           if (nodeToHighlight) nodeToHighlight.state = 'highlight';
 
           setTrie(newTrie); // Set the new tree
@@ -379,8 +391,8 @@ export default function TrieVisualization() {
 
         // If it's the last char, we need to update isEndOfWord
         if (isLastChar && !childNode.isEndOfWord) {
-          let newTrie = JSON.parse(JSON.stringify(trieRef.current));
-          let nodeToMark = findNodeInTrie(newTrie, currentNodeId);
+          const newTrie = JSON.parse(JSON.stringify(trieRef.current));
+          const nodeToMark = findNodeInTrie(newTrie, currentNodeId);
           if (nodeToMark) {
             nodeToMark.isEndOfWord = true;
           }
@@ -575,14 +587,14 @@ export default function TrieVisualization() {
         <div className={`flex-1 w-full h-full p-8 overflow-auto ${isDarkMode ? 'bg-slate-900/40' : 'bg-white/60'} rounded-lg border ${isDarkMode ? 'border-slate-700/50' : 'border-gray-200/50'}`}>
           {Object.keys(trie.children).length === 0 ? (
              <div className="flex flex-col items-center justify-center h-full">
-              <RenderTrieNodeView node={trie} isDarkMode={isDarkMode} />
-              <h3 className={`text-lg font-semibold mt-4 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-                Trie is Empty
-              </h3>
-              <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                Insert words or use ✨ Suggest to build the visualization.
-              </p>
-            </div>
+               <RenderTrieNodeView node={trie} isDarkMode={isDarkMode} />
+               <h3 className={`text-lg font-semibold mt-4 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+                 Trie is Empty
+               </h3>
+               <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                 Insert words or use ✨ Suggest to build the visualization.
+               </p>
+             </div>
           ) : (
             <RenderTrieNodeView node={trie} isDarkMode={isDarkMode} />
           )}
@@ -668,6 +680,33 @@ export default function TrieVisualization() {
 
 // --- Child Components for Tabs & Visualization ---
 
+// FIX: Added Spinner component
+/**
+ * A simple loading spinner.
+ */
+const Spinner = () => (
+  <svg
+    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    ></circle>
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+    ></path>
+  </svg>
+);
+
 /**
  * Renders the Trie structure using nested flexbox.
  */
@@ -691,7 +730,7 @@ const RenderTrieNodeView = ({ node, isDarkMode }: { node: TrieNode, isDarkMode: 
       `}>
         {node.id === 'root' ? 'R' : node.char}
         {node.isEndOfWord && node.id !== 'root' && (
-           <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-800" title="End of word"></span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-800" title="End of word"></span>
         )}
       </div>
 
@@ -712,10 +751,25 @@ const RenderTrieNodeView = ({ node, isDarkMode }: { node: TrieNode, isDarkMode: 
 /**
  * Renders the Controls Tab content.
  */
+interface ControlsTabProps {
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  isAnimating: boolean;
+  isGeminiLoading: boolean;
+  speed: number;
+  setSpeed: (value: number) => void;
+  onInsert: () => void;
+  onSearch: () => void;
+  onSuggest: () => void;
+  onClear: () => void;
+  onKeyPress: (e: React.KeyboardEvent) => void;
+  isDarkMode: boolean;
+}
+
 const ControlsTab = ({
   inputValue, setInputValue, isAnimating, isGeminiLoading, speed, setSpeed,
   onInsert, onSearch, onSuggest, onClear, onKeyPress, isDarkMode
-}: any) => {
+}: ControlsTabProps) => {
   const isLoading = isAnimating || isGeminiLoading;
   
   return (
@@ -775,7 +829,7 @@ const ControlsTab = ({
         >
           {isGeminiLoading && !isAnimating ? (
             <>
-              <Spinner /> Asking Gemini...
+              <Spinner/> Asking Gemini...
             </>
           ) : (
             '✨ Suggest Words'
@@ -818,174 +872,139 @@ const ControlsTab = ({
   );
 }
 
-/**
- * Renders the PseudoCode Tab content.
- */
+// FIX: Added PseudoCodeTab component
 const PseudoCodeTab = ({ isDarkMode }: { isDarkMode: boolean }) => (
-  <div className={`space-y-4 p-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-      Trie Pseudocode
-    </h3>
-    <pre className={`text-sm p-4 rounded-xl overflow-x-auto shadow-inner ${isDarkMode ? 'bg-slate-900/50 text-slate-200' : 'bg-gray-100 text-gray-800'}`}>
-{`class TrieNode:
-  children = {}
-  isEndOfWord = false
-
-class Trie:
-  root = TrieNode()
-
-  function insert(word):
-    node = root
-    for char in word:
-      if char not in node.children:
-        node.children[char] = TrieNode()
-      node = node.children[char]
-    node.isEndOfWord = true
-
-  function search(word):
-    node = root
-    for char in word:
-      if char not in node.children:
-        return false (Not found)
-      node = node.children[char]
-    
-    return node.isEndOfWord`}
-    </pre>
-  </div>
-);
-
-/**
- * Renders the Explanation Tab content.
- */
-const ExplanationTab = ({ isDarkMode, lastFoundWord, explanation, onExplain, isGeminiLoading }: any) => (
-  <div className={`space-y-4 p-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-    {/* --- Gemini Explanation Section --- */}
-    {lastFoundWord && (
+  <div className="space-y-4">
+    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Trie Pseudocode</h3>
+    <div className={`p-4 rounded-xl font-mono text-sm ${isDarkMode ? 'bg-slate-900/50 text-slate-200 border border-slate-700/30' : 'bg-gray-100/80 text-gray-800 border border-gray-200/30'} overflow-x-auto`}>
       <div className="space-y-3">
-        <h4 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          Dynamic Explanation
-        </h4>
-        <button
-          onClick={onExplain}
-          disabled={isGeminiLoading}
-          className={`w-full px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-            isGeminiLoading
-              ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
-              : `${isDarkMode ? 'bg-purple-600/80 hover:bg-purple-500/90' : 'bg-purple-500/90 hover:bg-purple-600/90'} text-white hover:shadow-lg`
-          }`}
-        >
-          {isGeminiLoading ? (
-            <>
-              <Spinner /> Asking Gemini...
-            </>
-          ) : (
-            `✨ Explain "${lastFoundWord}"`
-          )}
-        </button>
-        {explanation && (
-          <p className={`text-sm p-3 rounded-lg ${isDarkMode ? 'bg-slate-800/60' : 'bg-gray-100/80'}`}>
-            {explanation}
-          </p>
-        )}
+        <div>
+          <div className={`text-xs font-bold mb-2 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>INSERT Operation:</div>
+          <div className="pl-2 space-y-1">
+            <div>function insert(word):</div>
+            <div className="pl-4">node = root</div>
+            <div className="pl-4">for char in word:</div>
+            <div className="pl-8">if node.children[char] not exist:</div>
+            <div className="pl-12">node.children[char] = new TrieNode(char)</div>
+            <div className="pl-8">node = node.children[char]</div>
+            <div className="pl-4">node.isEndOfWord = true</div>
+          </div>
+        </div>
+        <div>
+          <div className={`text-xs font-bold mb-2 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>SEARCH Operation:</div>
+          <div className="pl-2 space-y-1">
+            <div>function search(word):</div>
+            <div className="pl-4">node = root</div>
+            <div className="pl-4">for char in word:</div>
+            <div className="pl-8">if node.children[char] not exist:</div>
+            <div className="pl-12">return false</div>
+            <div className="pl-8">node = node.children[char]</div>
+            <div className="pl-4">return node.isEndOfWord</div>
+          </div>
+        </div>
       </div>
-    )}
-    
-    {/* --- Static Explanation Section --- */}
-    <div className="space-y-4 pt-4 border-t border-slate-700/50">
-      <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-        What is a Trie (Prefix Tree)?
-      </h3>
-      <p className="text-sm">
-        A **Trie** (also known as a prefix tree or digital tree) is a tree-like data structure used to efficiently store and retrieve keys in a dataset of strings.
-      </p>
-      <p className="text-sm">
-        Unlike a binary search tree, nodes in the Trie do not store their associated keys. Instead, a node's position in the tree defines the key it's associated with.
-      </p>
-      <ul className="list-disc list-inside text-sm space-y-1">
-        <li>The `root` node represents an empty string.</li>
-        <li>Each node stores a map of `children` (e.g., 'a', 'b', 'c', ...).</li>
-        <li>Each path from the root to a node represents a prefix.</li>
-        <li>A special marker (`isEndOfWord`) indicates if a node represents the end of a complete word.</li>
-      </ul>
-      <h4 className={`font-semibold pt-2 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>
-        Time Complexity
-      </h4>
-      <p className="text-sm">
-        Let **L** be the length of the word.
-      </p>
-      <ul className={`list-none text-sm space-y-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
-        <li>• Insert: <span className="font-mono bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">O(L)</span></li>
-        <li>• Search: <span className="font-mono bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">O(L)</span></li>
-        <li>• Prefix Search: <span className="font-mono bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">O(L)</span></li>
-      </ul>
-       <h4 className={`font-semibold pt-2 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>
-        Common Uses
-      </h4>
-      <ul className="list-disc list-inside text-sm space-y-1">
-        <li>Autocomplete and predictive text.</li>
-        <li>Spell checkers.</li>
-        <li>Storing a dictionary for fast lookups.</li>
-      </ul>
     </div>
   </div>
 );
 
-/**
- * Renders the History Tab content.
- */
-const HistoryTab = ({ history, isDarkMode }: { history: OperationHistory[], isDarkMode: boolean }) => (
-  <div className="space-y-3">
-    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-      Operation History
-    </h3>
-    {history.length === 0 ? (
-      <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-        No operations performed yet.
-      </p>
-    ) : (
-      <ul className="space-y-2 max-h-96 overflow-y-auto">
-        {history.map((entry) => (
-          <li key={entry.timestamp} className={`p-2 rounded-lg ${isDarkMode ? 'bg-slate-800/60' : 'bg-gray-100/80'}`}>
-            <div className="flex justify-between items-center text-sm">
-              <span className={`font-semibold ${
-                entry.operation === 'INSERT' ? (isDarkMode ? 'text-green-400' : 'text-green-600') :
-                (isDarkMode ? 'text-blue-400' : 'text-blue-600')
-              }`}>
-                {entry.operation} ("{entry.value}")
-              </span>
-              <span className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
-                {new Date(entry.timestamp).toLocaleTimeString()}
-              </span>
-            </div>
-          </li>
-        ))}
-      </ul>
-    )}
+// FIX: Added ExplanationTab component
+interface ExplanationTabProps {
+  isDarkMode: boolean;
+  lastFoundWord: string;
+  explanation: string;
+  onExplain: () => void;
+  isGeminiLoading: boolean;
+}
+
+const ExplanationTab = ({ isDarkMode, lastFoundWord, explanation, onExplain, isGeminiLoading }: ExplanationTabProps) => (
+  <div className="space-y-4">
+    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Understanding Tries</h3>
+    <div className="space-y-4">
+      <div>
+        <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>📚 What is a Trie?</h4>
+        <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+          A Trie (also known as a prefix tree) is a tree-like data structure that stores a dynamic set of strings. 
+          Nodes do not store keys directly; instead, their position in the tree defines the key they are associated with.
+        </p>
+      </div>
+
+      {lastFoundWord && (
+        <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-100/80'} border ${isDarkMode ? 'border-slate-700/30' : 'border-gray-200/30'}`}>
+          <button
+            onClick={onExplain}
+            disabled={isGeminiLoading}
+            className={`w-full text-sm px-3 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+              isGeminiLoading
+                ? `${isDarkMode ? 'bg-slate-700/50 text-slate-500' : 'bg-gray-200/50 text-gray-400'} cursor-not-allowed`
+                : `${isDarkMode ? 'bg-purple-600/80 hover:bg-purple-500/90' : 'bg-purple-500/90 hover:bg-purple-600/90'} text-white hover:shadow-lg`
+            }`}
+          >
+            {isGeminiLoading ? <Spinner/> : '✨'}
+            Explain &apos;{lastFoundWord}&apos;
+          </button>
+          {explanation && (
+            <p className={`text-sm leading-relaxed mt-3 pt-3 border-t ${isDarkMode ? 'text-slate-300 border-slate-700/50' : 'text-gray-700 border-gray-200/50'}`}>
+              {explanation}
+            </p>
+          )}
+        </div>
+      )}
+
+      <div>
+        <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>🚀 Time Complexity</h4>
+        <p className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+          Let &apos;L&apos; be the length of the word.
+        </p>
+        <div className={`text-sm space-y-1 mt-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+          <div>• Insert: <span className="font-mono bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">O(L)</span></div>
+          <div>• Search: <span className="font-mono bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">O(L)</span></div>
+          <div>• Space: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">O(N * L)</span> (N = num words)</div>
+        </div>
+      </div>
+    </div>
   </div>
 );
 
-/**
- * A simple loading spinner component.
- */
-const Spinner = () => (
-  <svg
-    className={`animate-spin h-4 w-4 ${'text-white'}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    ></circle>
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-    ></path>
-  </svg>
+// FIX: Added HistoryTab component
+interface HistoryTabProps {
+  history: OperationHistory[];
+  isDarkMode: boolean;
+}
+
+const HistoryTab = ({ history, isDarkMode }: HistoryTabProps) => (
+  <div className="space-y-4">
+    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Operation History</h3>
+    <div className="space-y-2">
+      {history.length === 0 ? (
+        <p className={`text-sm text-center py-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+          No operations performed yet.
+        </p>
+      ) : (
+        history.map((op) => (
+          <div
+            key={op.timestamp}
+            className={`p-3 rounded-lg text-sm transition-all duration-200 ${
+              isDarkMode ? 'bg-slate-800/30 hover:bg-slate-700/30' : 'bg-gray-100/50 hover:bg-gray-200/50'
+            }`}
+          >
+            <div className="flex justify-between items-center">
+              <span className={`font-semibold ${
+                op.operation === 'INSERT' ? 'text-green-400' :
+                op.operation === 'SEARCH' ? 'text-blue-400' : 'text-red-400'
+              }`}>
+                {op.operation}
+              </span>
+              <span className={`text-xs ${isDarkMode ? 'text-slate-500' : 'text-gray-500'}`}>
+                {new Date(op.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
+            <div className={`text-sm mt-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+              &quot;{op.value}&quot;
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
 );
+
