@@ -60,7 +60,7 @@ const calculateNodePositions = (heap: number[], width: number, nodeSize: number,
         const positionWithinActualLevel = levelNodeIndices[level].indexOf(index);
 
         // Calculate total width occupied by actual nodes in this level
-        const actualLevelContentWidth = actualNodesInThisLevel * nodeSize + (actualNodesInThisLevel > 1 ? (actualNodesInThisLevel - 1) * (horizontalNodeSpacing - nodeSize) : 0);
+        const actualLevelContentWidth = actualNodesInThisLevel * nodeSize + (actualNodesInThisLevel > 1 ? (horizontalNodeSpacing - nodeSize) : 0);
 
         // Calculate starting X to center the block of actual nodes for this level
         const startX = (effectiveContainerWidth - actualLevelContentWidth) / 2;
@@ -98,6 +98,28 @@ export const BinaryHeapVisualization: React.FC<BinaryHeapVisualizationProps> = (
   const nodeSize = nodeRadius * 2;
   const levelHeight = 85; // Vertical space between levels
 
+  // --- START OF INSERTED CODE (FIX FOR ReferenceError) ---
+  // Helper to calculate line coordinates from parent edge to child edge
+  const getLineCoords = (parent: NodePosition, child: NodePosition | undefined) => {
+      if (!child) return null;
+      // Note: nodeRadius is available via closure here
+
+      // Calculate angle from parent to child
+      const angle = Math.atan2(child.y - parent.y, child.x - parent.x);
+
+      // Start point on parent circle edge
+      const startX = parent.x + nodeRadius * Math.cos(angle);
+      const startY = parent.y + nodeRadius * Math.sin(angle);
+
+      // End point on child circle edge
+      const endX = child.x - nodeRadius * Math.cos(angle);
+      const endY = child.y - nodeRadius * Math.sin(angle);
+
+      return { x1: startX, y1: startY, x2: endX, y2: endY };
+  };
+  // --- END OF INSERTED CODE ---
+
+
   // Calculate node positions based on the current heap state and container width
   const nodePositions = useMemo(() => {
      // Pass containerWidth minus some padding to the calculation
@@ -133,7 +155,7 @@ export const BinaryHeapVisualization: React.FC<BinaryHeapVisualizationProps> = (
         clearTimeout(resizeTimeout); // Clear timeout on unmount
         window.removeEventListener('resize', debouncedUpdateWidth); // Cleanup listener
     };
-  }, []); // Run only once on mount and cleanup on unmount
+  }, [nodeSize, levelHeight]); // Added constants to dependencies
 
   // Helper to get styling classes based on highlights for both array and tree nodes
   const getHighlightStyling = (index: number): { base: string; svgFill: string; svgStroke: string; text: string; scale: number; pulse: boolean } => {
@@ -141,34 +163,36 @@ export const BinaryHeapVisualization: React.FC<BinaryHeapVisualizationProps> = (
     let svgFillClass = isDarkMode ? 'fill-slate-700' : 'fill-gray-200';
     let svgStrokeClass = isDarkMode ? 'stroke-slate-500' : 'stroke-gray-400';
     let textClass = isDarkMode ? 'fill-slate-200 text-slate-200' : 'fill-gray-700 text-gray-700'; // Add text color for array
-    let scale = 1;
-    let pulse = false;
+    let scale = 1; // Default scale
+    let pulse = false; // Default pulse (for swap animation)
 
     if (highlights.swap?.includes(index)) {
       baseStyle += isDarkMode ? ' bg-gradient-to-r from-red-600/90 to-pink-600/90 border-red-400/60 text-white shadow-red-500/30 scale-110' : ' bg-gradient-to-r from-red-500/90 to-pink-500/90 border-red-400/70 text-white shadow-red-500/40 scale-110';
       svgFillClass = isDarkMode ? 'fill-red-600' : 'fill-red-500';
       svgStrokeClass = isDarkMode ? 'stroke-red-400' : 'stroke-red-400';
       textClass = 'fill-white text-white';
-      scale = 1.1;
-      pulse = true;
+      scale = 1.1; // Make it 10% larger
+      pulse = true; // Enable pulse animation
     } else if (highlights.compare?.includes(index)) {
       baseStyle += isDarkMode ? ' bg-gradient-to-r from-blue-600/90 to-indigo-600/90 border-blue-400/60 text-white shadow-blue-500/30 ring-2 ring-blue-400/50 scale-105' : ' bg-gradient-to-r from-blue-500/90 to-indigo-500/90 border-blue-400/70 text-white shadow-blue-500/40 ring-2 ring-blue-400/50 scale-105';
       svgFillClass = isDarkMode ? 'fill-blue-600' : 'fill-blue-500';
       svgStrokeClass = isDarkMode ? 'stroke-blue-400' : 'stroke-blue-400';
       textClass = 'fill-white text-white';
-      scale = 1.05;
+      scale = 1.05; // Make it 5% larger
+      pulse = false;
     } else if (highlights.active?.includes(index)) {
       baseStyle += isDarkMode ? ' bg-gradient-to-r from-green-600/90 to-emerald-600/90 border-green-400/60 text-white shadow-green-500/30 scale-105' : ' bg-gradient-to-r from-green-500/90 to-emerald-500/90 border-green-400/70 text-white shadow-green-500/40 scale-105';
       svgFillClass = isDarkMode ? 'fill-green-600' : 'fill-green-500';
       svgStrokeClass = isDarkMode ? 'stroke-green-400' : 'stroke-green-400';
       textClass = 'fill-white text-white';
-      scale = 1.05;
+      scale = 1.05; // Make it 5% larger
+      pulse = false;
     } else {
       // Default style
       baseStyle += isDarkMode ? ' bg-gradient-to-r from-slate-700/90 to-slate-600/90 border-slate-500/60 text-slate-200 shadow-slate-500/20' : ' bg-gradient-to-r from-gray-200/90 to-gray-100/90 border-gray-400/70 text-gray-700 shadow-gray-400/30';
       // SVG Fill/Stroke/Text classes already assigned default values
     }
-    return { base: baseStyle, svgFill: svgFillClass, svgStroke: svgStrokeClass, text: textClass, scale, pulse };
+    return { base: baseStyle, svgFill: svgFillClass, svgStroke: svgStrokeClass, text: textClass, scale, pulse }; // RETURN scale and pulse
   };
 
 
@@ -224,10 +248,11 @@ export const BinaryHeapVisualization: React.FC<BinaryHeapVisualizationProps> = (
             Tree Representation
           </h3>
           {/* Container div used for measuring width */}
-          <div ref={treeContainerRef} className={`w-full min-h-[400px] relative rounded-lg border p-4 overflow-hidden ${isDarkMode ? 'border-slate-700 bg-slate-900/30' : 'border-gray-300 bg-gray-50/30'}`}>
+          <div ref={treeContainerRef} className={`w-full h-[500px] max-h-[60vh] relative rounded-lg border p-4 overflow-auto ${isDarkMode ? 'border-slate-700 bg-slate-900/30' : 'border-gray-300 bg-gray-50/30'}`}>
             {/* SVG Canvas for Drawing - Use state variable for width */}
             <svg width={containerWidth} height={svgHeight} className="transition-all duration-300 ease-in-out block mx-auto"> {/* Center SVG if needed */}
               {/* Draw Lines (Edges) */}
+              {/* Draw Lines (Edges) - USING HELPER FOR CLEAN CONNECTION */}
               {nodePositions.map((node, i) => {
                 const leftChildIndex = 2 * i + 1;
                 const rightChildIndex = 2 * i + 2;
@@ -235,26 +260,24 @@ export const BinaryHeapVisualization: React.FC<BinaryHeapVisualizationProps> = (
                 const leftChildPos = nodePositions.find(p => p.index === leftChildIndex);
                 const rightChildPos = nodePositions.find(p => p.index === rightChildIndex);
 
+                // Calculate line coordinates using the helper function
+                const leftLineCoords = getLineCoords(node, leftChildPos);
+                const rightLineCoords = getLineCoords(node, rightChildPos);
+
                 return (
                   <React.Fragment key={`lines-${i}`}>
-                    {leftChildPos && (
+                    {leftLineCoords && (
                       <line
-                        x1={node.x}
-                        y1={node.y}
-                        x2={leftChildPos.x}
-                        y2={leftChildPos.y}
+                        {...leftLineCoords} // Spread x1, y1, x2, x2 from the helper
                         className={`transition-all duration-300 ease-in-out ${isDarkMode ? 'stroke-slate-600' : 'stroke-gray-400'}`}
-                        strokeWidth="2"
+                        strokeWidth="1.5" // Thinner line for cleaner look
                       />
                     )}
-                    {rightChildPos && (
+                    {rightLineCoords && (
                       <line
-                        x1={node.x}
-                        y1={node.y}
-                        x2={rightChildPos.x}
-                        y2={rightChildPos.y}
+                        {...rightLineCoords} // Spread x1, y1, x2, y2 from the helper
                         className={`transition-all duration-300 ease-in-out ${isDarkMode ? 'stroke-slate-600' : 'stroke-gray-400'}`}
-                        strokeWidth="2"
+                        strokeWidth="1.5" // Thinner line for cleaner look
                       />
                     )}
                   </React.Fragment>
