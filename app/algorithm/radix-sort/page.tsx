@@ -19,12 +19,9 @@ const Toast = ({ message, onClose, isDarkMode }: { message: string, onClose: () 
   </div>
 );
 
-// 3. Renamed component
 export default function RadixSortPage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
-  
-  // 4. Use the imported Radix Sort config
   const algorithmConfig = radixSortConfig;
   
   const [isPlaying, setIsPlaying] = useState(false);
@@ -92,9 +89,8 @@ export default function RadixSortPage() {
         return;
       }
       
-      // Allow slightly larger arrays for Radix Sort, but still limit for vision
-      if (numbers.length > 25) { 
-        setAlertMessage("Please enter no more than 25 numbers for better visualization");
+      if (numbers.length > 12) { 
+        setAlertMessage("Please enter no more than 12 numbers for this visualization");
         return;
       }
 
@@ -115,10 +111,10 @@ export default function RadixSortPage() {
     }
   };
 
-  // 5. NEW FUNCTION for "Random Array Generator" enhancement
+
   const generateRandomArray = () => {
-    // Generate ~15-20 numbers up to 1000
-    const size = Math.floor(Math.random() * 6) + 15; // 15-20
+   
+    const size = Math.floor(Math.random() * 5) + 8; // 8-12
     const arr = Array.from({ length: size }, () => Math.floor(Math.random() * 1000));
     
     // Set the input string, which will be used by initializeAlgorithm
@@ -193,7 +189,7 @@ export default function RadixSortPage() {
               </p>
             </div>
             <div className="flex items-center gap-6 animate-in slide-in-from-right-4 fade-in duration-600 delay-300">
-              <div className={`px-4 py-2 rounded-xl backdrop-blur-sm ${
+              <div className={`px-6 py-2 rounded-xl backdrop-blur-sm ${
                 isDarkMode 
                   ? 'bg-slate-800/50 border border-slate-600/30' 
                   : 'bg-white/50 border border-gray-200/30'
@@ -203,13 +199,13 @@ export default function RadixSortPage() {
                 }`}>
                   Time: 
                 </span>
-                <span className={`ml-2 font-mono font-bold ${
+                <span className={`ml-2 font-mono font-bold whitespace-nowrap ${
                   isDarkMode ? 'text-amber-400' : 'text-amber-600'
                 }`}>
                   {algorithmConfig.timeComplexity.average}
                 </span>
               </div>
-              <div className={`px-4 py-2 rounded-xl backdrop-blur-sm ${
+              <div className={`px-6 py-2 rounded-xl backdrop-blur-sm ${
                 isDarkMode 
                   ? 'bg-slate-800/50 border border-slate-600/30' 
                   : 'bg-white/50 border border-gray-200/30'
@@ -219,7 +215,7 @@ export default function RadixSortPage() {
                 }`}>
                   Space: 
                 </span>
-                <span className={`ml-2 font-mono font-bold ${
+                <span className={`ml-2 font-mono font-bold whitespace-nowrap ${
                   isDarkMode ? 'text-emerald-400' : 'text-emerald-600'
                 }`}>
                   {algorithmConfig.spaceComplexity}

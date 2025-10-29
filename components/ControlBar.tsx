@@ -126,7 +126,7 @@ export default function ControlBar({
           </div>
 
           {/* Speed Control */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3">
             <label className={`text-sm font-semibold tracking-wide hidden sm:block ${
               isDarkMode ? 'text-slate-300' : 'text-gray-700'
             }`}>

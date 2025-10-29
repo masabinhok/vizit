@@ -106,7 +106,7 @@ export default function VisualizationCanvas({
       
       {/* Bucket Visualization (for Radix Sort) */}
       {isRadixSort && currentStep.buckets && (
-        <div className="flex justify-between gap-1 w-full mt-4 px-4 relative z-10">
+        <div className="flex justify-between gap-2 w-full mt-4 px-4 relative z-10">
           {currentStep.buckets.map((bucket, index) => (
             <div 
               key={index} 
