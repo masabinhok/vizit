@@ -41,6 +41,7 @@ Vizit is an educational platform that brings algorithms to life through smooth, 
 - 📊 **Performance metrics** tracked in real-time
 - 🧩 **Multiple algorithms** - sorting, data structures, graphs
 - 🎓 **Educational focus** - clear explanations and pseudocode
+- 🤖 **AI Learning Assistant** - Interactive chatbot for instant help
 
 ---
 
@@ -77,6 +78,13 @@ Vizit is an educational platform that brings algorithms to life through smooth, 
 - Responsive design
 - Dark/Light themes
 
+**🤖 AI Learning Assistant**
+- Interactive chatbot powered by Google Gemini
+- Real-time algorithm explanations and guidance
+- Complexity analysis and performance insights
+- Step-by-step learning with examples
+- Streaming responses with beautiful formatting
+
 ---
 
 ## 🚀 Quick Start
@@ -95,11 +103,44 @@ cd vizit
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.local.example .env.local
+# Add your Gemini API key to .env.local (see Setup Guide below)
+
 # Run development server
 npm run dev
 
 # Open http://localhost:3000
 ```
+
+### 🤖 AI Chatbot Setup
+
+Vizit includes an **AI-powered chatbot** that helps users learn algorithms interactively! To enable this feature:
+
+1. **Get a free Gemini API key:**
+   - Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Sign in with your Google account
+   - Click "Create API Key" and copy it
+
+2. **Configure the API key:**
+   ```bash
+   # Create environment file
+   echo "GEMINI_API_KEY=your_actual_api_key_here" > .env.local
+   ```
+
+3. **Features you'll unlock:**
+   - 🎯 **Algorithm explanations** with step-by-step breakdowns
+   - 📊 **Complexity analysis** and performance insights  
+   - 💡 **Interactive learning** with examples and practice guidance
+   - 🚀 **Real-time streaming** responses with beautiful formatting
+   - 🎨 **Visual learning** integrated with Vizit's platform features
+
+4. **Test the chatbot:**
+   - Start the dev server: `npm run dev`
+   - Click the chat icon in the bottom-right corner
+   - Try asking: *"What is Merge Sort?"* or *"How does Binary Search work?"*
+
+> **Note:** The chatbot will work without an API key but with limited functionality. For the best learning experience, we recommend setting up the Gemini API key!
 
 ### Build for Production
 
@@ -150,6 +191,8 @@ Perfect for first-time contributors:
 ```
 vizit/
 ├── app/
+│   ├── api/
+│   │   └── chat/           # AI chatbot API endpoint
 │   ├── algorithm/
 │   │   ├── bfs/
 │   │   ├── binary-search/
@@ -163,14 +206,21 @@ vizit/
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
+│   ├── ChatbotWidget.tsx    # AI learning assistant
 │   ├── ui/
 │   └── visualizers/
+├── contexts/
+│   └── ChatbotContext.tsx   # Chat state management
+├── utils/
+│   └── gemini-service.ts    # AI service integration
 ├── lib/
 │   └── utils/
 ├── public/
 ├── docs/
 │   ├── CONTRIBUTING.md
-│   └── ADDING_ALGORITHMS.md
+│   ├── ADDING_ALGORITHMS.md
+│   └── CHATBOT_SETUP.md     # Detailed chatbot setup
+├── .env.local               # Environment variables
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -193,12 +243,19 @@ vizit/
 
 ## 🗺️ Roadmap
 
+### Recently Added ✨
+- [x] **AI Learning Assistant** - Interactive chatbot powered by Google Gemini
+- [x] Real-time streaming responses with beautiful formatting
+- [x] Algorithm explanations and complexity analysis
+- [x] Step-by-step learning guidance
+
 ### Coming Soon
 - [ ] Quick Sort and Merge Sort improvements
 - [ ] Binary Search visualization
 - [ ] Graph algorithms (DFS, Dijkstra)
 - [ ] Algorithm comparison mode
 - [ ] Mobile app support
+- [ ] Enhanced chatbot features (code examples, quizzes)
 
 See [open issues](https://github.com/masabinhok/vizit/issues) for planned features and known bugs.
 
