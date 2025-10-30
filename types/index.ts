@@ -6,6 +6,8 @@ export interface ArrayElement {
   isSelected?: boolean;
   isPivot?: boolean;
   isPrime?: boolean;
+  isFound?: boolean;
+  color?: string;
 }
 
 export interface AlgorithmStep {
