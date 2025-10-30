@@ -178,7 +178,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
   };
 
   return (
-    <aside className={`w-72 h-screen relative ${
+    <aside className={`w-72 sticky top-0 h-screen ${
       isDarkMode 
         ? 'bg-gradient-to-b from-slate-900/95 to-slate-800/95 text-white' 
         : 'bg-gradient-to-b from-white/95 to-gray-50/95 text-gray-900'
@@ -190,7 +190,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
       
       {/* Header */}
-      <div className={`relative p-8 flex-shrink-0 border-b ${
+      <div className={`relative p-4 flex-shrink-0 border-b ${
         isDarkMode ? 'border-white/10' : 'border-gray-500/30'
       }`}>
         <button
@@ -244,7 +244,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       </div>
 
       {/* Search Bar */}
-      <div className="relative p-6 flex-shrink-0">
+      <div className="relative p-3 flex-shrink-0">
         <div className="relative group">
           <div className={`absolute inset-0 rounded-2xl ${
             isDarkMode 
@@ -309,7 +309,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       </div>
 
       {/* Categories */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto min-h-0 px-4 pb-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 px-2">
         {searchQuery && totalFilteredAlgorithms === 0 ? (
           /* No search results */
           <div className="flex flex-col items-center justify-center py-12 px-6">
@@ -340,7 +340,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
           </div>
         ) : (
           /* Normal categories view */
-          <div className="space-y-3">
+          <div className="space-y-0.5">
             {categoriesToDisplay.map((category) => {
               const isExpanded = expandedCategories.has(category.name);
               const isManuallyExpanded = manuallyExpandedCategories.has(category.name);
@@ -352,7 +352,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
               <div key={category.name} className="group">
                 <button
                   onClick={() => toggleCategoryExpansion(category.name)}
-                  className={`w-full text-left font-semibold mb-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden ${
+                  className={`w-full text-left font-semibold px-2 py-2 rounded-lg transition-all duration-300 relative overflow-hidden ${
                     isExpanded
                       ? `${isDarkMode 
                           ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 shadow-lg shadow-blue-500/10' 
@@ -391,12 +391,12 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
                 </button>
                 
                 {(isExpanded || (searchQuery.trim() && category.algorithms.length > 0)) && (
-                  <div className="ml-2 space-y-1 animate-in slide-in-from-left-4 fade-in duration-300">
+                  <div className="ml-1 -mt-1 no-space-y animate-in slide-in-from-left-4 fade-in duration-300">
                     {algorithmsToShow.map((algorithmId, algorithmIndex) => (
                       <button 
                         key={algorithmId}
                         onClick={() => handleAlgorithmSelect(algorithmId)}
-                        className={`group/item w-full text-left px-4 py-3 text-sm rounded-xl transition-all duration-300 relative overflow-hidden ${
+                        className={`group/item w-full text-left px-2 py-1.5 text-sm rounded-lg transition-all duration-300 relative overflow-hidden ${
                           currentAlgorithm === algorithmId
                             ? `${isDarkMode 
                                 ? 'bg-gradient-to-r from-emerald-500/20 to-blue-500/20 text-emerald-300 shadow-md shadow-emerald-500/10' 
@@ -430,7 +430,7 @@ export default function Sidebar({ currentAlgorithm }: SidebarProps) {
       </div>
 
       {/* Theme Toggle - Minimal */}
-      <div className={`relative p-6 flex-shrink-0 border-t ${
+      <div className={`relative p-3 flex-shrink-0 border-t ${
         isDarkMode ? 'border-white/10' : 'border-gray-500/30'
       }`}>
         <div className="flex items-center justify-between">
