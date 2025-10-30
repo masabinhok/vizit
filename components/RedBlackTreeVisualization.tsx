@@ -295,12 +295,16 @@ export default function RedBlackTreeVisualization() {
           // rotation
           if (curr === parent.right) {
             curr = parent;
-            leftRotate(root, curr);
+            const newSub = leftRotate(root, curr);
+            if (!newSub.parent) root = newSub;
             await highlightAndRender(curr, 'rotate');
           }
           parent.color = 'black';
           grandparent.color = 'red';
-          rightRotate(root, grandparent);
+          {
+            const newTop = rightRotate(root, grandparent);
+            if (!newTop.parent) root = newTop;
+          }
           await highlightAndRender(parent, 'rotate');
         }
       } else {
@@ -316,12 +320,16 @@ export default function RedBlackTreeVisualization() {
         } else {
           if (curr === parent.left) {
             curr = parent;
-            rightRotate(root, curr);
+            const newSub = rightRotate(root, curr);
+            if (!newSub.parent) root = newSub;
             await highlightAndRender(curr, 'rotate');
           }
           parent.color = 'black';
           grandparent.color = 'red';
-          leftRotate(root, grandparent);
+          {
+            const newTop = leftRotate(root, grandparent);
+            if (!newTop.parent) root = newTop;
+          }
           await highlightAndRender(parent, 'rotate');
         }
       }
