@@ -1,7 +1,7 @@
 // src/components/LinearSearchVisualization.tsx
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import type { AlgorithmStep, ArrayElement } from '../types';
 
 type Props = {
@@ -12,23 +12,16 @@ type Props = {
 
 export default function LinearSearchVisualization({ currentStep }: Props) {
   const array: ArrayElement[] = (currentStep && currentStep.array) || [];
-
   const desc = currentStep?.description ?? '';
   const codeLine = currentStep?.codeLineIndex ?? null;
-
-  const numericValues = useMemo(
-    () => array.map(a => (typeof a.value === 'number' ? a.value : Number(a.value) || 0)),
-    [array]
-  );
-  const maxVal = Math.max(1, ...numericValues);
 
   return (
     <div
       style={{
         position: 'relative',
         width: '100%',
-        maxWidth: '1100px', // ✅ Contain the visualization width
-        margin: '0 auto', // ✅ Center it horizontally
+        maxWidth: '1100px',
+        margin: '0 auto',
         minHeight: 320,
         overflow: 'visible',
       }}
@@ -74,7 +67,7 @@ export default function LinearSearchVisualization({ currentStep }: Props) {
           overflowX: 'auto',
           padding: '16px 0',
           display: 'flex',
-          justifyContent: 'center', // ✅ Centers the grid
+          justifyContent: 'center',
         }}
       >
         <div
@@ -82,21 +75,22 @@ export default function LinearSearchVisualization({ currentStep }: Props) {
           aria-live="polite"
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${array.length}, 1fr)`, // ✅ One column per item
+            gridTemplateColumns: `repeat(${array.length || 1}, 1fr)`,
             gap: 12,
-            maxWidth: 'min(95%, 900px)', // ✅ Limits width to stop over-expansion
+            maxWidth: 'min(95%, 900px)',
             alignItems: 'end',
             justifyItems: 'center',
+            margin: '0 auto',
           }}
         >
           {array.map((el, idx) => {
-            const key = (el as any).id ?? `${el.value}-${idx}`;
+            const key = ((el as unknown) as { id?: string }).id ?? `${el.value}-${idx}`;
             const value = el.value ?? '';
 
             const isCurrent = !!el.isComparing;
             const isChecked = !!el.isSorted;
             const isFound = !!el.isFound;
-            const colorFlag = (el as any).color as string | undefined;
+            const colorFlag = ((el as unknown) as { color?: string }).color;
 
             const defaultBg = 'rgba(96,165,250,0.12)';
             const defaultBorder = '#60A5FA';

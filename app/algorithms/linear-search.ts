@@ -134,6 +134,6 @@ export const linearSearchConfig: AlgorithmConfig = {
   },
   spaceComplexity: 'O(1)',
   code: linearSearchCode,
-  defaultInput: '64,34,25,12,22|12', // **note**: array|target format (pipe required)
+  defaultInput: '64,34,25,12,22|12', // array|target format
   generateSteps: generateLinearSearchSteps
 };
