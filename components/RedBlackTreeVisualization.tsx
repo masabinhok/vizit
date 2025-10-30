@@ -94,14 +94,14 @@ function fixUpInsert(root: RedBlackNode, node: RedBlackNode): RedBlackNode {
         // Uncle black
         if (curr === parent.right) {
           // Case 2: Curr is right child -> rotate left
-          let newParent = leftRotate(grandparent, parent);
+          const newParent = leftRotate(grandparent, parent);
           if (grandparent === updatedRoot) updatedRoot = newParent;
           curr = parent;
         }
         // Case 3: Curr is left, rotate right on grandparent
         parent.color = 'black';
         grandparent.color = 'red';
-        let newRoot = rightRotate(null, grandparent);
+        const newRoot = rightRotate(null, grandparent);
         if (!newRoot.parent) updatedRoot = newRoot;
       }
     } else {
@@ -114,13 +114,13 @@ function fixUpInsert(root: RedBlackNode, node: RedBlackNode): RedBlackNode {
         continue;
       } else {
         if (curr === parent.left) {
-          let newParent = rightRotate(grandparent, parent);
+          const newParent = rightRotate(grandparent, parent);
           if (grandparent === updatedRoot) updatedRoot = newParent;
           curr = parent;
         }
         parent.color = 'black';
         grandparent.color = 'red';
-        let newRoot = leftRotate(null, grandparent);
+        const newRoot = leftRotate(null, grandparent);
         if (!newRoot.parent) updatedRoot = newRoot;
       }
     }
@@ -131,8 +131,8 @@ function fixUpInsert(root: RedBlackNode, node: RedBlackNode): RedBlackNode {
 
 // --- Rotations: returns new subtree root, updates parent pointers ---
 function leftRotate(globalRoot: RedBlackNode | null, x: RedBlackNode): RedBlackNode {
-  let y = x.right!;
-  let beta = y.left || null;
+  const y = x.right!;
+  const beta = y.left || null;
   const xparent = x.parent;
   const yclone: RedBlackNode = { ...y };
   yclone.left = { ...x, right: beta, parent: undefined };
@@ -146,8 +146,8 @@ function leftRotate(globalRoot: RedBlackNode | null, x: RedBlackNode): RedBlackN
   return yclone;
 }
 function rightRotate(globalRoot: RedBlackNode | null, y: RedBlackNode): RedBlackNode {
-  let x = y.left!;
-  let beta = x.right || null;
+  const x = y.left!;
+  const beta = x.right || null;
   const yparent = y.parent;
   const xclone: RedBlackNode = { ...x };
   xclone.right = { ...y, left: beta, parent: undefined };
@@ -192,21 +192,21 @@ export default function RedBlackTreeVisualization() {
   // Count/measure helpers
   const countNodes = (node: RedBlackNode | null): number => node ? 1 + countNodes(node.left||null) + countNodes(node.right||null) : 0;
   const calcHeight = (node: RedBlackNode | null): number => node ? 1 + Math.max(calcHeight(node.left||null), calcHeight(node.right||null)) : 0;
-  const calcBlackHeight = (node: RedBlackNode | null): number => {
-    let h = 0;
-    while (node) {
-      if (node.color === 'black') h++;
-      node = node.left || null;
-    }
-    return h;
-  };
+  // const calcBlackHeight = (node: RedBlackNode | null): number => {
+  //   let h = 0;
+  //   while (node) {
+  //     if (node.color === 'black') h++;
+  //     node = node.left || null;
+  //   }
+  //   return h;
+  // };
 
   // --- Main Insert/Search Logic ---
   async function insertValue(val: number) {
     if (isAnimating) return;
     setIsAnimating(true);
     let newRoot = deepCloneRBTree(treeRoot);
-    let insertedPath: RedBlackNode[] = [];
+    const insertedPath: RedBlackNode[] = [];
     
     // insert just like BST, but always insert red
     function bstInsert(node: RedBlackNode | null, val: number, parent: RedBlackNode | null): RedBlackNode {
@@ -265,13 +265,23 @@ export default function RedBlackTreeVisualization() {
       n.isHighlighted = false; n.highlightType = undefined;
     };
 
+    function getGrandparent(n: RedBlackNode): RedBlackNode | null {
+      return n.parent && n.parent.parent ? n.parent.parent : null;
+    }
+    function getUncle(n: RedBlackNode): RedBlackNode | null {
+      const gp = getGrandparent(n);
+      if (!gp) return null;
+      if (n.parent === gp.left) return gp.right || null;
+      return gp.left || null;
+    }
+
     // Main loop:
     while (curr.parent && curr.parent.color === 'red') {
-      let parent = curr.parent;
-      let grandparent = parent.parent;
+      const parent = curr.parent;
+      const grandparent = getGrandparent(curr);
+      const uncle = getUncle(curr);
       if (!grandparent) break;
       if (parent === grandparent.left) {
-        let uncle = grandparent.right;
         if (uncle && uncle.color === 'red') {
           // color flip
           parent.color = 'black';
@@ -295,7 +305,6 @@ export default function RedBlackTreeVisualization() {
         }
       } else {
         // same as above, mirror
-        let uncle = grandparent.left;
         if (uncle && uncle.color === 'red') {
           parent.color = 'black';
           uncle.color = 'black';
@@ -362,7 +371,7 @@ export default function RedBlackTreeVisualization() {
     node.parent = parent || undefined;
     const levelGap = 80;
     const minSpread = 45;
-    let nextSpread = Math.max(spread / 2, minSpread);
+    const nextSpread = Math.max(spread / 2, minSpread);
     if (node.left) computeRBLayout(node.left, x - nextSpread, y + levelGap, depth + 1, nextSpread, node);
     if (node.right) computeRBLayout(node.right, x + nextSpread, y + levelGap, depth + 1, nextSpread, node);
     return node;
@@ -370,11 +379,11 @@ export default function RedBlackTreeVisualization() {
   function renderTree() {
     if (!treeRoot || !canvasRef.current) return null;
     const width = canvasRef.current.offsetWidth || 800;
-    let rootCopy = deepCloneRBTree(treeRoot);
+    const rootCopy = deepCloneRBTree(treeRoot);
     computeRBLayout(rootCopy, width / 2, 60, 0, width * 0.35);
     function renderEdges(node: RedBlackNode | null): React.ReactNode[] {
       if (!node) return [];
-      let lines: React.ReactNode[] = [];
+      const lines: React.ReactNode[] = [];
       if (node.left)
         lines.push(<line key={node.id+':l'} x1={node.x ?? 0} y1={(node.y ?? 0)} x2={node.left.x ?? 0} y2={node.left.y ?? 0} stroke="#94a3b8" strokeWidth={2} />);
       if (node.right)
@@ -385,9 +394,9 @@ export default function RedBlackTreeVisualization() {
     }
     function renderNodes(node: RedBlackNode | null): React.ReactNode[] {
       if (!node) return [];
-      let color = node.color === 'red' ? (isDarkMode ? '#ef4444' : '#dc2626') : (isDarkMode ? '#1e293b' : '#fff');
-      let strokeC = node.color === 'red' ? '#f87171' : (isDarkMode ? '#64748b' : '#64748b');
-      let highlightClass = node.isHighlighted ? (node.highlightType === 'rotate' ? 'animate-spin-slow' : 'animate-pulse') : '';
+      const color = node.color === 'red' ? (isDarkMode ? '#ef4444' : '#dc2626') : (isDarkMode ? '#1e293b' : '#fff');
+      const strokeC = node.color === 'red' ? '#f87171' : (isDarkMode ? '#64748b' : '#64748b');
+      const highlightClass = node.isHighlighted ? (node.highlightType === 'rotate' ? 'animate-spin-slow' : 'animate-pulse') : '';
       const hasRedRedViolation = node.color==='red' && ((node.left && node.left.color==='red') || (node.right && node.right.color==='red'));
       let children: React.ReactNode[] = [];
       if (node.left) {

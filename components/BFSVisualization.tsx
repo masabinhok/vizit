@@ -363,7 +363,7 @@ export default function BFSVisualization() {
         setIsPaused(false);
       }
     }, 300);
-  }, [bfsQueue, nodes, hasBFSStarted, stats.queueMaxLength, startNodeId, graph]);
+  }, [bfsQueue, nodes, hasBFSStarted, startNodeId, graph, parentMap, stats]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;

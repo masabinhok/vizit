@@ -24,7 +24,7 @@ export default function PercolationPage() {
   );
   const [steps, setSteps] = useState(0);
   const [autoPlay, setAutoPlay] = useState(false);
-  const [speed, setSpeed] = useState(400);
+
 
   // Opens a random cell
   const openRandomCell = () => {
@@ -55,10 +55,10 @@ export default function PercolationPage() {
   // Handles autoplay
   useEffect(() => {
     if (autoPlay && !percRef.current.percolates()) {
-      const interval = setInterval(openRandomCell, speed);
+      const interval = setInterval(openRandomCell, 400);
       return () => clearInterval(interval);
     }
-  }, [autoPlay, speed, grid]);
+  }, [autoPlay, grid]);
 
   // Stats
   const percolates = percRef.current.percolates();
