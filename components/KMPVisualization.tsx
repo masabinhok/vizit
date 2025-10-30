@@ -19,7 +19,8 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
     isPlaying,
     onComplete
 }) => {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const isDarkMode = resolvedTheme === 'dark';
     const [currentStep, setCurrentStep] = useState(0);
     const [showLPSConstruction, setShowLPSConstruction] = useState(false);
     const [searchSteps, setSearchSteps] = useState<KMPStep[]>([]);
@@ -52,23 +53,37 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
     }, [isPlaying, speed, showLPSConstruction, searchSteps, lpsSteps, currentStep, onComplete]);
 
     const renderLPSConstruction = () => {
-        if (!lpsSteps.length || currentStep >= lpsSteps.length) return null;
-        const step = lpsSteps[currentStep];
+        if (!lpsSteps.length) return (
+            <div className={`text-center py-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                No LPS construction steps available
+            </div>
+        );
+        
+        const actualStep = Math.min(currentStep, lpsSteps.length - 1);
+        const step = lpsSteps[actualStep];
 
         return (
             <div className="flex flex-col gap-6">
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">LPS Table Construction</h3>
+                <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>
+                    LPS Table Construction
+                </h3>
                 <div className="grid grid-cols-1 gap-6">
                     <div className="space-y-4">
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-24">Pattern:</span>
+                            <span className={`text-sm font-medium w-24 ${isDarkMode ? 'text-slate-400' : 'text-gray-700'}`}>
+                                Pattern:
+                            </span>
                             {step.pattern.split('').map((char, idx) => (
                                 <div
                                     key={idx}
-                                    className={`w-10 h-10 flex items-center justify-center text-lg font-medium rounded-md transition-all duration-200
+                                    className={`w-10 h-10 flex items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm
                                         ${idx === step.index 
-                                            ? 'bg-indigo-100 border-2 border-indigo-500 text-indigo-700 dark:bg-indigo-900 dark:border-indigo-400 dark:text-indigo-300' 
-                                            : 'bg-gray-50 border border-gray-200 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300'
+                                            ? isDarkMode
+                                                ? 'bg-indigo-600 border-2 border-indigo-400 text-white'
+                                                : 'bg-indigo-500 border-2 border-indigo-600 text-white'
+                                            : isDarkMode
+                                                ? 'bg-slate-700 border-2 border-slate-600 text-slate-200'
+                                                : 'bg-slate-600 border-2 border-slate-500 text-white'
                                         }`}
                                 >
                                     {char}
@@ -76,14 +91,20 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
                             ))}
                         </div>
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-24">LPS Values:</span>
+                            <span className={`text-sm font-medium w-24 ${isDarkMode ? 'text-slate-400' : 'text-gray-700'}`}>
+                                LPS Values:
+                            </span>
                             {step.lpsArray.map((value, idx) => (
                                 <div
                                     key={idx}
-                                    className={`w-10 h-10 flex items-center justify-center text-lg font-medium rounded-md transition-all duration-200
+                                    className={`w-10 h-10 flex items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm
                                         ${idx === step.index 
-                                            ? 'bg-indigo-100 border-2 border-indigo-500 text-indigo-700 dark:bg-indigo-900 dark:border-indigo-400 dark:text-indigo-300'
-                                            : 'bg-gray-50 border border-gray-200 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300'
+                                            ? isDarkMode
+                                                ? 'bg-indigo-600 border-2 border-indigo-400 text-white'
+                                                : 'bg-indigo-500 border-2 border-indigo-600 text-white'
+                                            : isDarkMode
+                                                ? 'bg-slate-700 border-2 border-slate-600 text-slate-200'
+                                                : 'bg-slate-600 border-2 border-slate-500 text-white'
                                         }`}
                                 >
                                     {value}
@@ -97,25 +118,39 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
     };
 
     const renderPatternSearch = () => {
-        if (!searchSteps.length || currentStep >= searchSteps.length) return null;
-        const step = searchSteps[currentStep];
+        if (!searchSteps.length) return (
+            <div className={`text-center py-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                No search steps available
+            </div>
+        );
+        
+        const actualStep = Math.min(currentStep, searchSteps.length - 1);
+        const step = searchSteps[actualStep];
 
         return (
             <div className="flex flex-col gap-6">
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Pattern Search</h3>
+                <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>
+                    Pattern Search
+                </h3>
                 <div className="grid grid-cols-1 gap-6">
                     {/* Text visualization */}
                     <div className="space-y-4">
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-24">Text:</span>
+                            <span className={`text-sm font-medium w-24 ${isDarkMode ? 'text-slate-400' : 'text-gray-700'}`}>
+                                Text:
+                            </span>
                             <div className="flex flex-wrap gap-2">
                                 {step.text.split('').map((char, idx) => (
                                     <div
                                         key={idx}
-                                        className={`w-10 h-10 flex items-center justify-center text-lg font-medium rounded-md transition-all duration-200 
+                                        className={`w-10 h-10 flex items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm
                                             ${idx === step.textIndex
-                                                ? 'bg-emerald-100 border-2 border-emerald-500 text-emerald-700 dark:bg-emerald-900 dark:border-emerald-400 dark:text-emerald-300'
-                                                : 'bg-gray-50 border border-gray-200 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300'
+                                                ? isDarkMode
+                                                    ? 'bg-emerald-600 border-2 border-emerald-400 text-white'
+                                                    : 'bg-emerald-500 border-2 border-emerald-600 text-white'
+                                                : isDarkMode
+                                                    ? 'bg-slate-700 border-2 border-slate-600 text-slate-200'
+                                                    : 'bg-slate-600 border-2 border-slate-500 text-white'
                                             }`}
                                     >
                                         {char}
@@ -126,7 +161,9 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
                         
                         {/* Pattern visualization */}
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-24">Pattern:</span>
+                            <span className={`text-sm font-medium w-24 ${isDarkMode ? 'text-slate-400' : 'text-gray-700'}`}>
+                                Pattern:
+                            </span>
                             <div 
                                 className="flex flex-wrap gap-2 transition-all duration-300 ease-in-out" 
                                 style={{ marginLeft: `${(step.textIndex - step.patternIndex) * 2.75}rem` }}
@@ -134,12 +171,18 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
                                 {step.pattern.split('').map((char, idx) => (
                                     <div
                                         key={idx}
-                                        className={`w-10 h-10 flex items-center justify-center text-lg font-medium rounded-md transition-all duration-200
+                                        className={`w-10 h-10 flex items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm
                                             ${idx === step.patternIndex
-                                                ? 'bg-indigo-100 border-2 border-indigo-500 text-indigo-700 dark:bg-indigo-900 dark:border-indigo-400 dark:text-indigo-300'
+                                                ? isDarkMode
+                                                    ? 'bg-indigo-600 border-2 border-indigo-400 text-white'
+                                                    : 'bg-indigo-500 border-2 border-indigo-600 text-white'
                                                 : step.isMatch
-                                                    ? 'bg-emerald-50 border-2 border-emerald-300 text-emerald-600 dark:bg-emerald-900/50 dark:border-emerald-500 dark:text-emerald-300'
-                                                    : 'bg-gray-50 border border-gray-200 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300'
+                                                    ? isDarkMode
+                                                        ? 'bg-emerald-700 border-2 border-emerald-500 text-white'
+                                                        : 'bg-emerald-400 border-2 border-emerald-500 text-white'
+                                                    : isDarkMode
+                                                        ? 'bg-slate-700 border-2 border-slate-600 text-slate-200'
+                                                        : 'bg-slate-600 border-2 border-slate-500 text-white'
                                             }`}
                                     >
                                         {char}
@@ -150,14 +193,18 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
 
                         {/* LPS Array visualization */}
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 w-24">LPS Array:</span>
+                            <span className={`text-sm font-medium w-24 ${isDarkMode ? 'text-slate-400' : 'text-gray-700'}`}>
+                                LPS Array:
+                            </span>
                             <div className="flex flex-wrap gap-2">
                                 {step.lpsArray.map((value, idx) => (
                                     <div
                                         key={idx}
-                                        className={`w-10 h-10 flex items-center justify-center text-lg font-medium rounded-md transition-all duration-200
-                                            bg-gray-50 border border-gray-200 text-gray-700
-                                            dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300`}
+                                        className={`w-10 h-10 flex items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm ${
+                                            isDarkMode
+                                                ? 'bg-slate-700 border-2 border-slate-600 text-slate-200'
+                                                : 'bg-slate-600 border-2 border-slate-500 text-white'
+                                        }`}
                                     >
                                         {value}
                                     </div>
@@ -174,16 +221,26 @@ const KMPVisualization: React.FC<KMPVisualizationProps> = ({
         <div className="flex flex-col gap-6">
             <div className="flex items-center gap-4 px-4">
                 <button
-                    className={`px-6 py-2.5 text-sm font-semibold transition-all duration-200 rounded-md shadow-sm
+                    className={`px-6 py-2.5 text-sm font-semibold transition-all duration-200 rounded-lg shadow-md
                         ${showLPSConstruction 
-                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 ring-2 ring-indigo-500 dark:ring-indigo-400' 
-                            : 'bg-indigo-600 text-white dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600'}`}
-                    onClick={() => setShowLPSConstruction(!showLPSConstruction)}
+                            ? isDarkMode
+                                ? 'bg-indigo-600 text-white ring-2 ring-indigo-400' 
+                                : 'bg-indigo-500 text-white ring-2 ring-indigo-600'
+                            : isDarkMode
+                                ? 'bg-slate-700 text-slate-200 hover:bg-slate-600'
+                                : 'bg-slate-600 text-white hover:bg-slate-700'
+                        }`}
+                    onClick={() => {
+                        setShowLPSConstruction(!showLPSConstruction);
+                        setCurrentStep(0); // Reset to beginning when switching views
+                    }}
                 >
                     {showLPSConstruction ? 'Show Pattern Search' : 'Show LPS Construction'}
                 </button>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg shadow-lg p-6 transition-all duration-300 ease-in-out">
+            <div className={`rounded-xl shadow-lg p-6 transition-all duration-300 ${
+                isDarkMode ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-white/90 border border-gray-200'
+            }`}>
                 <div className="backdrop-blur-sm">
                     {showLPSConstruction ? renderLPSConstruction() : renderPatternSearch()}
                 </div>

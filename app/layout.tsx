@@ -33,7 +33,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <HacktoberfestBanner />
-          {children}
+          <div className="flex h-screen overflow-hidden">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
