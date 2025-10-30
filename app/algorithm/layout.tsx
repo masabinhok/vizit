@@ -15,14 +15,14 @@ export default function AlgorithmLayout({
   const currentAlgorithm = pathParts[pathParts.length - 1];
 
   return (
-    <div className="flex h-screen animate-in fade-in duration-800">
+    <div className="flex min-h-screen animate-in fade-in duration-800">
       {/* Persistent Sidebar */}
-      <div className="animate-in slide-in-from-left-4 fade-in duration-600">
+      <div className="animate-in slide-in-from-left-4 fade-in duration-600 sticky top-0 h-screen">
         <Sidebar currentAlgorithm={currentAlgorithm} />
       </div>
       
       {/* Main Content Area */}
-      <div className="flex-1 min-h-0 animate-in slide-in-from-right-4 fade-in duration-600 delay-100">
+      <div className="flex-1 animate-in slide-in-from-right-4 fade-in duration-600 delay-100">
         {children}
       </div>
     </div>
