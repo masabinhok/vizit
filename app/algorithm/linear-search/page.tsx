@@ -9,6 +9,18 @@ import InfoPanel from '../../../components/InfoPanel';
 import { linearSearchConfig } from '../../../app/algorithms/linear-search';
 import type { AlgorithmStep } from '../../../types';
 
+function generateRandomPipeInput(count = 8, maxVal = 99, pickFromArray = true) {
+  const arr: number[] = [];
+  for (let i = 0; i < count; i++) {
+    arr.push(Math.floor(Math.random() * maxVal) + 1);
+  }
+  const target = pickFromArray
+    ? arr[Math.floor(Math.random() * arr.length)]
+    : Math.floor(Math.random() * maxVal) + 1;
+
+  return `${arr.join(',')}|${target}`;
+}
+
 export default function LinearSearchPage() {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
@@ -203,6 +215,24 @@ export default function LinearSearchPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Random Input button (centered, above control bar) */}
+            <div className="flex justify-center items-center gap-3 mt-3 mb-4">
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-sm transition-colors"
+                onClick={() => {
+                  const randomInput = generateRandomPipeInput(8, 99, true);
+                  setInputValue(randomInput);
+                  if (typeof initializeAlgorithm === 'function') {
+                    setTimeout(() => initializeAlgorithm(), 80);
+                  }
+                }}
+              >
+                🎲 Random Input
+              </button>
+              <div className="text-sm text-slate-500 select-none">(generates array|target)</div>
             </div>
 
             {/* Control Bar */}
