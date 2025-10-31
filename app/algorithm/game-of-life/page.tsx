@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { AlgorithmStep, ArrayElement } from '../../../types';
 import { gameOfLifeConfig, nextGeneration } from '../../algorithms/game-of-life';
 import GameOfLifeGrid from '../../../components/GameOfLifeGrid';
 import GameOfLifeControlBar from '../../../components/GameOfLifeControlBar';
 import InfoPanel from '../../../components/InfoPanel';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 
 export default function BubbleSortPage() {
@@ -50,7 +50,7 @@ export default function BubbleSortPage() {
     return arr;
   };
 
-  const initialize = () => {
+  const initialize = useCallback(() => {
     try {
       const { w, h } = parseDims(dimensions.trim() || algorithmConfig.defaultInput.split('@')[0]);
       const grid: number[][] = Array.from({ length: h }, () => Array(w).fill(0));
@@ -70,9 +70,10 @@ export default function BubbleSortPage() {
       }]);
       setIsInitialized(true);
     } catch (e) {
-      toast.error('Invalid input. Use format like "25x25" (5–80).');
+      console.log(e);
+      toast.error('Invalid input. Use format like "25x25" (5–80).', { id: 'input-error', duration: 4000 });
     }
-  };
+  }, [dimensions, density, algorithmConfig]);
 
   // auto-run loop
   useEffect(() => {
@@ -95,7 +96,7 @@ export default function BubbleSortPage() {
   }, [isInitialized, isPlaying, speed]);
 
   // start on mount
-  useEffect(() => { initialize(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
+  useEffect(() => { initialize(); }, [initialize]);
 
   const onRandomize = () => {
     initialize();

@@ -1,7 +1,7 @@
 // app/algorithm/linear-search/page.tsx
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '../../../contexts/ThemeContext';
 import LinearSearchVisualization from '../../../components/LinearSearchVisualization';
 import ControlBar from '../../../components/ControlBar';
@@ -38,63 +38,7 @@ export default function LinearSearchPage() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-initialize on mount with default input
-  useEffect(() => {
-    setInputValue(algorithmConfig.defaultInput || '');
-    const timer = setTimeout(() => initializeAlgorithm(), 120);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Playback interval effect
-  useEffect(() => {
-    if (isPlaying && steps.length > 0) {
-      const delay = Math.max(80, 1000 - speed * 9);
-      intervalRef.current = setInterval(() => {
-        setCurrentStep(prev => {
-          if (prev >= steps.length - 1) {
-            setIsPlaying(false);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, delay);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isPlaying, speed, steps.length]);
-
-  // Parse input in the required "array|target" format
-  const parsePipeInput = (raw: string): { target: number; arr: number[] } | null => {
-    const s = raw.trim();
-    if (!s) return null;
-    if (!s.includes('|')) return null;
-    const [arrPartRaw, targetPartRaw] = s.split('|', 2);
-    const arrPart = arrPartRaw?.trim() ?? '';
-    const targetPart = targetPartRaw?.trim() ?? '';
-    if (!arrPart || !targetPart) return null;
-
-    const arrNums = arrPart
-      .split(',')
-      .map(x => x.trim())
-      .filter(Boolean)
-      .map(x => Number.parseInt(x, 10))
-      .filter(n => !Number.isNaN(n) && Number.isFinite(n));
-
-    const tnum = Number.parseInt(targetPart, 10);
-    if (arrNums.length === 0 || Number.isNaN(tnum)) return null;
-
-    return { target: tnum, arr: arrNums };
-  };
-
-  const initializeAlgorithm = (): void => {
+   const initializeAlgorithm = useCallback((): void => {
     try {
       const raw = inputValue.trim() || algorithmConfig.defaultInput || '';
       const parsed = parsePipeInput(raw);
@@ -125,12 +69,68 @@ export default function LinearSearchPage() {
       const wrapper = document.getElementById('linear-canvas-wrapper');
       if (wrapper) wrapper.scrollTop = 0;
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('Failed to initialize Linear Search:', err);
       alert('Failed to initialize algorithm. Check console for details.');
     }
+  }, [inputValue, algorithmConfig]);
+
+
+  // Auto-initialize on mount with default input
+  useEffect(() => {
+    setInputValue(algorithmConfig.defaultInput || '');
+    const timer = setTimeout(() => initializeAlgorithm(), 120);
+    return () => clearTimeout(timer);
+  }, [algorithmConfig.defaultInput, initializeAlgorithm]);
+
+  // Playback interval effect
+  useEffect(() => {
+    if (isPlaying && steps.length > 0) {
+      const delay = Math.max(80, 1000 - speed * 9);
+      intervalRef.current = setInterval(() => {
+        setCurrentStep(prev => {
+          if (prev >= steps.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, delay);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying, speed, steps.length, algorithmConfig.defaultInput]);
+
+  // Parse input in the required "array|target" format
+  const parsePipeInput = (raw: string): { target: number; arr: number[] } | null => {
+    const s = raw.trim();
+    if (!s) return null;
+    if (!s.includes('|')) return null;
+    const [arrPartRaw, targetPartRaw] = s.split('|', 2);
+    const arrPart = arrPartRaw?.trim() ?? '';
+    const targetPart = targetPartRaw?.trim() ?? '';
+    if (!arrPart || !targetPart) return null;
+
+    const arrNums = arrPart
+      .split(',')
+      .map(x => x.trim())
+      .filter(Boolean)
+      .map(x => Number.parseInt(x, 10))
+      .filter(n => !Number.isNaN(n) && Number.isFinite(n));
+
+    const tnum = Number.parseInt(targetPart, 10);
+    if (arrNums.length === 0 || Number.isNaN(tnum)) return null;
+
+    return { target: tnum, arr: arrNums };
   };
 
+ 
   const stepForward = (): void => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);

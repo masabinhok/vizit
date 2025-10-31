@@ -10,7 +10,7 @@ export default function GameOfLifeGrid({
   if (!isInitialized || !currentStep) {
     return (
       <div className="w-full h-full flex items-center justify-center text-gray-500">
-        Click "Apply" to start
+        Click &quot;Apply&quot; to start
       </div>
     );
   }
